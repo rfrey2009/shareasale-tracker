@@ -27,7 +27,7 @@ class ShareASale_Tracker_Admin {
         'type'      => 'text'
         )); 
     }
-
+    
     /**
     * Method to wrap the WordPress admin_menu_page() function
     */

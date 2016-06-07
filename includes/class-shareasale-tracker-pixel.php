@@ -56,7 +56,6 @@ class ShareASale_Tracker_WooCommerce {
 
         $product_data = new stdClass();
 
-        //Let's get the items in the order
         $items = $this->order->get_items();
 
         $last_index = array_search(end($items), $items, true);
@@ -78,13 +77,12 @@ class ShareASale_Tracker_WooCommerce {
     }
 
     private function get_customer_status(){
-        //assume guest checkout so no newcustomer info passed to ShareASale at all
+        
         $newcustomer = '';
-        //check if get_user_id() exists since WC docs says it does, but a few merchants have had "call to undefined method" fatal errors in WC_Order when using it...
         if (method_exists($this->order, 'get_user_id')){
-            //it exists, so now lets find out the hard way if this is a new customer or not...
+            
             $customer_user_id = $this->order->get_user_id();
-            if($customer_user_id != 0){ //is it a guest checkout with user ID 0, or a real customer with an assigned ID?
+            if($customer_user_id != 0){ 
                 $user_orders = get_posts(
                     array(
                         'post_type'   => 'shop_order', 
@@ -95,7 +93,7 @@ class ShareASale_Tracker_WooCommerce {
                     )
                 );
                 $order_count = count($user_orders);
-                //whether new or existing customer based on order count so far
+                
                 $newcustomer = ($order_count > 1 ? 0 : 1);
             }
         }

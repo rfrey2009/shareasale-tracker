@@ -1,6 +1,6 @@
 <div id="shareasale-tracker">
 <?php
-	include_once 'options-head.php'; //to get settings errors set with add_settings_error in the validation/sanitization callback working in the custom menu page
+	include_once 'options-head.php';
 
 	if ( !current_user_can('manage_options') ) {
 	  wp_die( 'You do not have sufficient permissions to access this page.' );

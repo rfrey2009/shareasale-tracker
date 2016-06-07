@@ -13,7 +13,9 @@ if ( ! defined( 'WPINC' ) ) {
     die;
 }
 
-//require the core plugin class
+/*
+* require the core plugin class
+*/
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-shareasale-tracker.php';
 
 /**
