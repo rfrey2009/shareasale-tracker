@@ -1,0 +1,1 @@
+<p>Insert your ShareASale Merchant ID number here.</p>
