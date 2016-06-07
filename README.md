@@ -1,2 +1,2 @@
 # ShareASaleLinkify
-WP ShareASale linking plugin
+ShareASale Tracking Plugin for WooCommerce
