@@ -15,11 +15,12 @@ class ShareASale_Tracker_WooCommerce {
     
     public function woocommerce_thankyou($order_id) {
 
-        if(!$order_id) return;
-
-        $this->order = new WC_Order($order_id); 
-        
         $merchantID = get_option( 'tracker_options' )['Merchant ID'];
+
+        if(!$order_id || !$merchantID) return;
+
+        $this->order = new WC_Order($order_id);        
+        
         $product_data = $this->get_product_data();
 
         echo '<img src="https://shareasale.com/sale.cfm?amount=' . $this->get_order_amount() . 
