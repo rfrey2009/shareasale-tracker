@@ -1,6 +1,7 @@
 <?php
 /*
  Plugin Name:       ShareASale Tracker
+ Author:			ShareASale.com, Inc.
  Description:       Setup ShareASale's Affiliate network's conversion tracking in WooCommerce
  Version:           1.0
  Depends:  			WooCommerce

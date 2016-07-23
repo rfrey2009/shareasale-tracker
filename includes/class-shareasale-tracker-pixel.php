@@ -1,122 +1,132 @@
 <?php
- 
-class ShareASale_Tracker_WooCommerce {
+class ShareASale_Tracker_Pixel {
 
-     /**
-   * @var WC_Order $order WooCommere order object https://docs.woothemes.com/wc-apidocs/class-WC_Order.html
-   * @var float $version Plugin version
-   */
+	/**
+	* @var WC_Order $order WooCommere order object https://docs.woothemes.com/wc-apidocs/class-WC_Order.html
+	* @var float $version Plugin version
+	*/
 
-    private $order, $version;
+	private $order, $version;
 
-    public function __construct( $version ) {
-        $this->version = $version;
-    } 
-    
-    public function woocommerce_thankyou($order_id) {
+	public function __construct( $version ) {
+		$this->version = $version;
+	}
 
-        $merchantID = get_option( 'tracker_options' )['Merchant ID'];
+	public function woocommerce_thankyou( $order_id ) {
+		$options     = get_option( 'tracker_options' );
+		$merchant_id = $options['merchant-id'];
+		$store_id    = @$options['store-id'];
+		$xtype       = @$options['xtype'];
 
-        if(!$order_id || !$merchantID) return;
+		if ( ! $order_id || ! $merchant_id ) {
+			return;
+		}
 
-        $this->order = new WC_Order($order_id);        
-        
-        $product_data = $this->get_product_data();
+		if ( $store_id ) {
+			$store_id = '&storeID=' . $store_id;
+		}
 
-        echo '<img src="https://shareasale.com/sale.cfm?amount=' . $this->get_order_amount() . 
-                                                      '&tracking=' . $this->order->get_order_number() . 
-                                                      '&transtype=sale&merchantID=' . $merchantID . 
-                                                      '&skulist=' . $product_data->skulist . 
-                                                      '&quantitylist=' . $product_data->quantitylist . 
-                                                      '&pricelist=' . $product_data->pricelist . 
-                                                      '&couponcode=' . $this->get_coupon_codes() . 
-                                                      '&currency=' . $this->get_currency() . 
-                                                      '&newcustomer=' . $this->get_customer_status() . 
-                                                      '&v=' . $this->get_version() . 
-                                                      '" width="1" height="1">';
+		if ( $xtype ) {
+			$xtype = '&xtype=' . $xtype;
+		}
 
-    }    
+		$this->order = new WC_Order( $order_id );
 
-    private function get_order_amount(){
+		$product_data = $this->get_product_data();
 
-        $grand_total = $this->order->get_total();
-        //$total_discount = $this->order->get_cart_discount();
-        $total_shipping = $this->order->get_total_shipping();
-        $total_taxes = $this->order->get_total_tax();
-        $subtotal = $grand_total - ($total_shipping + $total_taxes);
+		echo '<img src="https://shareasale.com/sale.cfm?amount=' . $this->get_order_amount() .
+													'&tracking=' . $this->order->get_order_number() .
+													'&transtype=sale&merchantID=' . $merchant_id .
+													'&skulist=' . $product_data->skulist .
+													'&quantitylist=' . $product_data->quantitylist .
+													'&pricelist=' . $product_data->pricelist .
+													'&couponcode=' . $this->get_coupon_codes() .
+													'&currency=' . $this->get_currency() .
+													'&newcustomer=' . $this->get_customer_status() .
+													$store_id . $xtype .
+													'&v=' . $this->get_version() .
+													'" width="1" height="1">';
 
-        if ($subtotal < 0)
-            $subtotal = 0;
+	}
 
-        return $subtotal;
+	private function get_order_amount() {
 
-    }
+		$grand_total = $this->order->get_total();
+		//$total_discount = $this->order->get_cart_discount();
+		$total_shipping = $this->order->get_total_shipping();
+		$total_taxes = $this->order->get_total_tax();
+		$subtotal = $grand_total - ( $total_shipping + $total_taxes );
 
-    private function get_product_data(){
+		if ( $subtotal < 0 ) {
+			$subtotal = 0;
+		}
 
-        $product_data = new stdClass();
+		return $subtotal;
+	}
 
-        $items = $this->order->get_items();
+	private function get_product_data() {
 
-        $last_index = array_search(end($items), $items, true);
-        foreach ($items as $index => $item){
+		$product_data = new stdClass();
 
-            $delimiter = $index === $last_index ? '' : ',';
+		$items = $this->order->get_items();
 
-            $id = $item['product_id'];
-            $product = new WC_Product($id);
-            $sku = $product->get_sku();     
-            isset($product_data->skulist) ? $product_data->skulist .= $sku . $delimiter : $product_data->skulist = $sku . $delimiter;
-            isset($product_data->pricelist) ? $product_data->pricelist .= round(($item['line_total'] / $item['qty']), 2) . $delimiter : $product_data->pricelist = round(($item['line_total'] / $item['qty']), 2) . $delimiter;
-            isset($product_data->quantitylist) ? $product_data->quantitylist .= $item['qty'] . $delimiter : $product_data->quantitylist = $item['qty'] . $delimiter;            
-            
-        }
+		$last_index = array_search( end( $items ), $items, true );
+		foreach ( $items as $index => $item ) {
 
-        return $product_data;
+			$delimiter = $index === $last_index ? '' : ',';
 
-    }
+			$id = $item['product_id'];
+			$product = new WC_Product( $id );
+			$sku = $product->get_sku();
+			isset( $product_data->skulist ) ? $product_data->skulist .= $sku . $delimiter : $product_data->skulist = $sku . $delimiter;
+			isset( $product_data->pricelist ) ? $product_data->pricelist .= round( ( $item['line_total'] / $item['qty'] ), 2 ) . $delimiter : $product_data->pricelist = round( ( $item['line_total'] / $item['qty'] ), 2 ) . $delimiter;
+			isset( $product_data->quantitylist ) ? $product_data->quantitylist .= $item['qty'] . $delimiter : $product_data->quantitylist = $item['qty'] . $delimiter;
+		}
 
-    private function get_customer_status(){
-        
-        $newcustomer = '';
-        if (method_exists($this->order, 'get_user_id')){
-            
-            $customer_user_id = $this->order->get_user_id();
-            if($customer_user_id != 0){ 
-                $user_orders = get_posts(
-                    array(
-                        'post_type'   => 'shop_order', 
-                        'meta_key'    => '_customer_user', 
-                        'meta_value'  => $customer_user_id,
-                        'posts_per_page' => -1,
-                        'post_status' => array_keys( wc_get_order_statuses() )
-                    )
-                );
-                $order_count = count($user_orders);
-                
-                $newcustomer = ($order_count > 1 ? 0 : 1);
-            }
-        }
+		return $product_data;
 
-        return $newcustomer;  
+	}
 
-    }
+	private function get_customer_status() {
+		$newcustomer = '';
+		if ( method_exists( $this->order, 'get_user_id' ) ) {
 
-    private function get_coupon_codes(){
+			$customer_user_id = $this->order->get_user_id();
+			if ( 0 !== $customer_user_id ) {
+				$user_orders = get_posts(
+					array(
+						'post_type'      => 'shop_order',
+						'meta_key'       => '_customer_user',
+						'meta_value'     => $customer_user_id,
+						'posts_per_page' => -1,
+						'post_status'    => array_keys( wc_get_order_statuses() )
+					)
+				);
+				$order_count = count( $user_orders );
 
-        $couponcode = implode(', ', $this->order->get_used_coupons());
+				$newcustomer = ($order_count > 1 ? 0 : 1);
+			}
+		}
 
-        return $couponcode;
-    }
+		return $newcustomer;
 
-    private function get_currency(){
+	}
 
-        $currency = $this->order->get_order_currency();
+	private function get_coupon_codes() {
 
-        return $currency;
-    }
+		$couponcode = implode( ', ', $this->order->get_used_coupons() );
 
-    public function get_version() {
-        return $this->version;
-    }    
+		return $couponcode;
+	}
+
+	private function get_currency() {
+
+		$currency = $this->order->get_order_currency();
+
+		return $currency;
+	}
+
+	public function get_version() {
+		return $this->version;
+	}
 }
