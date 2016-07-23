@@ -17,9 +17,6 @@ class ShareASale_Tracker {
 		$this->define_woocommerce_hooks();
 	}
 
-	/**
-	* Loads the plugin's dependencies
-	*/
 	private function load_dependencies() {
 		add_option( 'tracker_options', '' );
 
@@ -29,14 +26,11 @@ class ShareASale_Tracker {
 		$this->loader = new ShareASale_Tracker_Loader();
 	}
 
-	/**
-	* Setup the actions/methods to run on the ShareASale_Tracker_Admin object when certain WordPress hooks happen
-	* No filters used yet in v1.0
-	*/
 	private function define_admin_hooks() {
 		$admin = new ShareASale_Tracker_Admin( $this->get_version() );
-		$this->loader->add_action( 'admin_init', $admin, 'admin_init' );
-		$this->loader->add_action( 'admin_menu', $admin, 'admin_menu' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_init',            $admin, 'admin_init' );
+		$this->loader->add_action( 'admin_menu',            $admin, 'admin_menu' );
 	}
 
 	private function define_woocommerce_hooks() {
@@ -44,17 +38,9 @@ class ShareASale_Tracker {
 		$this->loader->add_action( 'woocommerce_thankyou', $woocommerce, 'woocommerce_thankyou' );
 	}
 
-	/**
-	* Wrapper for the loader object to execute now that dependencies and hooks were setup in the constructor
-	*/
 	public function run() {
 		$this->loader->run();
 	}
-
-	/**
-	* Simply returns the plugin version
-	* Useful for cache-busting on the frontend
-	*/
 
 	public function get_version() {
 		return $this->version;

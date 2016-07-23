@@ -7,7 +7,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 }
 ?>
 	<div>    
-		<h2>ShareASale Tracker Settings</h2>
+		<h2><img id = "shareasale-logo" src = <?php echo '"' . plugin_dir_url( __FILE__ ) . '../images/star_logo.png"' ?>> ShareASale Tracker Settings</h2>
 		<form action="options.php" method="post">
 			<div id = 'tracker-options'>
 			<?php

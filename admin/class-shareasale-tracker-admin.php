@@ -9,6 +9,17 @@ class ShareASale_Tracker_Admin {
 		$this->version = $version;
 	}
 
+	public function enqueue_styles( $hook ) {
+		if ( 'toplevel_page_shareasale-tracker' === $hook ) {
+				wp_enqueue_style(
+					'shareasale-tracker-admin-css',
+					plugin_dir_url( __FILE__ ) . 'css/shareasale-tracker-admin.css',
+					array(),
+					$this->version
+				);
+		}
+	}
+
 	public function admin_init() {
 		$options = get_option( 'tracker_options' );
 		register_setting( 'tracker_options', 'tracker_options' );
@@ -71,9 +82,6 @@ class ShareASale_Tracker_Admin {
 		add_submenu_page( $menu_slug, $page_title, $sub_menu_title, $capability, $menu_slug, $callback );
 	}
 
-	/**
-	* Method that displays the markup for the settings page, to be called in the WordPress add_menu_page() function
-	*/
 	public function render_settings_page() {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings.php';
 	}
@@ -92,7 +100,7 @@ class ShareASale_Tracker_Admin {
 	public function render_settings_input( $attributes ) {
 		$template      = file_get_contents( plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-input.php' );
 		$template_data = array_map( 'esc_attr', $attributes );
-		
+
 		foreach ( $template_data as $macro => $value ) {
 			$template = str_replace( "!!$macro!!", $value, $template );
 		}

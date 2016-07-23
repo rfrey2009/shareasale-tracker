@@ -34,7 +34,7 @@ class ShareASale_Tracker_Pixel {
 
 		$product_data = $this->get_product_data();
 
-		echo '<img src="https://shareasale.com/sale.cfm?amount=' . $this->get_order_amount() .
+		$pixel = '<img src="https://shareasale.com/sale.cfm?amount=' . $this->get_order_amount() .
 													'&tracking=' . $this->order->get_order_number() .
 													'&transtype=sale&merchantID=' . $merchant_id .
 													'&skulist=' . $product_data->skulist .
@@ -44,9 +44,17 @@ class ShareASale_Tracker_Pixel {
 													'&currency=' . $this->get_currency() .
 													'&newcustomer=' . $this->get_customer_status() .
 													$store_id . $xtype .
-													'&v=' . $this->get_version() .
+													'&v=' . $this->version .
 													'" width="1" height="1">';
-
+													
+		echo wp_kses( $pixel, array(
+									'img' => array(
+										'src'    => true,
+										'width'  => true,
+										'height' => true,
+									),
+								)
+		);
 	}
 
 	private function get_order_amount() {
@@ -124,9 +132,5 @@ class ShareASale_Tracker_Pixel {
 		$currency = $this->order->get_order_currency();
 
 		return $currency;
-	}
-
-	public function get_version() {
-		return $this->version;
 	}
 }

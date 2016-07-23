@@ -11,7 +11,7 @@
  
 //don't allow access from a web browser
 if ( ! defined( 'WPINC' ) ) {
-    die;
+	die;
 }
 
 /*
@@ -24,8 +24,8 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-shareasale-tracker.ph
 */
 function run_shareasale_tracker() {
  
-    $shareasale = new ShareASale_Tracker();
-    $shareasale->run();
+	$shareasale_tracker = new ShareASale_Tracker();
+	$shareasale_tracker->run();
  
 }
 
