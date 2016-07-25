@@ -12,7 +12,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 			<div id = 'tracker-options'>
 			<?php
 			  settings_fields( 'tracker_options' );
-			  do_settings_sections( 'shareasale-tracker' );
+			  do_settings_sections( 'shareasale_tracker' );
 			?>     
 			</div>
 			<button id = "tracker-options-save" name="Submit">Save Settings</button>

@@ -9,8 +9,12 @@ class ShareASale_Tracker_Admin {
 		$this->version = $version;
 	}
 
+	private function load_dependencies() {
+		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-tracker-api.php';
+	}
+
 	public function enqueue_styles( $hook ) {
-		if ( 'toplevel_page_shareasale-tracker' === $hook ) {
+		if ( 'toplevel_page_shareasale_tracker' === $hook ) {
 				wp_enqueue_style(
 					'shareasale-tracker-admin-css',
 					plugin_dir_url( __FILE__ ) . 'css/shareasale-tracker-admin.css',
@@ -20,12 +24,18 @@ class ShareASale_Tracker_Admin {
 		}
 	}
 
+	public function enqueue_scripts( $hook ) {
+		if ( 'toplevel_page_shareasale_tracker' === $hook ) {
+			return;
+		}
+	}
+
 	public function admin_init() {
 		$options = get_option( 'tracker_options' );
-		register_setting( 'tracker_options', 'tracker_options' );
+		register_setting( 'tracker_options', 'tracker_options', array( $this, 'sanitize_settings' ) );
 
-		add_settings_section( 'tracker_required', 'Required Merchant Info', array( $this, 'render_settings_required_text' ), 'shareasale-tracker' );
-		add_settings_field( 'merchant-id', '*Merchant ID', array( $this, 'render_settings_input' ), 'shareasale-tracker', 'tracker_required',
+		add_settings_section( 'tracker_required', 'Required Merchant Info', array( $this, 'render_settings_required_section_text' ), 'shareasale_tracker' );
+		add_settings_field( 'merchant-id', '*Merchant ID', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_required',
 			array(
 				'label_for'   => 'merchant-id',
 				'id'          => 'merchant-id',
@@ -34,11 +44,12 @@ class ShareASale_Tracker_Admin {
 				'size'        => 22,
 				'type'        => 'text',
 				'placeholder' => 'ShareASale Merchant ID',
+				'class'       => 'tracker-option',
 			)
 		);
 
-		add_settings_section( 'tracker_optional', 'Optional Pixel Info', array( $this, 'render_settings_optional_text' ), 'shareasale-tracker' );
-		add_settings_field( 'store-id', 'Store ID', array( $this, 'render_settings_input' ), 'shareasale-tracker', 'tracker_optional',
+		add_settings_section( 'tracker_optional', 'Optional Pixel Info', array( $this, 'render_settings_optional_section_text' ), 'shareasale_tracker' );
+		add_settings_field( 'store-id', 'Store ID', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_optional',
 			array(
 				'label_for'   => 'store-id',
 				'id'          => 'store-id',
@@ -47,9 +58,10 @@ class ShareASale_Tracker_Admin {
 				'size'        => 3,
 				'type'        => 'text',
 				'placeholder' => 'ID',
+				'class'       => 'tracker-option',
 			)
 		);
-		add_settings_field( 'xtype', 'Merchant-Defined Type', array( $this, 'render_settings_input' ), 'shareasale-tracker', 'tracker_optional',
+		add_settings_field( 'xtype', 'Merchant-Defined Type', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_optional',
 			array(
 				'label_for'   => 'xtype',
 				'id'          => 'xtype',
@@ -58,8 +70,59 @@ class ShareASale_Tracker_Admin {
 				'size'        => 35,
 				'type'        => 'text',
 				'placeholder' => 'Xtype',
+				'class'       => 'tracker-option',
 			)
 		);
+		add_settings_section( 'tracker_reconciliation', 'Automate Reconciliation', array( $this, 'render_settings_reconciliation_section_text' ), 'shareasale_tracker' );
+		add_settings_field( 'reconciliation-setting-hidden', '', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_reconciliation',
+			array(
+				'id'          => 'reconciliation-setting-hidden',
+				'name'        => 'reconciliation-setting',
+				'value'       => 0,
+				'status'      => '',
+				'size'        => 1,
+				'type'        => 'hidden',
+				'placeholder' => '',
+				'class'       => 'tracker-option-hidden',
+		));
+		add_settings_field( 'reconciliation-setting', 'Automate', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_reconciliation',
+			array(
+				'label_for'   => 'reconciliation-setting',
+				'id'          => 'reconciliation-setting',
+				'name'        => 'reconciliation-setting',
+				'value'       => 1,
+				'status'      => checked( @$options['reconciliation-setting'], 1, false ),
+				'size'        => 18,
+				'type'        => 'checkbox',
+				'placeholder' => '',
+				'class'       => 'tracker-option',
+		));
+
+		add_settings_section( 'tracker_api', 'API Settings', array( $this, 'render_settings_api_section_text' ), 'shareasale_tracker' );
+		add_settings_field( 'api-token', '*API Token', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_api',
+			array(
+				'label_for'   => 'api-token',
+				'id'          => 'api-token',
+				'name'        => 'api-token',
+				'value'       => ! empty( $options['api-token'] ) ? $options['api-token'] : '',
+				'status'      => '',
+				'size'        => 20,
+				'type'        => 'text',
+				'placeholder' => 'Enter your API Token',
+				'class'       => 'tracker-option',
+		));
+		add_settings_field( 'api-secret', '*API Secret', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_api',
+			array(
+				'label_for'   => 'api-secret',
+				'id'          => 'api-secret',
+				'name'        => 'api-secret',
+				'value'       => ! empty( $options['api-secret'] ) ? $options['api-secret'] : '',
+				'status'      => '',
+				'size'        => 34,
+				'type'        => 'text',
+				'placeholder' => 'Enter your API Secret',
+				'class'       => 'tracker-option',
+		));
 	}
 
 	/**
@@ -71,7 +134,7 @@ class ShareASale_Tracker_Admin {
 		$page_title = 'ShareASale Tracker Settings';
 		$menu_title = 'ShareASale Tracker';
 		$capability = 'manage_options';
-		$menu_slug  = 'shareasale-tracker';
+		$menu_slug  = 'shareasale_tracker';
 		$callback   = array( $this, 'render_settings_page' );
 		$icon_url   = plugin_dir_url( __FILE__ ) . 'images/star_logo.png';
 		add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $callback, $icon_url );
@@ -86,12 +149,20 @@ class ShareASale_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings.php';
 	}
 
-	public function render_settings_required_text() {
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-required-text.php';
+	public function render_settings_required_section_text() {
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-required-section-text.php';
 	}
 
-	public function render_settings_optional_text() {
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-optional-text.php';
+	public function render_settings_optional_section_text() {
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-optional-section-text.php';
+	}
+
+	public function render_settings_reconciliation_section_text() {
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-reconciliation-section-text.php';
+	}
+
+	public function render_settings_api_section_text() {
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-api-section-text.php';
 	}
 
 	/**
@@ -107,14 +178,44 @@ class ShareASale_Tracker_Admin {
 
 		echo wp_kses( $template, array(
 									'input' => array(
-										'id' => true,
-										'name' => true,
-										'placeholder' => true,
-										'size' => true,
-										'type' => true,
-										'value' => true,
+										'checked'        => true,
+										'class'          => true,
+										'disabled'       => true,
+										'height'         => true,
+										'id'             => true,
+										'name'           => true,
+										'placeholder'    => true,
+										'size'           => true,
+										'type'           => true,
+										'value'          => true,
+										'width'          => true,
 									),
 								)
 		);
+	}
+
+	public function sanitize_settings( $new_settings = array() ) {
+		$old_settings      = get_option( 'tracker_options' ) ?: array();
+		$diff_new_settings = array_diff_assoc( $new_settings, $old_settings );
+
+		if ( isset( $diff_new_settings['merchant-id'] ) || isset( $diff_new_settings['api-token'] ) || isset( $diff_new_settings['api-secret'] ) ) {
+			//can't easily inject ShareASale_Dealsbar_API $shareasale_api as a ShareASale_Dealsbar_Admin dependency since it relies on values in the $new_settings
+			$shareasale_api = new ShareASale_Tracker_API( $new_settings['merchant-id'], $new_settings['api-token'], $new_settings['api-secret'] );
+			$req = $shareasale_api->token_count()->exec();
+
+			if ( ! $req ) {
+				add_settings_error(
+					'tracker_api',
+					'API',
+					'Your API credentials did not work. Check your merchant ID, key, and token.  <span style = "font-size: 10px">'
+					. $shareasale_api->get_error_msg() .
+					'</span>'
+				);
+				//if API credentials failed, sanitize those options prior to saving
+				$new_settings['merchant-id'] = $new_settings['api-token'] = $new_settings['api-secret'] = '';
+			}
+		}
+		//array order is important to the merge
+		return array_merge( $old_settings, $new_settings );
 	}
 }

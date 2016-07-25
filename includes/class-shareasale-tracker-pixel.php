@@ -30,6 +30,13 @@ class ShareASale_Tracker_Pixel {
 			$xtype = '&xtype=' . $xtype;
 		}
 
+		/*ideas for xtype toggles
+		*country/state/city code
+		*payment type
+		*mobile vs desktop customer
+		*custom field?
+		*/
+
 		$this->order = new WC_Order( $order_id );
 
 		$product_data = $this->get_product_data();
@@ -59,11 +66,11 @@ class ShareASale_Tracker_Pixel {
 
 	private function get_order_amount() {
 
-		$grand_total = $this->order->get_total();
+		$grand_total    = $this->order->get_total();
 		//$total_discount = $this->order->get_cart_discount();
 		$total_shipping = $this->order->get_total_shipping();
-		$total_taxes = $this->order->get_total_tax();
-		$subtotal = $grand_total - ( $total_shipping + $total_taxes );
+		$total_taxes    = $this->order->get_total_tax();
+		$subtotal       = $grand_total - ( $total_shipping + $total_taxes );
 
 		if ( $subtotal < 0 ) {
 			$subtotal = 0;
@@ -77,17 +84,20 @@ class ShareASale_Tracker_Pixel {
 		$product_data = new stdClass();
 
 		$items = $this->order->get_items();
-
 		$last_index = array_search( end( $items ), $items, true );
+
 		foreach ( $items as $index => $item ) {
 
 			$delimiter = $index === $last_index ? '' : ',';
 
-			$id = $item['product_id'];
+			$id      = $item['product_id'];
 			$product = new WC_Product( $id );
-			$sku = $product->get_sku();
+			$sku     = $product->get_sku();
+
 			isset( $product_data->skulist ) ? $product_data->skulist .= $sku . $delimiter : $product_data->skulist = $sku . $delimiter;
+
 			isset( $product_data->pricelist ) ? $product_data->pricelist .= round( ( $item['line_total'] / $item['qty'] ), 2 ) . $delimiter : $product_data->pricelist = round( ( $item['line_total'] / $item['qty'] ), 2 ) . $delimiter;
+
 			isset( $product_data->quantitylist ) ? $product_data->quantitylist .= $item['qty'] . $delimiter : $product_data->quantitylist = $item['qty'] . $delimiter;
 		}
 

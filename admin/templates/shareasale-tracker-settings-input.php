@@ -1,1 +1,1 @@
-<input id = "!!id!!" placeholder = "!!placeholder!!" type = "!!type!!" name = "tracker_options[!!name!!]" value = "!!value!!" size = "!!size!!" />
+<input id = "!!id!!" placeholder = "!!placeholder!!" type = "!!type!!" name = "tracker_options[!!name!!]" value = "!!value!!" size = "!!size!!" !!status!!/>

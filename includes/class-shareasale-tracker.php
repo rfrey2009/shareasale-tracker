@@ -22,6 +22,7 @@ class ShareASale_Tracker {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-shareasale-tracker-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-pixel.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-reconciler.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-loader.php';
 		$this->loader = new ShareASale_Tracker_Loader();
 	}
@@ -34,8 +35,18 @@ class ShareASale_Tracker {
 	}
 
 	private function define_woocommerce_hooks() {
-		$woocommerce = new ShareASale_Tracker_Pixel( $this->get_version() );
-		$this->loader->add_action( 'woocommerce_thankyou', $woocommerce, 'woocommerce_thankyou' );
+		//generates conversion tracking pixel
+		$pixel = new ShareASale_Tracker_Pixel( $this->get_version() );
+		$this->loader->add_action( 'woocommerce_thankyou', $pixel, 'woocommerce_thankyou' );
+		/*does optional edits/voids automatically
+		*1. setup new settings for api credentials and reconciliaton on/off
+		*2. setup automatic reconciliation
+		*3. setup logging of reconciliation attempts
+		*4. display reconciliation logging to users
+		*/
+		$reconciler = new ShareASale_Tracker_Reconciler( $this->get_version() );
+		$this->loader->add_action( 'woocommerce_order_partially_refunded', $reconciler, 'woocommerce_order_partially_refunded' );
+		$this->loader->add_action( 'woocommerce_order_fully_refunded',     $reconciler, 'woocommerce_order_fully_refunded' );
 	}
 
 	public function run() {
