@@ -1,7 +1,7 @@
 <?php
 class ShareASale_Tracker_Admin {
 	/**
-	* @var float $version Plugin version, used for cache-busting
+	* @var float $version Plugin version
 	*/
 	private $version;
 
