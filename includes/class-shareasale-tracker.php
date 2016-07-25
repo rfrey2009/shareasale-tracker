@@ -30,6 +30,7 @@ class ShareASale_Tracker {
 	private function define_admin_hooks() {
 		$admin = new ShareASale_Tracker_Admin( $this->get_version() );
 		$this->loader->add_action( 'admin_enqueue_scripts', $admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_init',            $admin, 'admin_init' );
 		$this->loader->add_action( 'admin_menu',            $admin, 'admin_menu' );
 	}
@@ -45,8 +46,12 @@ class ShareASale_Tracker {
 		*4. display reconciliation logging to users
 		*/
 		$reconciler = new ShareASale_Tracker_Reconciler( $this->get_version() );
-		$this->loader->add_action( 'woocommerce_order_partially_refunded', $reconciler, 'woocommerce_order_partially_refunded' );
-		$this->loader->add_action( 'woocommerce_order_fully_refunded',     $reconciler, 'woocommerce_order_fully_refunded' );
+		$this->loader->add_action( 'woocommerce_order_partially_refunded', $reconciler, 'woocommerce_order_partially_refunded',
+			array( 'priority' => 10, 'args' => 2 )
+		);
+		$this->loader->add_action( 'woocommerce_order_fully_refunded',     $reconciler, 'woocommerce_order_fully_refunded',
+			array( 'priority' => 10, 'args' => 2 )
+		);
 	}
 
 	public function run() {

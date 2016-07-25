@@ -97,7 +97,13 @@ class ShareASale_Tracker_Admin {
 				'placeholder' => '',
 				'class'       => 'tracker-option',
 		));
-
+		/*
+		add_settings_section( 'tracker_api',
+			( 1 == @$options['reconciliation-setting'] ? 'API Settings' : '' ),
+			( 1 == @$options['reconciliation-setting'] ? array( $this, 'render_settings_api_section_text' ) : '' ),
+			'shareasale_tracker'
+		);
+		*/
 		add_settings_section( 'tracker_api', 'API Settings', array( $this, 'render_settings_api_section_text' ), 'shareasale_tracker' );
 		add_settings_field( 'api-token', '*API Token', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_api',
 			array(
@@ -105,11 +111,12 @@ class ShareASale_Tracker_Admin {
 				'id'          => 'api-token',
 				'name'        => 'api-token',
 				'value'       => ! empty( $options['api-token'] ) ? $options['api-token'] : '',
-				'status'      => '',
+				'status'      => disabled( @$options['reconciliation-setting'], 0, false ),
 				'size'        => 20,
 				'type'        => 'text',
 				'placeholder' => 'Enter your API Token',
 				'class'       => 'tracker-option',
+				//'class'       => 1 == @$options['reconciliation-setting'] ? 'tracker-option' : 'tracker-option-hidden',
 		));
 		add_settings_field( 'api-secret', '*API Secret', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_api',
 			array(
@@ -117,11 +124,12 @@ class ShareASale_Tracker_Admin {
 				'id'          => 'api-secret',
 				'name'        => 'api-secret',
 				'value'       => ! empty( $options['api-secret'] ) ? $options['api-secret'] : '',
-				'status'      => '',
+				'status'      => disabled( @$options['reconciliation-setting'], 0, false ),
 				'size'        => 34,
 				'type'        => 'text',
 				'placeholder' => 'Enter your API Secret',
 				'class'       => 'tracker-option',
+				//'class'       => 1 == @$options['reconciliation-setting'] ? 'tracker-option' : 'tracker-option-hidden',
 		));
 	}
 
@@ -195,6 +203,8 @@ class ShareASale_Tracker_Admin {
 	}
 
 	public function sanitize_settings( $new_settings = array() ) {
+		return $new_settings;
+		/*
 		$old_settings      = get_option( 'tracker_options' ) ?: array();
 		$diff_new_settings = array_diff_assoc( $new_settings, $old_settings );
 
@@ -217,5 +227,6 @@ class ShareASale_Tracker_Admin {
 		}
 		//array order is important to the merge
 		return array_merge( $old_settings, $new_settings );
+		*/
 	}
 }
