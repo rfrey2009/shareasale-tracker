@@ -15,15 +15,17 @@ class ShareASale_Tracker {
 		$this->load_dependencies();
 		$this->define_admin_hooks();
 		$this->define_woocommerce_hooks();
+		$this->define_installer_hooks();
+		$this->define_uninstaller_hooks();
 	}
 
 	private function load_dependencies() {
-		add_option( 'tracker_options', '' );
-
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-shareasale-tracker-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-pixel.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-reconciler.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-loader.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-installer.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-uninstaller.php';
 		$this->loader = new ShareASale_Tracker_Loader();
 	}
 
@@ -52,6 +54,15 @@ class ShareASale_Tracker {
 		$this->loader->add_action( 'woocommerce_order_fully_refunded',     $reconciler, 'woocommerce_order_fully_refunded',
 			array( 'priority' => 10, 'args' => 2 )
 		);
+	}
+
+	private function define_installer_hooks() {
+	    register_activation_hook( SHAREASALE_TRACKER_PLUGIN_FILENAME, array( 'ShareASale_Tracker_Installer', 'install' ) );
+	}
+
+	private function define_uninstaller_hooks() {
+		register_deactivation_hook( SHAREASALE_TRACKER_PLUGIN_FILENAME, array( 'ShareASale_Tracker_Uninstaller', 'disable' ) );
+	    register_uninstall_hook( SHAREASALE_TRACKER_PLUGIN_FILENAME, array( 'ShareASale_Tracker_Uninstaller', 'uninstall' ) );
 	}
 
 	public function run() {

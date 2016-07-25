@@ -35,6 +35,7 @@ class ShareASale_Tracker_Pixel {
 		*payment type
 		*mobile vs desktop customer
 		*custom field?
+		*product tags
 		*/
 
 		$this->order = new WC_Order( $order_id );
@@ -53,7 +54,7 @@ class ShareASale_Tracker_Pixel {
 													$store_id . $xtype .
 													'&v=' . $this->version .
 													'" width="1" height="1">';
-													
+
 		echo wp_kses( $pixel, array(
 									'img' => array(
 										'src'    => true,
@@ -117,7 +118,7 @@ class ShareASale_Tracker_Pixel {
 						'meta_key'       => '_customer_user',
 						'meta_value'     => $customer_user_id,
 						'posts_per_page' => -1,
-						'post_status'    => array_keys( wc_get_order_statuses() )
+						'post_status'    => array_keys( wc_get_order_statuses() ),
 					)
 				);
 				$order_count = count( $user_orders );

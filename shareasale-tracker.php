@@ -13,7 +13,7 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
-
+define( 'SHAREASALE_TRACKER_PLUGIN_FILENAME', plugin_basename( __FILE__ ) );
 /*
 * require the core plugin class
 */

@@ -10,6 +10,7 @@ class ShareASale_Tracker_Reconciler {
 
 	private function load_dependencies() {
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-api.php';
+		//require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-logger.php';
 		$settings = get_option( 'tracker_options' );
 
 		if ( $settings['merchant-id'] && $settings['api-token'] && $settings['api-secret'] ) {
