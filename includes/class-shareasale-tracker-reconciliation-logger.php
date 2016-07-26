@@ -19,7 +19,7 @@ class ShareASale_Tracker_Reconciliation_Logger {
 		$this->table = $this->wpdb->prefix . 'shareasale_tracker_logs';
 	}
 
-	public function log_reconcile( $type, $reason, $deducted, $subtotal_before, $subtotal_after, $order_number, $response, $date ) {
+	public function log( $type, $reason, $deducted, $subtotal_before, $subtotal_after, $order_number, $response, $date ) {
 
 		$log = array(
 					'action'          => $type,
@@ -52,7 +52,9 @@ class ShareASale_Tracker_Reconciliation_Logger {
 		if ( is_null( $previous_subtotal_after ) ) {
 			$previous_subtotal_after = 0;
 		}
-
+		error_log( $this->wpdb->last_query );
+		error_log( "\n" );
+		error_log( $previous_subtotal_after );
 		return $previous_subtotal_after;
 	}
 }

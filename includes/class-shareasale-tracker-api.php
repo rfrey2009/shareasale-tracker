@@ -54,12 +54,13 @@ class ShareASale_Tracker_API {
 		return true;
 	}
 
-	public function edit_trans( $order_number, $date, $new_amount ) {
+	public function edit_trans( $order_number, $date, $new_amount, $new_comment ) {
 		$this->action = 'edit';
 		$params       = array(
 							'ordernumber' => $order_number,
 							'date'        => $date,
 							'newamount'   => $new_amount,
+							'newcomment'  => $new_comment,
 						);
 		$this->query  = $this->build_url( $params );
 		return $this;

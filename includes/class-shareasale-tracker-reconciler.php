@@ -1,7 +1,7 @@
 <?php
 class ShareASale_Tracker_Reconciler {
 
-	private $api, $logger, $version;
+	private $version, $api, $logger;
 
 	public function __construct( $version ) {
 		$this->version = $version;
@@ -20,51 +20,34 @@ class ShareASale_Tracker_Reconciler {
 		$this->logger = new ShareASale_Tracker_Reconciliation_Logger( $this->version );
 	}
 
-	//ShareASale_Tracker_API method signatures
-	//edit_trans( $order_number, $date, $new_amount )
-	//void_trans( $order_number, $date, $reason = '' )
 	public function woocommerce_order_partially_refunded( $order_id, $refund_id ) {
 		if ( $this->api ) {
-			$order        = new WC_Order( $order_id );
-			$order_number = $order->get_order_number();
-			$order_date   = date( 'm/d/Y', strtotime( $order->order_date ) );
+			$order   = new WC_Order( $order_id );
+			$refund  = new WC_Order_Refund( $refund_id );
+			$details = $this->crunch( $order, $refund );
 
-			$grand_total       = $order->get_total();
-			$total_shipping    = $order->get_total_shipping();
-			$total_taxes       = $order->get_total_tax();
-			$subtotal          = $grand_total - ( $total_shipping + $total_taxes );
-			$subtotal_refunded =
-				$order->get_total_refunded() - ( $order->get_total_tax_refunded() + $order->get_total_shipping_refunded() );
+			$req = $this->api->edit_trans(
+				$details['order_number'],
+				$details['order_date'],
+				$details['new_amount'],
+				$details['refund_reason']
+			)->exec();
 
-			$new_amount        = $subtotal - $subtotal_refunded;
-			if ( $new_amount < 0 ) {
-				$new_amount = 0;
+			if ( $req ) {
+				$result = $this->api->get_response();
+			} else {
+				$result = $this->api->get_error_msg();
 			}
-			$previous_new_amount = $this->logger->get_previous_log_subtotal_after( $order_number );
-
-			$refund         = new WC_Order_Refund( $refund_id );
-			$current_refund = ( 0 === $previous_new_amount ? $subtotal_refunded : $previous_new_amount - $new_amount );
-			$refund_date    = $refund->date;
-			$refund_reason  = $refund->get_refund_reason();
-
-			if ( 0 !== $current_refund ) {
-
-				$req = $this->api->edit_trans( $order_number, $order_date, $new_amount )->exec();
-				if ( $req ) {
-					$result = $this->api->get_response();
-				} else {
-					$result = $this->api->get_error_msg();
-				}
-
-				$this->logger->log_reconcile(
-					'edit', //edit or void
-					$refund_reason,
-					$current_refund, //deducted
-					($new_amount + $current_refund), //subtotal before
-					$new_amount, //subtotal after
-					$order_number,
-					$result, //api response
-					$refund_date
+			if ( 'Transaction Not Found' !== $result ) {
+				$this->logger->log(
+					'edit',
+					$details['refund_reason'],
+					$details['current_refund'],
+					$details['previous_amount'],
+					$details['new_amount'],
+					$details['order_number'],
+					$result,
+					$details['refund_date']
 				);
 			}
 		}
@@ -72,33 +55,68 @@ class ShareASale_Tracker_Reconciler {
 
 	public function woocommerce_order_fully_refunded( $order_id, $refund_id ) {
 		if ( $this->api ) {
-			$order          = new WC_Order( $order_id );
-			$order_number   = $order->get_order_number();
-			$order_date     = date( 'm/d/Y', strtotime( $order->order_date ) );
+			$order   = new WC_Order( $order_id );
+			$refund  = new WC_Order_Refund( $refund_id );
+			$details = $this->crunch( $order, $refund );
 
-			$refund         = new WC_Order_Refund( $refund_id );
-			$current_refund = $this->logger->get_previous_log_subtotal_after( $order_number );
-			$refund_date    = $refund->date;
-			$refund_reason  = $refund->get_refund_reason();
-			$subtotal       = $current_refund;
+			$subtotal_finalized  = ( 0 == $details['previous_amount'] ? $details['subtotal'] : $details['previous_amount'] );
 
-			$req = $this->api->void_trans( $order_number, $order_date, $refund_reason )->exec();
+			$req = $this->api->void_trans(
+				$details['order_number'],
+				$details['order_date'],
+				$details['refund_reason']
+			)->exec();
+
 			if ( $req ) {
 				$result = $this->api->get_response();
 			} else {
 				$result = $this->api->get_error_msg();
 			}
-
-			$this->logger->log_reconcile(
-				'void',
-				$refund_reason,
-				$current_refund,
-				$subtotal,
-				0.00,
-				$order_number,
-				$result,
-				$refund_date
-			);
+			if ( 'Transaction Not Found' !== $result ) {
+				$this->logger->log(
+					'void',
+					$details['refund_reason'],
+					$details['current_refund'],
+					$subtotal_finalized,
+					0.00,
+					$details['order_number'],
+					$result,
+					$details['refund_date']
+				);
+			}
 		}
+	}
+
+	private function crunch( $order, $refund ) {
+		$order_number = $order->get_order_number();
+		$order_date   = date( 'm/d/Y', strtotime( $order->order_date ) );
+
+		$grand_total       = $order->get_total();
+		$total_shipping    = $order->get_total_shipping();
+		$total_taxes       = $order->get_total_tax();
+		$subtotal          = $grand_total - ( $total_shipping + $total_taxes );
+		$subtotal_refunded =
+			$order->get_total_refunded() - ( $order->get_total_tax_refunded() + $order->get_total_shipping_refunded() );
+
+		$new_amount        = $subtotal - $subtotal_refunded;
+		if ( $new_amount < 0 ) {
+			$new_amount = 0;
+		}
+
+		$previous_amount = ( $this->logger->get_previous_log_subtotal_after( $order_number ) ?: $subtotal );
+		$current_refund  = ( $subtotal === $previous_amount ? $subtotal_refunded : $previous_amount - $new_amount );
+		$refund_date     = $refund->date;
+		$refund_reason   = $refund->get_refund_reason();
+
+		return array(
+			'order_number'    => $order_number,
+			'order_date'      => $order_date,
+			'subtotal'        => $subtotal,
+			'previous_amount' => $previous_amount,
+			'new_amount'      => $new_amount,
+			'current_refund'  => $current_refund,
+			'refund_date'     => $refund_date,
+			'refund_reason'   => $refund_reason,
+		);
 	}
 }
