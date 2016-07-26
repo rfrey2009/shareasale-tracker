@@ -59,7 +59,7 @@ class ShareASale_Tracker_Reconciler {
 			$refund  = new WC_Order_Refund( $refund_id );
 			$details = $this->crunch( $order, $refund );
 
-			$subtotal_finalized  = ( 0 == $details['previous_amount'] ? $details['subtotal'] : $details['previous_amount'] );
+			$subtotal_finalized  = ( 0 === $details['previous_amount'] ? $details['subtotal'] : $details['previous_amount'] );
 
 			$req = $this->api->void_trans(
 				$details['order_number'],

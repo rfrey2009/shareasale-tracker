@@ -11,10 +11,10 @@ if ( ! current_user_can( 'manage_options' ) ) {
 			ShareASale Tracker Settings
 		</h2>
 		<h2 class="nav-tab-wrapper">
-	    	<a href="?page=shareasale_tracker" class="nav-tab nav-tab-active">
+	    	<a href="?page=shareasale_tracker" class="nav-tab">
 	    		Tracking Settings
 	    	</a>
-	    	<a href="?page=shareasale_tracker_automatic_reconciliation" class="nav-tab">
+	    	<a href="?page=shareasale_tracker_automatic_reconciliation" class="nav-tab nav-tab-active">
 	    		Automatic Reconciliation
 	    	</a>
 		</h2>
@@ -22,10 +22,10 @@ if ( ! current_user_can( 'manage_options' ) ) {
 			<div id = 'tracker-options'>
 			<?php
 			  settings_fields( 'tracker_options' );
-			  do_settings_sections( 'shareasale_tracker' );
+			  do_settings_sections( 'shareasale_tracker_automatic_reconciliation' );
 			?>     
 			</div>
 			<button id = "tracker-options-save" name="Submit">Save Settings</button>
 		</form>
-	</div> 
+	</div>
 </div>
