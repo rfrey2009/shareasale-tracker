@@ -14,7 +14,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 /*todo:
-*add pagination to automatic reconciliation log table. resort?
+*add pagination to automatic reconciliation log table. re-sorting too?
 *finish sanitization
 *finish xtype
 *make sure automatic reconciliation only happens if user turned it on

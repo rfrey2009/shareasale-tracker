@@ -61,3 +61,6 @@
 .shareasale-tracker-logs-cell:nth-child(n+4):nth-child(-n+6)::before {
     content: "$";
  }
+.shareasale-tracker-logs-pagination{
+	float: left !important;
+}

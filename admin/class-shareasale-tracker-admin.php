@@ -165,6 +165,7 @@ class ShareASale_Tracker_Admin {
 	public function render_settings_page_submenu() {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation.php';
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation-table.php';
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation-pagination.php';
 	}
 
 	public function render_settings_required_section_text() {

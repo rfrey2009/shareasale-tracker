@@ -1,7 +1,12 @@
 <?php
 global $wpdb;
-$logs_table = $wpdb->prefix . 'shareasale_tracker_logs';
-$offset     = isset( $_GET['offset'] ) ? $_GET['offset'] : 0;
+$logs_table   = $wpdb->prefix . 'shareasale_tracker_logs';
+$page_num     = filter_input( INPUT_GET, 'page_num' ) ? absint( filter_input( INPUT_GET, 'page_num' ) ) : 1;
+$limit        = 10;
+$offset       = ( $page_num - 1 ) * $limit;
+$total        = $wpdb->get_var( "SELECT COUNT(id) FROM $logs_table" );
+$num_of_pages = ceil( $total / $limit );
+
 $logs       = $wpdb->get_results(
 	$wpdb->prepare(
 		"
@@ -16,13 +21,13 @@ $logs       = $wpdb->get_results(
 		DATE_FORMAT( refund_date, '%%m/%%d/%%Y %%h:%%m %%p' )
 		FROM $logs_table
 		ORDER BY order_number DESC
-		LIMIT %d,
-		10
+		LIMIT %d, %d
 		",
-		$offset
+		$offset, $limit
 	)
 );
 ?>
+<h2>Recently Reconciled Affiliate Transactions</h2>
 <table class = "shareasale-tracker-logs-table">
 	<thead class = "shareasale-tracker-logs-head">
 		<tr class = "shareasale-tracker-logs-row">

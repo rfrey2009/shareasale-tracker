@@ -8,7 +8,7 @@
 	    	<a href = "?page=shareasale_tracker" class = "nav-tab nav-tab-active">
 	    		Tracking Settings
 	    	</a>
-	    	<a href = "?page=shareasale_tracker_automatic_reconciliation&amp;offset=0" class = "nav-tab">
+	    	<a href = "?page=shareasale_tracker_automatic_reconciliation&amp;page_num=1" class = "nav-tab">
 	    		Automatic Reconciliation
 	    	</a>
 		</h2>
