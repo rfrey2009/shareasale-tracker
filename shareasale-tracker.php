@@ -13,6 +13,12 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
+/*todo:
+*add pagination to automatic reconciliation log table. resort?
+*finish sanitization
+*finish xtype
+*make sure automatic reconciliation only happens if user turned it on
+*/
 define( 'SHAREASALE_TRACKER_PLUGIN_FILENAME', plugin_basename( __FILE__ ) );
 /*
 * require the core plugin class
