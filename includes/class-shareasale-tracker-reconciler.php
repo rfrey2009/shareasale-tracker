@@ -14,10 +14,11 @@ class ShareASale_Tracker_Reconciler {
 
 		$settings = get_option( 'tracker_options' );
 
-		if ( $settings['merchant-id'] && $settings['api-token'] && $settings['api-secret'] ) {
+		if ( $settings['merchant-id'] && $settings['api-token'] && $settings['api-secret'] && 1 == $settings['reconciliation-setting'] ) {
+
 			$this->api = new ShareASale_Tracker_API( $settings['merchant-id'], $settings['api-token'], $settings['api-secret'] );
+			$this->logger = new ShareASale_Tracker_Reconciliation_Logger( $this->version );
 		}
-		$this->logger = new ShareASale_Tracker_Reconciliation_Logger( $this->version );
 	}
 
 	public function woocommerce_order_partially_refunded( $order_id, $refund_id ) {

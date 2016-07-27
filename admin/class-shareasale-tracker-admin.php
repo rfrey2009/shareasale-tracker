@@ -15,18 +15,23 @@ class ShareASale_Tracker_Admin {
 
 	public function enqueue_styles( $hook ) {
 		if ( 'toplevel_page_shareasale_tracker' === $hook || 'shareasale-tracker_page_shareasale_tracker_automatic_reconciliation' === $hook ) {
-				wp_enqueue_style(
-					'shareasale-tracker-admin-css',
-					plugin_dir_url( __FILE__ ) . 'css/shareasale-tracker-admin.css',
-					array(),
-					$this->version
-				);
+			wp_enqueue_style(
+				'shareasale-tracker-admin-css',
+				plugin_dir_url( __FILE__ ) . 'css/shareasale-tracker-admin.css',
+				array(),
+				$this->version
+			);
 		}
 	}
 
 	public function enqueue_scripts( $hook ) {
-		if ( 'toplevel_page_shareasale_tracker' === $hook ) {
-			return;
+		if ( 'toplevel_page_shareasale_tracker' === $hook || 'shareasale-tracker_page_shareasale_tracker_automatic_reconciliation' === $hook ) {
+			wp_enqueue_script(
+				'shareasale-tracker-admin-js',
+				plugin_dir_url( __FILE__ ) . 'js/shareasale-tracker-admin.js',
+				array( 'jquery' ),
+				$this->version
+			);
 		}
 	}
 
@@ -163,6 +168,7 @@ class ShareASale_Tracker_Admin {
 	}
 
 	public function render_settings_page_submenu() {
+		include_once 'options-head.php';
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation.php';
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation-table.php';
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation-pagination.php';
@@ -215,27 +221,32 @@ class ShareASale_Tracker_Admin {
 
 	public function sanitize_settings( $new_settings = array() ) {
 		$old_settings      = get_option( 'tracker_options' ) ?: array();
+		//$diff_new_settings is necessary to check whether API credentials have actually changed or not
 		$diff_new_settings = array_diff_assoc( $new_settings, $old_settings );
+		$final_settings    = array_merge( $old_settings, $new_settings );
 
-		if ( isset( $diff_new_settings['merchant-id'] ) || isset( $diff_new_settings['api-token'] ) || isset( $diff_new_settings['api-secret'] ) ) {
-			//can't easily inject ShareASale_Dealsbar_API $shareasale_api as a ShareASale_Dealsbar_Admin dependency since it relies on values in the $new_settings
-			$shareasale_api = new ShareASale_Tracker_API( $new_settings['merchant-id'], $new_settings['api-token'], $new_settings['api-secret'] );
-			$req = $shareasale_api->token_count()->exec();
+		if ( 1 == $final_settings['reconciliation-setting'] ) {
 
-			if ( ! $req ) {
-				add_settings_error(
-					'tracker_api',
-					'API',
-					'Your API credentials did not work. Check your merchant ID, key, and token.
-					<span style = "font-size: 10px">'
-					. $shareasale_api->get_error_msg() .
-					'</span>'
-				);
-				//if API credentials failed, sanitize those options prior to saving
-				$new_settings['merchant-id'] = $new_settings['api-token'] = $new_settings['api-secret'] = '';
+			if ( isset( $diff_new_settings['merchant-id'] ) || isset( $diff_new_settings['api-token'] ) || isset( $diff_new_settings['api-secret'] ) || $old_settings['reconciliation-setting'] == 0 ) {
+
+				$shareasale_api = new ShareASale_Tracker_API( $final_settings['merchant-id'], $final_settings['api-token'], $final_settings['api-secret'] );
+				$req = $shareasale_api->token_count()->exec();
+
+				if ( ! $req ) {
+					add_settings_error(
+						'tracker_api',
+						'API',
+						'Your API credentials did not work. Check your merchant ID, API token, and API key.
+						<span style = "font-size: 10px">'
+						. $shareasale_api->get_error_msg() .
+						'</span>'
+					);
+					//if API credentials failed, sanitize those options prior to saving and turn off automatic reconcilation
+					$final_settings['api-token'] = $final_settings['api-secret'] = '';
+					$final_settings['reconciliation-setting'] = 0;
+				}
 			}
 		}
-		//array order is important to the merge
-		return array_merge( $old_settings, $new_settings );
+		return $final_settings;
 	}
 }

@@ -14,20 +14,12 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 /*todo:
-*add pagination to automatic reconciliation log table. re-sorting too?
-*finish sanitization
 *finish xtype
-*make sure automatic reconciliation only happens if user turned it on
 */
 define( 'SHAREASALE_TRACKER_PLUGIN_FILENAME', plugin_basename( __FILE__ ) );
-/*
-* require the core plugin class
-*/
+
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-shareasale-tracker.php';
 
-/**
-* Kicks off the plugin init
-*/
 function run_shareasale_tracker() {
 	$shareasale_tracker = new ShareASale_Tracker();
 	$shareasale_tracker->run();
