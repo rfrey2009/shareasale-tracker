@@ -102,13 +102,7 @@ class ShareASale_Tracker_Admin {
 				'placeholder' => '',
 				'class'       => 'tracker-option',
 		));
-		/*
-		add_settings_section( 'tracker_api',
-			( 1 == @$options['reconciliation-setting'] ? 'API Settings' : '' ),
-			( 1 == @$options['reconciliation-setting'] ? array( $this, 'render_settings_api_section_text' ) : '' ),
-			'shareasale_tracker_automatic_reconciliation'
-		);
-		*/
+
 		add_settings_section( 'tracker_api', 'API Settings', array( $this, 'render_settings_api_section_text' ), 'shareasale_tracker_automatic_reconciliation' );
 		add_settings_field( 'api-token', '*API Token', array( $this, 'render_settings_input' ), 'shareasale_tracker_automatic_reconciliation', 'tracker_api',
 			array(
@@ -225,9 +219,17 @@ class ShareASale_Tracker_Admin {
 		$diff_new_settings = array_diff_assoc( $new_settings, $old_settings );
 		$final_settings    = array_merge( $old_settings, $new_settings );
 
+		if ( empty( $final_settings['merchant-id'] ) ) {
+			add_settings_error(
+				'tracker_required',
+				'merchant-id',
+				'You must enter a ShareASale Merchant ID in the <a href = "?page=shareasale_tracker">Tracking Settings</a> tab.'
+			);
+		}
+
 		if ( 1 == $final_settings['reconciliation-setting'] ) {
 
-			if ( isset( $diff_new_settings['merchant-id'] ) || isset( $diff_new_settings['api-token'] ) || isset( $diff_new_settings['api-secret'] ) || $old_settings['reconciliation-setting'] == 0 ) {
+			if ( isset( $diff_new_settings['merchant-id'] ) || isset( $diff_new_settings['api-token'] ) || isset( $diff_new_settings['api-secret'] ) || 0 == $old_settings['reconciliation-setting'] ) {
 
 				$shareasale_api = new ShareASale_Tracker_API( $final_settings['merchant-id'], $final_settings['api-token'], $final_settings['api-secret'] );
 				$req = $shareasale_api->token_count()->exec();
@@ -235,7 +237,7 @@ class ShareASale_Tracker_Admin {
 				if ( ! $req ) {
 					add_settings_error(
 						'tracker_api',
-						'API',
+						'api',
 						'Your API credentials did not work. Check your merchant ID, API token, and API key.
 						<span style = "font-size: 10px">'
 						. $shareasale_api->get_error_msg() .
