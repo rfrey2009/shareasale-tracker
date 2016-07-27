@@ -55,10 +55,10 @@ class ShareASale_Tracker_Admin {
 				'id'          => 'store-id',
 				'name'        => 'store-id',
 				'value'       => ! empty( $options['store-id'] ) ? $options['store-id'] : '',
-				'size'        => 3,
-				'type'        => 'text',
+				'size'        => '',
+				'type'        => 'number',
 				'placeholder' => 'ID',
-				'class'       => 'tracker-option',
+				'class'       => 'tracker-option tracker-option-number',
 			)
 		);
 		add_settings_field( 'xtype', 'Merchant-Defined Type', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_optional',
@@ -158,11 +158,13 @@ class ShareASale_Tracker_Admin {
 	}
 
 	public function render_settings_page() {
+		include_once 'options-head.php';
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings.php';
 	}
 
 	public function render_settings_page_submenu() {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation.php';
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation-table.php';
 	}
 
 	public function render_settings_required_section_text() {

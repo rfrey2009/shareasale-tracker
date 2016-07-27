@@ -54,11 +54,11 @@ class ShareASale_Tracker_API {
 		return true;
 	}
 
-	public function edit_trans( $order_number, $date, $new_amount, $new_comment ) {
+	public function edit_trans( $order_number, $order_date, $new_amount, $new_comment ) {
 		$this->action = 'edit';
 		$params       = array(
 							'ordernumber' => $order_number,
-							'date'        => $date,
+							'date'        => $order_date,
 							'newamount'   => $new_amount,
 							'newcomment'  => $new_comment,
 						);
@@ -66,12 +66,12 @@ class ShareASale_Tracker_API {
 		return $this;
 	}
 
-	public function void_trans( $order_number, $date, $reason = '' ) {
+	public function void_trans( $order_number, $order_date, $reason = '' ) {
 		$this->action = 'void';
 		$params       = array(
 							'ordernumber' => $order_number,
-							'date' => $date,
-							'reason' => $reason,
+							'date'        => $order_date,
+							'reason'      => $reason,
 						);
 		$this->query  = $this->build_url( $params );
 		return $this;

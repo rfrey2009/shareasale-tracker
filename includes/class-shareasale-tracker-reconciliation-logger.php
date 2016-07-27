@@ -19,7 +19,7 @@ class ShareASale_Tracker_Reconciliation_Logger {
 		$this->table = $this->wpdb->prefix . 'shareasale_tracker_logs';
 	}
 
-	public function log( $type, $reason, $deducted, $subtotal_before, $subtotal_after, $order_number, $response, $date ) {
+	public function log( $type, $reason, $deducted, $subtotal_before, $subtotal_after, $order_number, $response, $refund_date ) {
 
 		$log = array(
 					'action'          => $type,
@@ -29,7 +29,7 @@ class ShareASale_Tracker_Reconciliation_Logger {
 					'subtotal_after'  => $subtotal_after,
 					'order_number'    => $order_number,
 					'response'        => $response,
-					'date'            => $date,
+					'refund_date'     => $refund_date,
 				);
 		$this->wpdb->insert( $this->table, $log );
 	}

@@ -4,3 +4,39 @@
 .tracker-option-hidden{
 	display: none;
 }
+.tracker-option-number{
+	width: 50px;
+}
+.shareasale-tracker-logs-table{
+	background: white;
+	border: 1px solid #b4b9be;
+	margin: 0.5em 0;
+	padding: 0.5em;
+}
+.shareasale-tracker-logs-header{
+	border-bottom: 1px solid #f1f1f1;
+	font-weight: normal;
+	padding: 0;
+}
+.shareasale-tracker-logs-row{
+}
+.shareasale-tracker-logs-header, .shareasale-tracker-logs-cell{
+	padding: 0.5em;
+}
+.shareasale-tracker-logs-header-align-left, .shareasale-tracker-logs-cell-align-left{
+	text-align: left;
+}
+.shareasale-tracker-logs-header-align-right, .shareasale-tracker-logs-cell-align-right{
+	text-align: right;
+}
+.shareasale-tracker-logs-cell:first-child:not(:empty) {
+    background: #f1f1f1;
+
+}
+.shareasale-tracker-logs-cell:first-child:not(:empty)::before {
+    content: "#";
+}
+.breakup{
+	height: 1em;
+	border-bottom: 1px solid #f1f1f1;
+}

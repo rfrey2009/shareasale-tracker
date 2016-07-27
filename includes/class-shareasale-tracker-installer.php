@@ -22,10 +22,10 @@ class ShareASale_Tracker_Installer {
 			subtotal_after decimal(9,3) NOT NULL,
 			order_number int(11) NOT NULL,
 			response varchar(255) NOT NULL,
-			date datetime NOT NULL,
+			refund_date datetime NOT NULL,
 			PRIMARY KEY (id),
-			UNIQUE KEY  date (date)
-			) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=latin1';
+			UNIQUE KEY date (refund_date)
+			) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1';
 
 		dbDelta( $query );
 	}

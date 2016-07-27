@@ -42,7 +42,7 @@ class ShareASale_Tracker_Pixel {
 
 		$product_data = $this->get_product_data();
 
-		$pixel = '<img src="https://shareasale.com/sale.cfm?amount=' . $this->get_order_amount() .
+		$pixel = '<img src = "https://shareasale.com/sale.cfm?amount=' . $this->get_order_amount() .
 													'&tracking=' . $this->order->get_order_number() .
 													'&transtype=sale&merchantID=' . $merchant_id .
 													'&skulist=' . $product_data->skulist .
