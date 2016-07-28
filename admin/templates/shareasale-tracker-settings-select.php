@@ -5,15 +5,14 @@
 		<option value = "city_code">City Code</option>
 	</optgroup>
 	<optgroup label = "Customer">
-		<option value = "customer_id">Customer ID</option>
+		<option value = "customer_id">ID</option>
 	</optgroup>
 	<optgroup label = "Payment">
 		<option value = "payment_gateway">Gateway</option>
-		<option value = "payment_type">Payment Type</option>
+		<option value = "payment_type">Type</option>
 	</optgroup>
 	<optgroup label = "Device">
-		<option value = "mobile_device">Mobile</option>
-		<option value = "desktop_device">Desktop</option>
+		<option value = "device_type">Type (mobile or desktop)</option>
 	</optgroup>
 	<optgroup label = "Product">
 		<option value = "product_attribute">Custom Attribute</option>

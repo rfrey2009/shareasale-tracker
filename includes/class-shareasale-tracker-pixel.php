@@ -26,11 +26,44 @@ class ShareASale_Tracker_Pixel {
 			$store_id = '&storeID=' . $store_id;
 		}
 
-		if ( $xtype ) {
-			$xtype = '&xtype=' . $xtype;
-		}
-
 		$this->order = new WC_Order( $order_id );
+
+		switch ( $xtype ) {
+			case 'country_code':
+				$xtype = '&xtype=' . $this->order->billing_country;
+				break;
+
+			case 'state_code':
+				$xtype = '&xtype=' . $this->order->billing_state;
+				break;
+
+			case 'city_code':
+				$xtype = '&xtype=' . $this->order->billing_city;
+				break;
+
+			case 'customer_id':
+				$xtype = '&xtype=' . $this->order->get_user_id();
+				break;
+			case 'payment_gateway':
+				//$xtype = '&xtype=' . $this->order->payment_method_title;
+				break;
+
+			case 'payment_type':
+				$xtype = '&xtype=' . $this->order->payment_method_title;
+				break;
+
+			case 'device_type':
+				$xtype = '&xtype=' . ( wp_is_mobile() ? 'mobile' : 'desktop' );
+				break;
+
+			case 'product_attribute':
+				//$xtype = '&xtype=' . $this->order->get_user_id();
+				break;
+
+			case 'product_bestseller':
+				//$xtype = '&xtype=' . $this->order->get_user_id();
+				break;
+		}
 
 		$product_data = $this->get_product_data();
 
@@ -60,7 +93,6 @@ class ShareASale_Tracker_Pixel {
 	private function get_order_amount() {
 
 		$grand_total    = $this->order->get_total();
-		//$total_discount = $this->order->get_cart_discount();
 		$total_shipping = $this->order->get_total_shipping();
 		$total_taxes    = $this->order->get_total_tax();
 		$subtotal       = $grand_total - ( $total_shipping + $total_taxes );
