@@ -41,12 +41,7 @@ class ShareASale_Tracker {
 		//generates conversion tracking pixel
 		$pixel = new ShareASale_Tracker_Pixel( $this->get_version() );
 		$this->loader->add_action( 'woocommerce_thankyou', $pixel, 'woocommerce_thankyou' );
-		/*does optional edits/voids automatically
-		*1. setup new settings for api credentials and reconciliaton on/off
-		*2. setup automatic reconciliation
-		*3. setup logging of reconciliation attempts
-		*4. display reconciliation logging to users
-		*/
+
 		$reconciler = new ShareASale_Tracker_Reconciler( $this->get_version() );
 		$this->loader->add_action( 'woocommerce_order_partially_refunded', $reconciler, 'woocommerce_order_partially_refunded',
 			array( 'priority' => 10, 'args' => 2 )

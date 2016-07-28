@@ -154,11 +154,49 @@ class ShareASale_Tracker_Admin {
 
 	public function render_settings_page() {
 		include_once 'options-head.php';
+		//errors are stylized off add_settings_error() from WordPress. Can't be called here since not submitting to options.php.
+		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+			echo '<div id="setting-error-plugin-depends" class="error settings-error notice is-dismissible"> 
+						<p>
+							<strong>WooCommerce plugin must be installed and activated to use this plugin.</a></strong>
+						</p>
+						<button type="button" class="notice-dismiss">
+							<span class="screen-reader-text">Dismiss this notice.</span>
+						</button>
+					</div>';
+			return;
+		}
+
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings.php';
 	}
 
 	public function render_settings_page_submenu() {
 		include_once 'options-head.php';
+		//errors are stylized off add_settings_error() from WordPress. Can't be called here since not submitting to options.php.
+		if ( ! function_exists( 'curl_version' ) ) {
+			echo '<div id="setting-error-plugin-depends" class="error settings-error notice is-dismissible"> 
+						<p>
+							<strong>cURL is not enabled on your shop\'s server. Please contact your webhost to have cURL enabled to use automatic reconciliation.</a></strong>
+						</p>
+						<button type="button" class="notice-dismiss">
+							<span class="screen-reader-text">Dismiss this notice.</span>
+						</button>
+					</div>';
+			return;
+		}
+
+		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+			echo '<div id="setting-error-plugin-depends" class="error settings-error notice is-dismissible"> 
+						<p>
+							<strong>WooCommerce plugin must be installed and activated to use this plugin.</a></strong>
+						</p>
+						<button type="button" class="notice-dismiss">
+							<span class="screen-reader-text">Dismiss this notice.</span>
+						</button>
+					</div>';
+			return;
+		}
+
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation.php';
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation-table.php';
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation-pagination.php';
