@@ -25,7 +25,7 @@ class ShareASale_Tracker_Admin {
 	}
 
 	public function enqueue_scripts( $hook ) {
-		if ( 'toplevel_page_shareasale_tracker' === $hook || 'shareasale-tracker_page_shareasale_tracker_automatic_reconciliation' === $hook ) {
+		if ( 'shareasale-tracker_page_shareasale_tracker_automatic_reconciliation' === $hook ) {
 			wp_enqueue_script(
 				'shareasale-tracker-admin-js',
 				plugin_dir_url( __FILE__ ) . 'js/shareasale-tracker-admin.js',
@@ -149,7 +149,7 @@ class ShareASale_Tracker_Admin {
 	    $submenu_title      = 'Automatic Reconciliation';
 	    $submenu_slug       = 'shareasale_tracker_automatic_reconciliation';
 	    $submenu_function   = array( $this, 'render_settings_page_submenu' );
-	   	add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, 'manage_options', $submenu_slug, $submenu_function );
+	   	add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
 	}
 
 	public function render_settings_page() {

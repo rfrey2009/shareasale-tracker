@@ -29,40 +29,48 @@ class ShareASale_Tracker_Pixel {
 		$this->order = new WC_Order( $order_id );
 
 		switch ( $xtype ) {
-			case 'country_code':
-				$xtype = '&xtype=' . $this->order->billing_country;
+			case 'customer_billing_country_code':
+				$xtype = '&xtype=' . (string) $this->order->billing_country;
 				break;
 
-			case 'state_code':
-				$xtype = '&xtype=' . $this->order->billing_state;
+			case 'customer_billing_state_code':
+				$xtype = '&xtype=' . (string) $this->order->billing_state;
 				break;
 
-			case 'city_code':
-				$xtype = '&xtype=' . $this->order->billing_city;
+			case 'customer_billing_city_code':
+				$xtype = '&xtype=' . (string) $this->order->billing_city;
+				break;
+
+			case 'customer_shipping_country_code':
+				$xtype = '&xtype=' . (string) $this->order->shipping_country;
+				break;
+
+			case 'customer_shipping_state_code':
+				$xtype = '&xtype=' . (string) $this->order->shipping_state;
+				break;
+
+			case 'customer_shipping_city_code':
+				$xtype = '&xtype=' . (string) $this->order->shipping_city;
 				break;
 
 			case 'customer_id':
-				$xtype = '&xtype=' . $this->order->get_user_id();
-				break;
-			case 'payment_gateway':
-				//$xtype = '&xtype=' . $this->order->payment_method_title;
+				$xtype = '&xtype=' . (string) $this->order->get_user_id();
 				break;
 
-			case 'payment_type':
-				$xtype = '&xtype=' . $this->order->payment_method_title;
-				break;
-
-			case 'device_type':
+			case 'customer_device_type':
 				$xtype = '&xtype=' . ( wp_is_mobile() ? 'mobile' : 'desktop' );
 				break;
 
-			case 'product_attribute':
-				//$xtype = '&xtype=' . $this->order->get_user_id();
+			case 'payment_type':
+				$xtype = '&xtype=' . (string) $this->order->payment_method_title;
 				break;
 
-			case 'product_bestseller':
-				//$xtype = '&xtype=' . $this->order->get_user_id();
+			case 'payment_shipping':
+				$xtype = '&xtype=' . (string) $this->order->get_shipping_method();
 				break;
+
+			default:
+				$xtype = '';
 		}
 
 		$product_data = $this->get_product_data();
