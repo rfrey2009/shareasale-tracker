@@ -46,6 +46,7 @@ class ShareASale_Tracker_Admin {
 				'id'          => 'merchant-id',
 				'name'        => 'merchant-id',
 				'value'       => ! empty( $options['merchant-id'] ) ? $options['merchant-id'] : '',
+				'status'      => 'required',
 				'size'        => 22,
 				'type'        => 'text',
 				'placeholder' => 'ShareASale Merchant ID',
@@ -66,15 +67,15 @@ class ShareASale_Tracker_Admin {
 				'class'       => 'tracker-option tracker-option-number',
 			)
 		);
-		add_settings_field( 'xtype', 'Merchant-Defined Type', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_optional',
+		add_settings_field( 'xtype', 'Merchant-Defined Type', array( $this, 'render_settings_select' ), 'shareasale_tracker', 'tracker_optional',
 			array(
 				'label_for'   => 'xtype',
 				'id'          => 'xtype',
 				'name'        => 'xtype',
 				'value'       => ! empty( $options['xtype'] ) ? $options['xtype'] : '',
-				'size'        => 35,
-				'type'        => 'text',
-				'placeholder' => 'Xtype',
+				'size'        => '',
+				'type'        => 'select',
+				'placeholder' => '',
 				'class'       => 'tracker-option',
 			)
 		);
@@ -115,7 +116,6 @@ class ShareASale_Tracker_Admin {
 				'type'        => 'text',
 				'placeholder' => 'Enter your API Token',
 				'class'       => 'tracker-option',
-				//'class'       => 1 == @$options['reconciliation-setting'] ? 'tracker-option' : 'tracker-option-hidden',
 		));
 		add_settings_field( 'api-secret', '*API Secret', array( $this, 'render_settings_input' ), 'shareasale_tracker_automatic_reconciliation', 'tracker_api',
 			array(
@@ -128,13 +128,9 @@ class ShareASale_Tracker_Admin {
 				'type'        => 'text',
 				'placeholder' => 'Enter your API Secret',
 				'class'       => 'tracker-option',
-				//'class'       => 1 == @$options['reconciliation-setting'] ? 'tracker-option' : 'tracker-option-hidden',
 		));
 	}
 
-	/**
-	* Method to wrap the WordPress admin_menu_page() function
-	*/
 	public function admin_menu() {
 
 		/** Add the top-level admin menu */
@@ -184,9 +180,6 @@ class ShareASale_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-api-section-text.php';
 	}
 
-	/**
-	* Method that creates any HTML <input>, to be called in the WordPress add_settings_field() function
-	*/
 	public function render_settings_input( $attributes ) {
 		$template      = file_get_contents( plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-input.php' );
 		$template_data = array_map( 'esc_attr', $attributes );
@@ -204,6 +197,7 @@ class ShareASale_Tracker_Admin {
 										'id'          => true,
 										'name'        => true,
 										'placeholder' => true,
+										'required'    => true,
 										'size'        => true,
 										'type'        => true,
 										'value'       => true,
@@ -211,6 +205,47 @@ class ShareASale_Tracker_Admin {
 									),
 								)
 		);
+	}
+
+	public function render_settings_select( $attributes ) {
+		$template      = file_get_contents( plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-select.php' );
+		$template_data = array_map( 'esc_attr', $attributes );
+
+		foreach ( $template_data as $macro => $value ) {
+			$template = str_replace( "!!$macro!!", $value, $template );
+		}
+
+		$template = str_replace( '"' . $template_data['value'] . '"', '"' . $template_data['value'] . '" selected', $template );
+
+		echo wp_kses( $template, array(
+									'select' => array(
+										'autofocus' => true,
+										'class'     => true,
+										'disabled'  => true,
+										'form'      => true,
+										'id'        => true,
+										'multiple'  => true,
+										'name'      => true,
+										'required'  => true,
+										'size'      => true,
+									),
+									'optgroup' => array(
+										'class'    => true,
+										'disabled' => true,
+										'id'       => true,
+										'label'    => true,
+									),
+									'option' => array(
+										'class'    => true,
+										'disabled' => true,
+										'id'       => true,
+										'label'    => true,
+										'selected' => true,
+										'value'    => true,
+									),
+								)
+		);
+
 	}
 
 	public function sanitize_settings( $new_settings = array() ) {

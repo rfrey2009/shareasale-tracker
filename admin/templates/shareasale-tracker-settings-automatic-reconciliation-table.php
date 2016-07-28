@@ -20,7 +20,7 @@ $logs       = $wpdb->get_results(
 		response,
 		DATE_FORMAT( refund_date, '%%m/%%d/%%Y %%h:%%m %%p' )
 		FROM $logs_table
-		ORDER BY order_number DESC
+		ORDER BY order_number DESC, refund_date ASC
 		LIMIT %d, %d
 		",
 		$offset, $limit

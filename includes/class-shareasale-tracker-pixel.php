@@ -30,14 +30,6 @@ class ShareASale_Tracker_Pixel {
 			$xtype = '&xtype=' . $xtype;
 		}
 
-		/*ideas for xtype toggles
-		*country/state/city code
-		*payment type
-		*mobile vs desktop customer
-		*custom field?
-		*product tags
-		*/
-
 		$this->order = new WC_Order( $order_id );
 
 		$product_data = $this->get_product_data();
