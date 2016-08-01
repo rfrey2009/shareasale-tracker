@@ -13,9 +13,7 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
-/*todo:
-*finish xtype
-*/
+
 define( 'SHAREASALE_TRACKER_PLUGIN_FILENAME', plugin_basename( __FILE__ ) );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-shareasale-tracker.php';

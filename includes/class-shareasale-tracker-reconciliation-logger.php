@@ -52,9 +52,6 @@ class ShareASale_Tracker_Reconciliation_Logger {
 		if ( is_null( $previous_subtotal_after ) ) {
 			$previous_subtotal_after = 0;
 		}
-		error_log( $this->wpdb->last_query );
-		error_log( "\n" );
-		error_log( $previous_subtotal_after );
 		return $previous_subtotal_after;
 	}
 }
