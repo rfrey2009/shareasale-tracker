@@ -287,7 +287,7 @@ class ShareASale_Tracker_Admin {
 	}
 
 	public function sanitize_settings( $new_settings = array() ) {
-		$old_settings      = get_option( 'tracker_options' ) ?: array();
+		$old_settings      = get_option( 'tracker_options' ) ? get_option( 'tracker_options' ) : array();
 		//$diff_new_settings is necessary to check whether API credentials have actually changed or not
 		$diff_new_settings = array_diff_assoc( $new_settings, $old_settings );
 		$final_settings    = array_merge( $old_settings, $new_settings );

@@ -14,7 +14,7 @@ class ShareASale_Tracker_Reconciler {
 
 		$settings = get_option( 'tracker_options' );
 
-		if ( $settings['merchant-id'] && $settings['api-token'] && $settings['api-secret'] && 1 == $settings['reconciliation-setting'] ) {
+		if ( @$settings['merchant-id'] && $settings['api-token'] && $settings['api-secret'] && 1 == $settings['reconciliation-setting'] ) {
 
 			$this->api = new ShareASale_Tracker_API( $settings['merchant-id'], $settings['api-token'], $settings['api-secret'] );
 			$this->logger = new ShareASale_Tracker_Reconciliation_Logger( $this->version );
@@ -104,7 +104,7 @@ class ShareASale_Tracker_Reconciler {
 			$new_amount = 0;
 		}
 
-		$previous_amount = ( $this->logger->get_previous_log_subtotal_after( $order_number ) ?: $subtotal );
+		$previous_amount = ( $this->logger->get_previous_log_subtotal_after( $order_number ) ? $this->logger->get_previous_log_subtotal_after( $order_number ) : $subtotal );
 		$current_refund  = ( $subtotal === $previous_amount ? $subtotal_refunded : $previous_amount - $new_amount );
 		$refund_date     = $refund->date;
 		$refund_reason   = $refund->get_refund_reason();

@@ -9,7 +9,7 @@ class ShareASale_Tracker_Installer {
 	public static function install() {
 		self::load_dependencies();
 
-		add_option( 'tracker_options', '' );
+		update_option( 'tracker_options', '' );
 
 		global $wpdb;
 		$logs_table = $wpdb->prefix . 'shareasale_tracker_logs';
@@ -23,7 +23,7 @@ class ShareASale_Tracker_Installer {
 			order_number int(11) NOT NULL,
 			response varchar(255) NOT NULL,
 			refund_date datetime NOT NULL,
-			PRIMARY KEY (id),
+			PRIMARY KEY  (id),
 			UNIQUE KEY date (refund_date)
 			) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1';
 
