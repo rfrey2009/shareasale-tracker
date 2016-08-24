@@ -9,11 +9,11 @@ class ShareASale_Tracker_Installer {
 	public static function install() {
 		self::load_dependencies();
 
-		update_option( 'tracker_options', '' );
+		add_option( 'tracker_options', '' );
 
 		global $wpdb;
 		$logs_table = $wpdb->prefix . 'shareasale_tracker_logs';
-		$query = 'CREATE TABLE ' . $logs_table . ' (
+		$query = 'CREATE TABLE IF NOT EXISTS ' . $logs_table . ' (
 			id int(11) NOT NULL AUTO_INCREMENT,
 			action varchar(20) DEFAULT NULL,
 			reason varchar(255) NOT NULL,
