@@ -1,5 +1,5 @@
 <?php
-class ShareASale_Tracker_Reconciliation_Logger {
+class ShareASale_WC_Tracker_Reconciliation_Logger {
 	/**
 	* @var float $version Plugin version
 	* @var Wpdb $wpdb WordPress global database connection singleton
@@ -16,7 +16,7 @@ class ShareASale_Tracker_Reconciliation_Logger {
 		global $wpdb;
 
 		$this->wpdb  = &$wpdb;
-		$this->table = $this->wpdb->prefix . 'shareasale_tracker_logs';
+		$this->table = $this->wpdb->prefix . 'shareasale_wc_tracker_logs';
 	}
 
 	public function log( $type, $reason, $deducted, $subtotal_before, $subtotal_after, $order_number, $response, $refund_date ) {

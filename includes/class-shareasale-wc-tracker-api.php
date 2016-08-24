@@ -1,5 +1,5 @@
 <?php
-class ShareASale_Tracker_API {
+class ShareASale_WC_Tracker_API {
 
 	private $api_version = 2.8;
 	private $api_token;
@@ -60,8 +60,12 @@ class ShareASale_Tracker_API {
 							'ordernumber' => $order_number,
 							'date'        => $order_date,
 							'newamount'   => $new_amount,
-							'newcomment'  => $new_comment,
 						);
+		//only pass a new comment if it exists so as not to overwrite the standard ShareASale transaction comment "Sale - Ordernumber"
+		if ( $new_comment ) {
+			$params['newcomment'] = $new_comment;
+		}
+
 		$this->query  = $this->build_url( $params );
 		return $this;
 	}

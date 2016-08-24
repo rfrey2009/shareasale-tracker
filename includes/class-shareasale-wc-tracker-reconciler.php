@@ -1,5 +1,5 @@
 <?php
-class ShareASale_Tracker_Reconciler {
+class ShareASale_WC_Tracker_Reconciler {
 
 	private $version, $api, $logger;
 
@@ -9,15 +9,15 @@ class ShareASale_Tracker_Reconciler {
 	}
 
 	private function load_dependencies() {
-		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-api.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-tracker-reconciliation-logger.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-api.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-reconciliation-logger.php';
 
-		$settings = get_option( 'tracker_options' );
+		$settings = get_option( 'shareasale_wc_tracker_options' );
 
 		if ( @$settings['merchant-id'] && @$settings['api-token'] && @$settings['api-secret'] && 1 == @$settings['reconciliation-setting'] ) {
 
-			$this->api = new ShareASale_Tracker_API( $settings['merchant-id'], $settings['api-token'], $settings['api-secret'] );
-			$this->logger = new ShareASale_Tracker_Reconciliation_Logger( $this->version );
+			$this->api = new ShareASale_WC_Tracker_API( $settings['merchant-id'], $settings['api-token'], $settings['api-secret'] );
+			$this->logger = new ShareASale_WC_Tracker_Reconciliation_Logger( $this->version );
 		}
 	}
 
@@ -26,6 +26,10 @@ class ShareASale_Tracker_Reconciler {
 			$order   = new WC_Order( $order_id );
 			$refund  = new WC_Order_Refund( $refund_id );
 			$details = $this->crunch( $order, $refund );
+			//if current refund does not have an impact on the subtotal, ignore
+			if ( $details['current_refund'] <= 0 ) {
+				return;
+			}
 
 			$req = $this->api->edit_trans(
 				$details['order_number'],
@@ -39,7 +43,8 @@ class ShareASale_Tracker_Reconciler {
 			} else {
 				$result = $this->api->get_error_msg();
 			}
-			if ( 'Transaction Not Found' !== $result ) {
+			//if not an API error but still not a success, don't log
+			if ( 'Transaction Not Found' !== $result && 'Multiple Transactions Found (ambiguous order number)' !== $result ) {
 				$this->logger->log(
 					'edit',
 					$details['refund_reason'],
@@ -59,6 +64,10 @@ class ShareASale_Tracker_Reconciler {
 			$order   = new WC_Order( $order_id );
 			$refund  = new WC_Order_Refund( $refund_id );
 			$details = $this->crunch( $order, $refund );
+			//if current refund does not have an impact on the subtotal, ignore
+			if ( $details['current_refund'] <= 0 ) {
+				return;
+			}
 
 			$subtotal_finalized  = ( 0 === $details['previous_amount'] ? $details['subtotal'] : $details['previous_amount'] );
 
@@ -73,7 +82,8 @@ class ShareASale_Tracker_Reconciler {
 			} else {
 				$result = $this->api->get_error_msg();
 			}
-			if ( 'Transaction Not Found' !== $result ) {
+			//if not an API error but still not a success, don't log
+			if ( 'Transaction Not Found' !== $result && 'Multiple Transactions Found (ambiguous order number)' !== $result ) {
 				$this->logger->log(
 					'void',
 					$details['refund_reason'],
@@ -105,7 +115,7 @@ class ShareASale_Tracker_Reconciler {
 		}
 
 		$previous_amount = ( $this->logger->get_previous_log_subtotal_after( $order_number ) ? $this->logger->get_previous_log_subtotal_after( $order_number ) : $subtotal );
-		$current_refund  = ( $subtotal === $previous_amount ? $subtotal_refunded : $previous_amount - $new_amount );
+		$current_refund  = ( $subtotal === $previous_amount ? $subtotal_refunded : round( $previous_amount - $new_amount, 3 ) );
 		$refund_date     = $refund->date;
 		$refund_reason   = $refund->get_refund_reason();
 

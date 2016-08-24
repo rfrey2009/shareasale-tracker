@@ -1,5 +1,5 @@
 <?php
-class ShareASale_Tracker_Pixel {
+class ShareASale_WC_Tracker_Pixel {
 
 	/**
 	* @var WC_Order $order WooCommere order object https://docs.woothemes.com/wc-apidocs/class-WC_Order.html
@@ -13,7 +13,7 @@ class ShareASale_Tracker_Pixel {
 	}
 
 	public function woocommerce_thankyou( $order_id ) {
-		$options     = get_option( 'tracker_options' );
+		$options     = get_option( 'shareasale_wc_tracker_options' );
 		$merchant_id = $options['merchant-id'];
 		$store_id    = @$options['store-id'];
 		$xtype       = @$options['xtype'];

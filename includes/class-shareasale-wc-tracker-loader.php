@@ -1,5 +1,5 @@
 <?php
-class ShareASale_Tracker_Loader {
+class ShareASale_WC_Tracker_Loader {
 	/**
 	* @var array $actions An array of hook names, object names, and their methods to run
 	* @var array $filters An array of filter names, object names, and their methods to ru   */

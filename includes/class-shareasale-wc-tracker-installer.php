@@ -1,5 +1,5 @@
 <?php
-class ShareASale_Tracker_Installer {
+class ShareASale_WC_Tracker_Installer {
 
 	private static function load_dependencies() {
 		//necessary for using dbDelta() to create and update WordPress tables
@@ -9,10 +9,10 @@ class ShareASale_Tracker_Installer {
 	public static function install() {
 		self::load_dependencies();
 
-		add_option( 'tracker_options', '' );
+		add_option( 'shareasale_wc_tracker_options', '' );
 
 		global $wpdb;
-		$logs_table = $wpdb->prefix . 'shareasale_tracker_logs';
+		$logs_table = $wpdb->prefix . 'shareasale_wc_tracker_logs';
 		$query = 'CREATE TABLE IF NOT EXISTS ' . $logs_table . ' (
 			id int(11) NOT NULL AUTO_INCREMENT,
 			action varchar(20) DEFAULT NULL,

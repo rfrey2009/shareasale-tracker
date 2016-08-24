@@ -9,7 +9,7 @@ $page_links = paginate_links( array(
 ) );
 ?>
 <div class="tablenav">
-	<div class="tablenav-pages shareasale-tracker-logs-pagination">
+	<div class="tablenav-pages shareasale-wc-tracker-logs-pagination">
 		<?php echo $page_links; ?>
 	</div>
 </div>

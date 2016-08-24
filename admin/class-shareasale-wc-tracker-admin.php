@@ -1,5 +1,5 @@
 <?php
-class ShareASale_Tracker_Admin {
+class ShareASale_WC_Tracker_Admin {
 	/**
 	* @var float $version Plugin version
 	*/
@@ -10,14 +10,14 @@ class ShareASale_Tracker_Admin {
 	}
 
 	private function load_dependencies() {
-		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-tracker-api.php';
+		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-api.php';
 	}
 
 	public function enqueue_styles( $hook ) {
-		if ( 'toplevel_page_shareasale_tracker' === $hook || 'shareasale-tracker_page_shareasale_tracker_automatic_reconciliation' === $hook ) {
+		if ( 'toplevel_page_shareasale_wc_tracker' === $hook || 'shareasale-tracker_page_shareasale_wc_tracker_automatic_reconciliation' === $hook ) {
 			wp_enqueue_style(
-				'shareasale-tracker-admin-css',
-				plugin_dir_url( __FILE__ ) . 'css/shareasale-tracker-admin.css',
+				'shareasale-wc-tracker-admin-css',
+				plugin_dir_url( __FILE__ ) . 'css/shareasale-wc-tracker-admin.css',
 				array(),
 				$this->version
 			);
@@ -25,10 +25,10 @@ class ShareASale_Tracker_Admin {
 	}
 
 	public function enqueue_scripts( $hook ) {
-		if ( 'shareasale-tracker_page_shareasale_tracker_automatic_reconciliation' === $hook ) {
+		if ( 'shareasale-tracker_page_shareasale_wc_tracker_automatic_reconciliation' === $hook ) {
 			wp_enqueue_script(
-				'shareasale-tracker-admin-js',
-				plugin_dir_url( __FILE__ ) . 'js/shareasale-tracker-admin.js',
+				'shareasale-wc-tracker-admin-js',
+				plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-admin.js',
 				array( 'jquery' ),
 				$this->version
 			);
@@ -36,11 +36,11 @@ class ShareASale_Tracker_Admin {
 	}
 
 	public function admin_init() {
-		$options = get_option( 'tracker_options' );
-		register_setting( 'tracker_options', 'tracker_options', array( $this, 'sanitize_settings' ) );
+		$options = get_option( 'shareasale_wc_tracker_options' );
+		register_setting( 'shareasale_wc_tracker_options', 'shareasale_wc_tracker_options', array( $this, 'sanitize_settings' ) );
 
-		add_settings_section( 'tracker_required', 'Required Merchant Info', array( $this, 'render_settings_required_section_text' ), 'shareasale_tracker' );
-		add_settings_field( 'merchant-id', '*Merchant ID', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_required',
+		add_settings_section( 'tracker_required', 'Required Merchant Info', array( $this, 'render_settings_required_section_text' ), 'shareasale_wc_tracker' );
+		add_settings_field( 'merchant-id', '*Merchant ID', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker', 'tracker_required',
 			array(
 				'label_for'   => 'merchant-id',
 				'id'          => 'merchant-id',
@@ -54,8 +54,8 @@ class ShareASale_Tracker_Admin {
 			)
 		);
 
-		add_settings_section( 'tracker_optional', 'Optional Pixel Info', array( $this, 'render_settings_optional_section_text' ), 'shareasale_tracker' );
-		add_settings_field( 'store-id', 'Store ID', array( $this, 'render_settings_input' ), 'shareasale_tracker', 'tracker_optional',
+		add_settings_section( 'tracker_optional', 'Optional Pixel Info', array( $this, 'render_settings_optional_section_text' ), 'shareasale_wc_tracker' );
+		add_settings_field( 'store-id', 'Store ID', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker', 'tracker_optional',
 			array(
 				'label_for'   => 'store-id',
 				'id'          => 'store-id',
@@ -67,7 +67,7 @@ class ShareASale_Tracker_Admin {
 				'class'       => 'tracker-option tracker-option-number',
 			)
 		);
-		add_settings_field( 'xtype', 'Merchant-Defined Type', array( $this, 'render_settings_select' ), 'shareasale_tracker', 'tracker_optional',
+		add_settings_field( 'xtype', 'Merchant-Defined Type', array( $this, 'render_settings_select' ), 'shareasale_wc_tracker', 'tracker_optional',
 			array(
 				'label_for'   => 'xtype',
 				'id'          => 'xtype',
@@ -79,8 +79,8 @@ class ShareASale_Tracker_Admin {
 				'class'       => 'tracker-option',
 			)
 		);
-		add_settings_section( 'tracker_reconciliation', 'Automate Reconciliation', array( $this, 'render_settings_reconciliation_section_text' ), 'shareasale_tracker_automatic_reconciliation' );
-		add_settings_field( 'reconciliation-setting-hidden', '', array( $this, 'render_settings_input' ), 'shareasale_tracker_automatic_reconciliation', 'tracker_reconciliation',
+		add_settings_section( 'tracker_reconciliation', 'Automate Reconciliation', array( $this, 'render_settings_reconciliation_section_text' ), 'shareasale_wc_tracker_automatic_reconciliation' );
+		add_settings_field( 'reconciliation-setting-hidden', '', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'tracker_reconciliation',
 			array(
 				'id'          => 'reconciliation-setting-hidden',
 				'name'        => 'reconciliation-setting',
@@ -91,7 +91,7 @@ class ShareASale_Tracker_Admin {
 				'placeholder' => '',
 				'class'       => 'tracker-option-hidden',
 		));
-		add_settings_field( 'reconciliation-setting', 'Automate', array( $this, 'render_settings_input' ), 'shareasale_tracker_automatic_reconciliation', 'tracker_reconciliation',
+		add_settings_field( 'reconciliation-setting', 'Automate', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'tracker_reconciliation',
 			array(
 				'label_for'   => 'reconciliation-setting',
 				'id'          => 'reconciliation-setting',
@@ -104,8 +104,8 @@ class ShareASale_Tracker_Admin {
 				'class'       => 'tracker-option',
 		));
 
-		add_settings_section( 'tracker_api', 'API Settings', array( $this, 'render_settings_api_section_text' ), 'shareasale_tracker_automatic_reconciliation' );
-		add_settings_field( 'api-token', '*API Token', array( $this, 'render_settings_input' ), 'shareasale_tracker_automatic_reconciliation', 'tracker_api',
+		add_settings_section( 'tracker_api', 'API Settings', array( $this, 'render_settings_api_section_text' ), 'shareasale_wc_tracker_automatic_reconciliation' );
+		add_settings_field( 'api-token', '*API Token', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'tracker_api',
 			array(
 				'label_for'   => 'api-token',
 				'id'          => 'api-token',
@@ -117,7 +117,7 @@ class ShareASale_Tracker_Admin {
 				'placeholder' => 'Enter your API Token',
 				'class'       => 'tracker-option',
 		));
-		add_settings_field( 'api-secret', '*API Secret', array( $this, 'render_settings_input' ), 'shareasale_tracker_automatic_reconciliation', 'tracker_api',
+		add_settings_field( 'api-secret', '*API Secret', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'tracker_api',
 			array(
 				'label_for'   => 'api-secret',
 				'id'          => 'api-secret',
@@ -137,7 +137,7 @@ class ShareASale_Tracker_Admin {
 		$page_title = 'ShareASale Tracker Settings';
 		$menu_title = 'ShareASale Tracker';
 		$capability = 'manage_options';
-		$menu_slug  = 'shareasale_tracker';
+		$menu_slug  = 'shareasale_wc_tracker';
 		$callback   = array( $this, 'render_settings_page' );
 		$icon_url   = plugin_dir_url( __FILE__ ) . 'images/star_logo.png';
 		add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $callback, $icon_url );
@@ -147,7 +147,7 @@ class ShareASale_Tracker_Admin {
 
 	    $submenu_page_title = 'Automatic Reconciliation';
 	    $submenu_title      = 'Automatic Reconciliation';
-	    $submenu_slug       = 'shareasale_tracker_automatic_reconciliation';
+	    $submenu_slug       = 'shareasale_wc_tracker_automatic_reconciliation';
 	    $submenu_function   = array( $this, 'render_settings_page_submenu' );
 	   	add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
 	}
@@ -167,7 +167,7 @@ class ShareASale_Tracker_Admin {
 			return;
 		}
 
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings.php';
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings.php';
 	}
 
 	public function render_settings_page_submenu() {
@@ -197,29 +197,29 @@ class ShareASale_Tracker_Admin {
 			return;
 		}
 
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation.php';
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation-table.php';
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-automatic-reconciliation-pagination.php';
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-automatic-reconciliation.php';
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-automatic-reconciliation-table.php';
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-automatic-reconciliation-pagination.php';
 	}
 
 	public function render_settings_required_section_text() {
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-required-section-text.php';
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-required-section-text.php';
 	}
 
 	public function render_settings_optional_section_text() {
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-optional-section-text.php';
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-optional-section-text.php';
 	}
 
 	public function render_settings_reconciliation_section_text() {
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-reconciliation-section-text.php';
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-reconciliation-section-text.php';
 	}
 
 	public function render_settings_api_section_text() {
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-api-section-text.php';
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-api-section-text.php';
 	}
 
 	public function render_settings_input( $attributes ) {
-		$template      = file_get_contents( plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-input.php' );
+		$template      = file_get_contents( plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-input.php' );
 		$template_data = array_map( 'esc_attr', $attributes );
 
 		foreach ( $template_data as $macro => $value ) {
@@ -246,7 +246,7 @@ class ShareASale_Tracker_Admin {
 	}
 
 	public function render_settings_select( $attributes ) {
-		$template      = file_get_contents( plugin_dir_path( __FILE__ ) . 'templates/shareasale-tracker-settings-select.php' );
+		$template      = file_get_contents( plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-select.php' );
 		$template_data = array_map( 'esc_attr', $attributes );
 
 		foreach ( $template_data as $macro => $value ) {
@@ -286,8 +286,15 @@ class ShareASale_Tracker_Admin {
 
 	}
 
+	//add shortcut to settings page from the plugin admin entry for dealsbar
+	public function render_settings_shortcut( $links ) {
+		$settings_link = '<a href="' . get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=shareasale_wc_tracker">Settings</a>';
+		array_unshift( $links, $settings_link );
+		return $links;
+	}
+
 	public function sanitize_settings( $new_settings = array() ) {
-		$old_settings      = get_option( 'tracker_options' ) ? get_option( 'tracker_options' ) : array();
+		$old_settings      = get_option( 'shareasale_wc_tracker_options' ) ? get_option( 'shareasale_wc_tracker_options' ) : array();
 		//$diff_new_settings is necessary to check whether API credentials have actually changed or not
 		$diff_new_settings = array_diff_assoc( $new_settings, $old_settings );
 		$final_settings    = array_merge( $old_settings, $new_settings );
@@ -296,7 +303,7 @@ class ShareASale_Tracker_Admin {
 			add_settings_error(
 				'tracker_required',
 				'merchant-id',
-				'You must enter a ShareASale Merchant ID in the <a href = "?page=shareasale_tracker">Tracking Settings</a> tab.'
+				'You must enter a ShareASale Merchant ID in the <a href = "?page=shareasale_wc_tracker">Tracking Settings</a> tab.'
 			);
 		}
 
@@ -304,7 +311,7 @@ class ShareASale_Tracker_Admin {
 
 			if ( isset( $diff_new_settings['merchant-id'] ) || isset( $diff_new_settings['api-token'] ) || isset( $diff_new_settings['api-secret'] ) || 0 == $old_settings['reconciliation-setting'] ) {
 
-				$shareasale_api = new ShareASale_Tracker_API( $final_settings['merchant-id'], $final_settings['api-token'], $final_settings['api-secret'] );
+				$shareasale_api = new ShareASale_WC_Tracker_API( $final_settings['merchant-id'], $final_settings['api-token'], $final_settings['api-secret'] );
 				$req = $shareasale_api->token_count()->exec();
 
 				if ( ! $req ) {
