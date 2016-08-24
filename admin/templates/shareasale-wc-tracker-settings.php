@@ -13,7 +13,7 @@
 	    	</a>
 		</h2>
 		<form action = "options.php" method = "post">
-			<div id = 'tracker-options'>
+			<div id = 'shareasale-wc-tracker-options'>
 			<?php
 			  settings_fields( 'shareasale_wc_tracker_options' );
 			  do_settings_sections( 'shareasale_wc_tracker' );

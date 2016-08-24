@@ -14,7 +14,8 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function enqueue_styles( $hook ) {
-		if ( 'toplevel_page_shareasale_wc_tracker' === $hook || 'shareasale-tracker_page_shareasale_wc_tracker_automatic_reconciliation' === $hook ) {
+		echo $hook;
+		if ( 'toplevel_page_shareasale_wc_tracker' === $hook || 'shareasale-wc-tracker_page_shareasale_wc_tracker_automatic_reconciliation' === $hook ) {
 			wp_enqueue_style(
 				'shareasale-wc-tracker-admin-css',
 				plugin_dir_url( __FILE__ ) . 'css/shareasale-wc-tracker-admin.css',
@@ -25,7 +26,7 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function enqueue_scripts( $hook ) {
-		if ( 'shareasale-tracker_page_shareasale_wc_tracker_automatic_reconciliation' === $hook ) {
+		if ( 'shareasale-wc-tracker_page_shareasale_wc_tracker_automatic_reconciliation' === $hook ) {
 			wp_enqueue_script(
 				'shareasale-wc-tracker-admin-js',
 				plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-admin.js',
@@ -39,8 +40,8 @@ class ShareASale_WC_Tracker_Admin {
 		$options = get_option( 'shareasale_wc_tracker_options' );
 		register_setting( 'shareasale_wc_tracker_options', 'shareasale_wc_tracker_options', array( $this, 'sanitize_settings' ) );
 
-		add_settings_section( 'tracker_required', 'Required Merchant Info', array( $this, 'render_settings_required_section_text' ), 'shareasale_wc_tracker' );
-		add_settings_field( 'merchant-id', '*Merchant ID', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker', 'tracker_required',
+		add_settings_section( 'shareasale_wc_tracker_required', 'Required Merchant Info', array( $this, 'render_settings_required_section_text' ), 'shareasale_wc_tracker' );
+		add_settings_field( 'merchant-id', '*Merchant ID', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker', 'shareasale_wc_tracker_required',
 			array(
 				'label_for'   => 'merchant-id',
 				'id'          => 'merchant-id',
@@ -50,12 +51,12 @@ class ShareASale_WC_Tracker_Admin {
 				'size'        => 22,
 				'type'        => 'text',
 				'placeholder' => 'ShareASale Merchant ID',
-				'class'       => 'tracker-option',
+				'class'       => 'shareasale-wc-tracker-option',
 			)
 		);
 
-		add_settings_section( 'tracker_optional', 'Optional Pixel Info', array( $this, 'render_settings_optional_section_text' ), 'shareasale_wc_tracker' );
-		add_settings_field( 'store-id', 'Store ID', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker', 'tracker_optional',
+		add_settings_section( 'shareasale_wc_tracker_optional', 'Optional Pixel Info', array( $this, 'render_settings_optional_section_text' ), 'shareasale_wc_tracker' );
+		add_settings_field( 'store-id', 'Store ID', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker', 'shareasale_wc_tracker_optional',
 			array(
 				'label_for'   => 'store-id',
 				'id'          => 'store-id',
@@ -64,10 +65,10 @@ class ShareASale_WC_Tracker_Admin {
 				'size'        => '',
 				'type'        => 'number',
 				'placeholder' => 'ID',
-				'class'       => 'tracker-option tracker-option-number',
+				'class'       => 'shareasale-wc-tracker-option shareasale-wc-tracker-option-number',
 			)
 		);
-		add_settings_field( 'xtype', 'Merchant-Defined Type', array( $this, 'render_settings_select' ), 'shareasale_wc_tracker', 'tracker_optional',
+		add_settings_field( 'xtype', 'Merchant-Defined Type', array( $this, 'render_settings_select' ), 'shareasale_wc_tracker', 'shareasale_wc_tracker_optional',
 			array(
 				'label_for'   => 'xtype',
 				'id'          => 'xtype',
@@ -76,7 +77,7 @@ class ShareASale_WC_Tracker_Admin {
 				'size'        => '',
 				'type'        => 'select',
 				'placeholder' => '',
-				'class'       => 'tracker-option',
+				'class'       => 'shareasale-wc-tracker-option',
 			)
 		);
 		add_settings_section( 'tracker_reconciliation', 'Automate Reconciliation', array( $this, 'render_settings_reconciliation_section_text' ), 'shareasale_wc_tracker_automatic_reconciliation' );
@@ -89,7 +90,7 @@ class ShareASale_WC_Tracker_Admin {
 				'size'        => 1,
 				'type'        => 'hidden',
 				'placeholder' => '',
-				'class'       => 'tracker-option-hidden',
+				'class'       => 'shareasale-wc-tracker-option-hidden',
 		));
 		add_settings_field( 'reconciliation-setting', 'Automate', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'tracker_reconciliation',
 			array(
@@ -101,7 +102,7 @@ class ShareASale_WC_Tracker_Admin {
 				'size'        => 18,
 				'type'        => 'checkbox',
 				'placeholder' => '',
-				'class'       => 'tracker-option',
+				'class'       => 'shareasale-wc-tracker-option',
 		));
 
 		add_settings_section( 'tracker_api', 'API Settings', array( $this, 'render_settings_api_section_text' ), 'shareasale_wc_tracker_automatic_reconciliation' );
@@ -115,7 +116,7 @@ class ShareASale_WC_Tracker_Admin {
 				'size'        => 20,
 				'type'        => 'text',
 				'placeholder' => 'Enter your API Token',
-				'class'       => 'tracker-option',
+				'class'       => 'shareasale-wc-tracker-option',
 		));
 		add_settings_field( 'api-secret', '*API Secret', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'tracker_api',
 			array(
@@ -127,7 +128,7 @@ class ShareASale_WC_Tracker_Admin {
 				'size'        => 34,
 				'type'        => 'text',
 				'placeholder' => 'Enter your API Secret',
-				'class'       => 'tracker-option',
+				'class'       => 'shareasale-wc-tracker-option',
 		));
 	}
 
@@ -135,7 +136,7 @@ class ShareASale_WC_Tracker_Admin {
 
 		/** Add the top-level admin menu */
 		$page_title = 'ShareASale Tracker Settings';
-		$menu_title = 'ShareASale Tracker';
+		$menu_title = 'ShareASale WC Tracker';
 		$capability = 'manage_options';
 		$menu_slug  = 'shareasale_wc_tracker';
 		$callback   = array( $this, 'render_settings_page' );
@@ -301,7 +302,7 @@ class ShareASale_WC_Tracker_Admin {
 
 		if ( empty( $final_settings['merchant-id'] ) ) {
 			add_settings_error(
-				'tracker_required',
+				'shareasale_wc_tracker_required',
 				'merchant-id',
 				'You must enter a ShareASale Merchant ID in the <a href = "?page=shareasale_wc_tracker">Tracking Settings</a> tab.'
 			);
