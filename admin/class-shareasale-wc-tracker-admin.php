@@ -14,7 +14,6 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function enqueue_styles( $hook ) {
-		echo $hook;
 		if ( 'toplevel_page_shareasale_wc_tracker' === $hook || 'shareasale-wc-tracker_page_shareasale_wc_tracker_automatic_reconciliation' === $hook ) {
 			wp_enqueue_style(
 				'shareasale-wc-tracker-admin-css',
@@ -80,8 +79,8 @@ class ShareASale_WC_Tracker_Admin {
 				'class'       => 'shareasale-wc-tracker-option',
 			)
 		);
-		add_settings_section( 'tracker_reconciliation', 'Automate Reconciliation', array( $this, 'render_settings_reconciliation_section_text' ), 'shareasale_wc_tracker_automatic_reconciliation' );
-		add_settings_field( 'reconciliation-setting-hidden', '', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'tracker_reconciliation',
+		add_settings_section( 'shareasale_wc_tracker_reconciliation', 'Automate Reconciliation', array( $this, 'render_settings_reconciliation_section_text' ), 'shareasale_wc_tracker_automatic_reconciliation' );
+		add_settings_field( 'reconciliation-setting-hidden', '', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'shareasale_wc_tracker_reconciliation',
 			array(
 				'id'          => 'reconciliation-setting-hidden',
 				'name'        => 'reconciliation-setting',
@@ -92,7 +91,7 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => '',
 				'class'       => 'shareasale-wc-tracker-option-hidden',
 		));
-		add_settings_field( 'reconciliation-setting', 'Automate', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'tracker_reconciliation',
+		add_settings_field( 'reconciliation-setting', 'Automate', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'shareasale_wc_tracker_reconciliation',
 			array(
 				'label_for'   => 'reconciliation-setting',
 				'id'          => 'reconciliation-setting',
@@ -105,8 +104,8 @@ class ShareASale_WC_Tracker_Admin {
 				'class'       => 'shareasale-wc-tracker-option',
 		));
 
-		add_settings_section( 'tracker_api', 'API Settings', array( $this, 'render_settings_api_section_text' ), 'shareasale_wc_tracker_automatic_reconciliation' );
-		add_settings_field( 'api-token', '*API Token', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'tracker_api',
+		add_settings_section( 'shareasale_wc_tracker_api', 'API Settings', array( $this, 'render_settings_api_section_text' ), 'shareasale_wc_tracker_automatic_reconciliation' );
+		add_settings_field( 'api-token', '*API Token', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'shareasale_wc_tracker_api',
 			array(
 				'label_for'   => 'api-token',
 				'id'          => 'api-token',
@@ -118,7 +117,7 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => 'Enter your API Token',
 				'class'       => 'shareasale-wc-tracker-option',
 		));
-		add_settings_field( 'api-secret', '*API Secret', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'tracker_api',
+		add_settings_field( 'api-secret', '*API Secret', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_automatic_reconciliation', 'shareasale_wc_tracker_api',
 			array(
 				'label_for'   => 'api-secret',
 				'id'          => 'api-secret',
@@ -135,7 +134,7 @@ class ShareASale_WC_Tracker_Admin {
 	public function admin_menu() {
 
 		/** Add the top-level admin menu */
-		$page_title = 'ShareASale Tracker Settings';
+		$page_title = 'ShareASale WooCommerce Tracker Settings';
 		$menu_title = 'ShareASale WC Tracker';
 		$capability = 'manage_options';
 		$menu_slug  = 'shareasale_wc_tracker';
@@ -317,7 +316,7 @@ class ShareASale_WC_Tracker_Admin {
 
 				if ( ! $req ) {
 					add_settings_error(
-						'tracker_api',
+						'shareasale_wc_tracker_api',
 						'api',
 						'Your API credentials did not work. Check your merchant ID, API token, and API key.
 						<span style = "font-size: 10px">'

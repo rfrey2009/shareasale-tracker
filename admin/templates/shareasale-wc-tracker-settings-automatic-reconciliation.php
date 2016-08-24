@@ -2,7 +2,7 @@
 	<div class = "wrap">    
 		<h2>
 			<img id = "shareasale-logo" src = "<?php echo plugin_dir_url( __FILE__ ) . '../images/star_logo.png' ?>">
-			ShareASale Tracker Settings
+			ShareASale WooCommerce Tracker Settings
 		</h2>
 		<h2 class = "nav-tab-wrapper">
 	    	<a href = "?page=shareasale_wc_tracker" class = "nav-tab">
