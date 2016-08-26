@@ -75,18 +75,23 @@ class ShareASale_WC_Tracker_Pixel {
 
 		$product_data = $this->get_product_data();
 
-		$pixel = '<img src = "https://shareasale.com/sale.cfm?amount=' . $this->get_order_amount() .
-													'&tracking=' . $this->order->get_order_number() .
-													'&transtype=sale&merchantID=' . $merchant_id .
-													'&skulist=' . $product_data->skulist .
-													'&quantitylist=' . $product_data->quantitylist .
-													'&pricelist=' . $product_data->pricelist .
-													'&couponcode=' . $this->get_coupon_codes() .
-													'&currency=' . $this->get_currency() .
-													'&newcustomer=' . $this->get_customer_status() .
-													$store_id . $xtype .
-													'&v=' . $this->version .
-													'" width="1" height="1">';
+		$params = array(
+				'amount'       => $this->get_order_amount(),
+				'tracking'     => $this->order->get_order_number(),
+				'transtype'    => 'sale',
+				'merchantID'   => $merchant_id,
+				'skulist'      => $product_data->skulist,
+				'quantitylist' => $product_data->quantitylist,
+				'pricelist'    => $product_data->pricelist,
+				'couponcode'   => $this->get_coupon_codes(),
+				'currency'     => $this->get_currency(),
+				'newcustomer'  => $this->get_customer_status(),
+				'v'            => $this->version,
+			);
+
+		$query_string = '?' . http_build_query( $params );
+
+		$pixel = '<img src = "https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype . '" width="1" height="1">';
 
 		echo wp_kses( $pixel, array(
 									'img' => array(

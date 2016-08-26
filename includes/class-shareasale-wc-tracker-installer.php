@@ -20,7 +20,7 @@ class ShareASale_WC_Tracker_Installer {
 			deducted decimal(9,3) NOT NULL,
 			subtotal_before decimal(9,3) NOT NULL,
 			subtotal_after decimal(9,3) NOT NULL,
-			order_number int(11) NOT NULL,
+			order_number varchar(255) NOT NULL,
 			response varchar(255) NOT NULL,
 			refund_date datetime NOT NULL,
 			PRIMARY KEY  (id),
