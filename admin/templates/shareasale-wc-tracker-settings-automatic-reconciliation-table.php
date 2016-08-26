@@ -53,9 +53,8 @@ foreach ( $logs as $log ) : ?>
 	<?php
 		$value        = $value === $order_number ? '' : $value;
 		$order_number = $log->order_number;
-		$class        = is_numeric( $value ) ? 'shareasale-wc-tracker-logs-cell-align-right' : 'shareasale-wc-tracker-logs-cell-align-left';
 	?>
-				<td class = "shareasale-wc-tracker-logs-cell <?php echo $class; ?>"><?php echo esc_html( $value ); ?></td>
+				<td class = "shareasale-wc-tracker-logs-cell"><?php echo esc_html( $value ); ?></td>
 	<?php endforeach; ?>
 			</tr>
 <?php endforeach; ?>

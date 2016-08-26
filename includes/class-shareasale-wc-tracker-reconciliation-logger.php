@@ -41,7 +41,7 @@ class ShareASale_WC_Tracker_Reconciliation_Logger {
 				"
 				SELECT subtotal_after
 				FROM {$this->table}
-				WHERE order_number = %d
+				WHERE order_number = %s
 				ORDER BY id DESC
 				LIMIT 0,1
 				",
