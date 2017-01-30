@@ -3,7 +3,7 @@ class ShareASale_WC_Tracker_Uninstaller {
 
 	public static function uninstall() {
 		global $wpdb;
-		$logs_table = $wpdb->prefix . '_shareasale_wc_tracker_logs';
+		$logs_table = $wpdb->prefix . 'shareasale_wc_tracker_logs';
 		//drop logs table
 		$query = 'DROP TABLE ' . $logs_table;
 		$wpdb->query( $query );

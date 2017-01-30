@@ -1,20 +1,18 @@
 === ShareASale WooCommerce Tracker ===
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 3.0.1
-Tested up to: 4.6
+Tested up to: 4.7
 Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The ShareASale WooCommerce Tracker plugin sets up the conversion tracking pixel code on a ShareASale Merchant's WooCommerce cart, and allows a ShareASale Merchant to automatically edit or void applicable Affiliate commissions when they issue customer refunds.
+The ShareASale WooCommerce Tracker sets up the tracking pixel on a Merchant's cart and allows commission auto-edits if customers are refunded.
 
 == Installation ==
 
 1. Login to ShareASale and jot down your Merchant ID. It's printed at the top of the Merchant dashboard in ShareASale.
 
-2. In the plugin's settings "Tracking Settings" tab (star icon on the WordPress sidebar), enter your Merchant ID and click "Save Settings." 
-
-This is all that's required to setup basic ShareASale conversion tracking in your WooCommerce cart. See below for optional features. 
+2. In the plugin's settings "Tracking Settings" tab (star icon on the WordPress sidebar), enter your Merchant ID and click "Save Settings." This is all that's required to setup basic ShareASale conversion tracking in your WooCommerce cart. See below for optional features. 
 
 3. OPTIONAL:
 
