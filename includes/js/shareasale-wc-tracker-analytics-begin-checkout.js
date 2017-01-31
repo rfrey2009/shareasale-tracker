@@ -1,1 +1,1 @@
-SHRSL_ANALYTICS_DISPATCH('beginCheckout','SKULIST','PRICELIST','QUANTITYLIST');
+SHRSL_ANALYTICS_DISPATCH('beginCheckout',shareasaleWcTrackerAnalyticsBeginCheckout.skulist,shareasaleWcTrackerAnalyticsBeginCheckout.pricelist,shareasaleWcTrackerAnalyticsBeginCheckout.quantitylist);

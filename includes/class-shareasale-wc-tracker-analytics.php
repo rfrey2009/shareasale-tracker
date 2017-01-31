@@ -6,7 +6,7 @@ class ShareASale_WC_Tracker_Analytics {
 	* @var float $version Plugin version
 	*/
 
-	private $version;
+	private $merchant_id, $version;
 
 	public function __construct( $version ) {
 		$this->version     = $version;
@@ -14,7 +14,8 @@ class ShareASale_WC_Tracker_Analytics {
 		$options           = get_option( 'shareasale_wc_tracker_options' );
 		$this->merchant_id = $options['merchant-id'];
 	}
-	//adds defer and async to second-chance pixel js
+
+	//adds defer and async attributes to second-chance pixel script tag
 	public function script_loader_tag( $tag, $handle, $src ) {
 
 		$async_scripts = array( 'shareasale-wc-tracker-analytics-second-chance' );
@@ -47,25 +48,91 @@ class ShareASale_WC_Tracker_Analytics {
 
 	public function woocommerce_add_to_cart( $cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data ) {
 
-		error_log( 'ITEM ADDED TO CART!' );
+		error_log('
+			cart_item_key:  $cart_item_key \r\n 
+			product_id:     $product_id \r\n 
+			quantity:       $quantity \r\n 
+			variation_id:   $variation_id \r\n 
+		    variation:      $variation \r\n  
+			cart_item_data: $cart_item_data \r\n
+		');
 
+		wp_enqueue_script(
+			'shareasale-wc-tracker-analytics-add-to-cart',
+			plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js',
+			'shareasale-wc-tracker-analytics',
+			$this->version
+		);
+
+		wp_localize_script(
+			'shareasale-wc-tracker-analytics-add-to-cart',
+			'shareasaleWcTrackerAnalyticsAddToCart',
+			array(
+				'skulist'      => '',
+				'pricelist'    => '',
+				'quantitylist' => '',
+			)
+		);
 	}
 
 	public function woocommerce_checkout_init( $instance ) {
 
-		error_log( 'CHECKOUT INITIATED!' );
+		error_log( print_r( $instance, true ) );
 
+		wp_enqueue_script(
+			'shareasale-wc-tracker-analytics-begin-checkout',
+			plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-begin-checkout.js',
+			'shareasale-wc-tracker-analytics',
+			$this->version
+		);
+
+		wp_localize_script(
+			'shareasale-wc-tracker-analytics-begin-checkout',
+			'shareasaleWcTrackerAnalyticsBeginCheckout',
+			array(
+				'skulist'      => '',
+				'pricelist'    => '',
+				'quantitylist' => '',
+			)
+		);
 	}
 
 	public function woocommerce_applied_coupon( $coupon_code ) {
 
-		error_log( 'COUPON APPLIED!' );
+		wp_enqueue_script(
+			'shareasale-wc-tracker-analytics-applied-coupon',
+			plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-applied-coupon.js',
+			'shareasale-wc-tracker-analytics',
+			$this->version
+		);
 
+		wp_localize_script(
+			'shareasale-wc-tracker-analytics-applied-coupon',
+			'shareasaleWcTrackerAnalyticsAppliedCoupon',
+			array(
+				'couponcode' => $coupon_code,
+			)
+		);
 	}
 
 	public function woocommerce_thankyou( $order_id ) {
+		$order = new WC_Order( $order_id );
+		$ordernumber = $order->get_order_number();
 
-		error_log( 'CONVERSION DONE!' );
+		wp_enqueue_script(
+			'shareasale-wc-tracker-analytics-conversion',
+			plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-conversion.js',
+			'shareasale-wc-tracker-analytics',
+			$this->version
+		);
+
+		wp_localize_script(
+			'shareasale-wc-tracker-analytics-conversion',
+			'shareasaleWcTrackerAnalyticsConversion',
+			array(
+				'ordernumber' => $ordernumber,
+			)
+		);
 
 		wp_enqueue_script(
 			'shareasale-wc-tracker-analytics-second-chance',
@@ -74,6 +141,5 @@ class ShareASale_WC_Tracker_Analytics {
 			$this->version,
 			true
 		);
-
 	}
 }

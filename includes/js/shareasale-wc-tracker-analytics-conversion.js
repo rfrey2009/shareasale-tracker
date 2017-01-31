@@ -1,1 +1,1 @@
-SHRSL_ANALYTICS_DISPATCH('conversion','ORDERNUMBER');
+SHRSL_ANALYTICS_DISPATCH('conversion',shareasaleWcTrackerAnalyticsConversion.ordernumber);
