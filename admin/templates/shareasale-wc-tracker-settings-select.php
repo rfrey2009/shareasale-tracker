@@ -1,4 +1,5 @@
-<select id = "!!id!!" class = "!!class!!" name = "shareasale_wc_tracker_options[!!name!!]">	
+<select id = "!!id!!" class = "!!class!!" name = "shareasale_wc_tracker_options[!!name!!]">
+	<option value = "default">Select an optional Merchant-defined type</option>
 	<optgroup label = "Customer">
 		<option value = "customer_id">ID</option>
 		<option value = "customer_device_type">Device Type (mobile or desktop)</option>

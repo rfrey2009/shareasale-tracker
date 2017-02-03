@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 class ShareASale_WC_Tracker_Reconciliation_Logger {
 	/**
 	* @var float $version Plugin version

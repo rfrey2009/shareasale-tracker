@@ -1,3 +1,8 @@
+<?php if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+?>
+
 <div id = "shareasale-wc-tracker">
 	<div class = "wrap">    
 		<h2>

@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 class ShareASale_WC_Tracker_Loader {
 	/**
 	* @var array $actions An array of hook names, object names, and their methods to run

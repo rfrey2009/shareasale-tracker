@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 $page_links = paginate_links( array(
 	'base'      => add_query_arg( 'page_num', '%#%' ),
 	'format'    => '',

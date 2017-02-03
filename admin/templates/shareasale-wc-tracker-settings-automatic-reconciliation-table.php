@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 global $wpdb;
 $logs_table   = $wpdb->prefix . 'shareasale_wc_tracker_logs';
 $page_num     = filter_input( INPUT_GET, 'page_num' ) ? absint( filter_input( INPUT_GET, 'page_num' ) ) : 1;

@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 class ShareASale_WC_Tracker {
 	/**
 	* @var ShareASale_WC_Tracker_Analytics $analytics object that controls advanced analytics (add-to-cart, coupon code, etc.) setup

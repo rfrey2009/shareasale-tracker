@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 class ShareASale_WC_Tracker_API {
 
 	private $api_version = 2.8;
