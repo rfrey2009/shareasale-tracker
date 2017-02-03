@@ -65,7 +65,7 @@ class ShareASale_WC_Tracker_Analytics {
 		wp_enqueue_script(
 			'shareasale-wc-tracker-analytics-add-to-cart',
 			plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js',
-			'shareasale-wc-tracker-analytics',
+			array( 'shareasale-wc-tracker-analytics' ),
 			$this->version
 		);
 		//single item add to cart
@@ -82,12 +82,12 @@ class ShareASale_WC_Tracker_Analytics {
 
 	public function woocommerce_checkout_init( $instance ) {
 
-		error_log( print_r( $instance, true ) );
+		//error_log( print_r( $instance, true ) );
 
 		wp_enqueue_script(
 			'shareasale-wc-tracker-analytics-begin-checkout',
 			plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-begin-checkout.js',
-			'shareasale-wc-tracker-analytics',
+			array( 'shareasale-wc-tracker-analytics' ),
 			$this->version
 		);
 		//multi-item checkout possible
@@ -107,7 +107,7 @@ class ShareASale_WC_Tracker_Analytics {
 		wp_enqueue_script(
 			'shareasale-wc-tracker-analytics-applied-coupon',
 			plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-applied-coupon.js',
-			'shareasale-wc-tracker-analytics',
+			array( 'shareasale-wc-tracker-analytics' ),
 			$this->version
 		);
 
@@ -127,7 +127,7 @@ class ShareASale_WC_Tracker_Analytics {
 		wp_enqueue_script(
 			'shareasale-wc-tracker-analytics-conversion',
 			plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-conversion.js',
-			'shareasale-wc-tracker-analytics',
+			array( 'shareasale-wc-tracker-analytics' ),
 			$this->version
 		);
 

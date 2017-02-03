@@ -256,7 +256,7 @@ class ShareASale_WC_Tracker_Admin {
 		foreach ( $template_data as $macro => $value ) {
 			$template = str_replace( "!!$macro!!", $value, $template );
 		}
-
+		//find the current saved option and replace its value to add the selected attribute
 		$template = str_replace( '"' . $template_data['value'] . '"', '"' . $template_data['value'] . '" selected', $template );
 
 		echo wp_kses( $template, array(
