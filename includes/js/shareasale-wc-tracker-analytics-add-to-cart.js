@@ -1,1 +1,2 @@
-SHRSL_ANALYTICS_DISPATCH('addToCart',shareasaleWcTrackerAnalyticsAddToCart.skulist,shareasaleWcTrackerAnalyticsAddToCart.pricelist,shareasaleWcTrackerAnalyticsAddToCart.quantitylist);
+//SHRSL_ANALYTICS_DISPATCH('addToCart',shareasaleWcTrackerAnalyticsAddToCart.skulist,shareasaleWcTrackerAnalyticsAddToCart.pricelist,shareasaleWcTrackerAnalyticsAddToCart.quantitylist);
+console.log('did a cart add!');

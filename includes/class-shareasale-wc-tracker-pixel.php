@@ -74,7 +74,7 @@ class ShareASale_WC_Tracker_Pixel {
 				break;
 
 			default:
-				$xtype = '';
+				$xtype = '&xtype=';
 		}
 
 		$product_data = $this->get_product_data();
