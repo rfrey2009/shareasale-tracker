@@ -14,7 +14,7 @@ class ShareASale_WC_Tracker_Analytics {
 	public function __construct( $version ) {
 		$this->version = $version;
 	}
-
+	//setup the placeholder tags that will be swapped with <script/> fragments if/when there's an AJAX add-to-cart
 	public function wp_head() {
 		echo '
 			<noscript id="shareasale-wc-tracker-analytics-add-to-cart-ajax-model"></noscript>
@@ -23,10 +23,10 @@ class ShareASale_WC_Tracker_Analytics {
 			';
 	}
 
-	//adds defer and async attributes to second-chance pixel <script/>
+	//adds defer and async attributes to second-chance pixel <script/> and possibly future others
 	public function script_loader_tag( $tag, $handle, $src ) {
-		//list of enqueued/registered script handles to add the defer and aync attributes
 		$async_scripts = array( 'shareasale-wc-tracker-analytics-second-chance' );
+
 	    if ( in_array( $handle, $async_scripts, true ) ) {
 	        return '<script type="text/javascript" src="' . $src . '" async="async" defer="defer"></script>' . "\n";
 	    } else {
@@ -35,7 +35,7 @@ class ShareASale_WC_Tracker_Analytics {
 	}
 
 	public function enqueue_scripts( $hook ) {
-		//required analytics on every page
+		//required base analytics on every page
 		$src         = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics.js';
 		$options     = get_option( 'shareasale_wc_tracker_options' );
 		$merchant_id = $options['merchant-id'];
@@ -59,7 +59,6 @@ class ShareASale_WC_Tracker_Analytics {
 	public function woocommerce_ajax_added_to_cart( $product_id ) {
 		$product  = new WC_Product( $product_id );
 		$sku      = $product->get_sku();
-		//fortunately can't have a discount yet...
 		$price    = $product->get_price();
 		//quantity should be one on non-single product page where AJAX happens
 		$quantity = 1;
@@ -70,6 +69,7 @@ class ShareASale_WC_Tracker_Analytics {
 			'pricelist'    => $price,
 			'quantitylist' => $quantity,
 		);
+		//inject the custom <script/> HTML fragments into the JSON response by using this WC filter
 		add_filter( 'woocommerce_add_to_cart_fragments',
 			array(
 				$this,
@@ -80,12 +80,11 @@ class ShareASale_WC_Tracker_Analytics {
 
 	public function woocommerce_add_to_cart_fragments( $fragments ) {
 		$src  = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js?v=' . $this->version;
-		//clean out WC session storage for this fragment...
 		$src2 = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-cache-buster.js?v=' . $this->version;
 
 		ob_start();
 		?>
-		<!--localize product data -->
+		<!-- first localize product data -->
 		<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax-model" type="text/javascript">
 			var shareasaleWcTrackerAnalyticsAddToCart = <?php echo wp_json_encode( $this->ajax_product_data ) ?>;
 		</script>
@@ -97,7 +96,7 @@ class ShareASale_WC_Tracker_Analytics {
 		<?php
 		$fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax'] = ob_get_clean();
 		?>
-		<!-- make sure the script tag isn't cached as a WC cart fragment -->
+		<!-- make sure the script tag isn't cached in HTML5 session storage as another WC cart fragment... -->
 		<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax-cb" type="text/javascript" src="<?php echo esc_attr( $src2 ); ?>"></script>
 		<?php
 		$fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-cb'] = ob_get_clean();
@@ -112,7 +111,6 @@ class ShareASale_WC_Tracker_Analytics {
 		}
 
 		$product = new WC_Product( $product_id );
-		//fortunately can't have a discount yet...
 		$price   = $product->get_price();
 		$sku     = $product->get_sku();
 
@@ -134,7 +132,8 @@ class ShareASale_WC_Tracker_Analytics {
 			)
 		);
 	}
-
+	
+	/*
 	public function woocommerce_checkout_init( $instance ) {
 		//error_log( print_r( $instance, true ) );
 
@@ -161,12 +160,22 @@ class ShareASale_WC_Tracker_Analytics {
 			);
 		}
 	}
+	*/
 
 	public function woocommerce_applied_coupon( $coupon_code ) {
 		$src = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-applied-coupon.js';
+
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
-			echo '<script type="text/javascript"></script>';
-			echo '<script type="text/javascript" src="' . $src . '"></script>';
+			ob_start();
+			?>
+			<!-- first localize coupon data -->
+			<script type="text/javascript">
+				var shareasaleWcTrackerAnalyticsAppliedCoupon = <?php echo wp_json_encode( array( 'couponcode' => $coupon_code ) ) ?>;
+			</script>
+			<!-- run coupon applied call for ShareASale analytics -->
+			<script type="text/javascript" src="<?php echo esc_attr( $src ); ?>"></script>
+			<?php
+			ob_end_flush();
 		} else {
 			wp_enqueue_script(
 				'shareasale-wc-tracker-analytics-applied-coupon',
