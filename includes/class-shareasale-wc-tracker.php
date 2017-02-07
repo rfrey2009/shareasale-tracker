@@ -71,12 +71,14 @@ class ShareASale_WC_Tracker {
 		$this->loader->add_action( 'woocommerce_add_to_cart',        $this->analytics, 'woocommerce_add_to_cart',
 			array( 'priority' => 10, 'args' => 6 )
 		);
-		$this->loader->add_action( 'woocommerce_ajax_added_to_cart', $this->analytics, 'woocommerce_ajax_added_to_cart' );
-		$this->loader->add_action( 'woocommerce_checkout_init',      $this->analytics, 'woocommerce_checkout_init' );
-		$this->loader->add_action( 'woocommerce_applied_coupon',     $this->analytics, 'woocommerce_applied_coupon' );
-		$this->loader->add_action( 'woocommerce_thankyou',           $this->analytics, 'woocommerce_thankyou' );
+		$this->loader->add_action( 'woocommerce_ajax_added_to_cart',   $this->analytics, 'woocommerce_ajax_added_to_cart' );
+		$this->loader->add_action( 'woocommerce_before_checkout_form', $this->analytics, 'woocommerce_before_checkout_form' );
+		$this->loader->add_action( 'woocommerce_applied_coupon',       $this->analytics, 'woocommerce_applied_coupon' );
+		$this->loader->add_action( 'woocommerce_thankyou',             $this->analytics, 'woocommerce_thankyou',
+			array( 'priority' => 9, 'args' => 1 )
+		);
 		//analytics filter
-		$this->loader->add_filter( 'script_loader_tag',              $this->analytics, 'script_loader_tag',
+		$this->loader->add_filter( 'script_loader_tag',                $this->analytics, 'script_loader_tag',
 			array( 'priority' => 10, 'args' => 3 )
 		);
 

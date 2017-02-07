@@ -6,5 +6,5 @@ jQuery(document).on("added_to_cart", function(){
 		delete fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-cb'];
 		sessionStorage.setItem( wc_cart_fragments_params.fragment_name, JSON.stringify( fragments ) );
 	}
-	console.log('busted a cache!');
+	console.log('cache busted!');
 });

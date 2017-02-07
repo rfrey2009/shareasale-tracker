@@ -17,12 +17,17 @@ class ShareASale_WC_Tracker_Pixel {
 	}
 
 	public function woocommerce_thankyou( $order_id ) {
-		$options     = get_option( 'shareasale_wc_tracker_options' );
-		$merchant_id = $options['merchant-id'];
-		$store_id    = @$options['store-id'];
-		$xtype       = @$options['xtype'];
+		$options        = get_option( 'shareasale_wc_tracker_options' );
+		$merchant_id    = $options['merchant-id'];
+		$store_id       = @$options['store-id'];
+		$xtype          = @$options['xtype'];
+		$prev_triggered = get_post_meta( $order_id, 'shareasale-wc-tracker-triggered', true );
 
 		if ( ! $order_id || ! $merchant_id ) {
+			return;
+		}
+
+		if ( $prev_triggered && ! isset( $_GET['troubleshooting'] ) ) {
 			return;
 		}
 
@@ -106,6 +111,8 @@ class ShareASale_WC_Tracker_Pixel {
 									),
 								)
 		);
+		add_post_meta( $order_id, 'shareasale-wc-tracker-triggered', date( 'Y-m-d H:i:s' ), true );
+		//delete_post_meta( $order_id, 'shareasale-wc-tracker-triggered' );
 	}
 
 	private function get_order_amount() {
@@ -156,15 +163,14 @@ class ShareASale_WC_Tracker_Pixel {
 			if ( 0 !== $customer_user_id ) {
 				$user_orders = get_posts(
 					array(
-						'post_type'      => 'shop_order',
-						'meta_key'       => '_customer_user',
-						'meta_value'     => $customer_user_id,
-						'posts_per_page' => -1,
-						'post_status'    => array_keys( wc_get_order_statuses() ),
+						'post_type'   => wc_get_order_types(),
+						'meta_key'    => '_customer_user',
+						'meta_value'  => $customer_user_id,
+						'numberposts' => -1,
+						'post_status' => array_keys( wc_get_order_statuses() ),
 					)
 				);
 				$order_count = count( $user_orders );
-
 				$newcustomer = ($order_count > 1 ? 0 : 1);
 			}
 		}

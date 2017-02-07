@@ -14,7 +14,7 @@ class ShareASale_WC_Tracker_Analytics {
 	public function __construct( $version ) {
 		$this->version = $version;
 	}
-	//setup the placeholder tags that will be swapped with <script/> fragments if/when there's an AJAX add-to-cart
+
 	public function wp_head() {
 		echo '
 			<noscript id="shareasale-wc-tracker-analytics-add-to-cart-ajax-model"></noscript>
@@ -23,7 +23,6 @@ class ShareASale_WC_Tracker_Analytics {
 			';
 	}
 
-	//adds defer and async attributes to second-chance pixel <script/> and possibly future others
 	public function script_loader_tag( $tag, $handle, $src ) {
 		$async_scripts = array( 'shareasale-wc-tracker-analytics-second-chance' );
 
@@ -63,7 +62,6 @@ class ShareASale_WC_Tracker_Analytics {
 		//quantity should be one on non-single product page where AJAX happens
 		$quantity = 1;
 
-		//if woocommerce_add_to_cart_fragments() were anonymous rather than a method, could use closure here instead...
 		$this->ajax_product_data = array(
 			'skulist'      => $sku,
 			'pricelist'    => $price,
@@ -132,15 +130,30 @@ class ShareASale_WC_Tracker_Analytics {
 			)
 		);
 	}
-	
-	/*
-	public function woocommerce_checkout_init( $instance ) {
-		//error_log( print_r( $instance, true ) );
+
+	public function woocommerce_before_checkout_form( $checkout ) {
+		error_log( print_r( $checkout, true ) );
 
 		$src = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-begin-checkout.js';
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
-			//echo '<script type="text/javascript"></script>';
-			//echo '<script type="text/javascript" src="' . $src . '"></script>';
+			ob_start();
+			?>
+			<!-- first localize coupon data -->
+			<script type="text/javascript">
+				var shareasaleWcTrackerAnalyticsBeginCheckout = 
+				<?php
+				echo wp_json_encode(
+					array(
+						'skulist'      => '',
+						'pricelist'    => '',
+						'quantitylist' => '',
+					)
+				) ?>;
+			</script>
+			<!-- run coupon applied call for ShareASale analytics -->
+			<script type="text/javascript" src="<?php echo esc_attr( $src ); ?>"></script>
+			<?php
+			ob_end_flush();
 		} else {
 			wp_enqueue_script(
 				'shareasale-wc-tracker-analytics-begin-checkout',
@@ -160,7 +173,6 @@ class ShareASale_WC_Tracker_Analytics {
 			);
 		}
 	}
-	*/
 
 	public function woocommerce_applied_coupon( $coupon_code ) {
 		$src = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-applied-coupon.js';
@@ -195,11 +207,18 @@ class ShareASale_WC_Tracker_Analytics {
 	}
 
 	public function woocommerce_thankyou( $order_id ) {
-		$order       = new WC_Order( $order_id );
-		$ordernumber = $order->get_order_number();
+		//don't bother if we've already fired a standard ShareASale_WC_Tracker_Pixel() for this
+		$prev_triggered = get_post_meta( $order_id, 'shareasale-wc-tracker-triggered', true );
+		if ( $prev_triggered ) {
+			return;
+		}
+
+		$order          = new WC_Order( $order_id );
+		$ordernumber    = $order->get_order_number();
 
 		$src  = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-conversion.js';
 		$src2 = 'https://shareasale-analytics.com/j.js';
+
 		wp_enqueue_script(
 			'shareasale-wc-tracker-analytics-conversion',
 			$src,
