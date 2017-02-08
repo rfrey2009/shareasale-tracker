@@ -137,12 +137,8 @@ class ShareASale_WC_Tracker_Pixel {
 		$last_index = array_search( end( $items ), $items, true );
 
 		foreach ( $items as $index => $item ) {
-
 			$delimiter = $index === $last_index ? '' : ',';
-
-			$id      = $item['product_id'];
-			$product = new WC_Product( $id );
-			$sku     = $product->get_sku();
+			$sku = ( new WC_Product( $item['product_id'] ) )->get_sku();
 
 			isset( $product_data->skulist ) ? $product_data->skulist .= $sku . $delimiter : $product_data->skulist = $sku . $delimiter;
 

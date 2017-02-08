@@ -26,11 +26,11 @@ class ShareASale_WC_Tracker_Analytics {
 	public function script_loader_tag( $tag, $handle, $src ) {
 		$async_scripts = array( 'shareasale-wc-tracker-analytics-second-chance' );
 
-	    if ( in_array( $handle, $async_scripts, true ) ) {
-	        return '<script type="text/javascript" src="' . $src . '" async="async" defer="defer"></script>' . "\n";
-	    } else {
-	    	return $tag;
-	    }
+		if ( in_array( $handle, $async_scripts, true ) ) {
+			return '<script type="text/javascript" src="' . $src . '" async="async" defer="defer"></script>' . "\n";
+		} else {
+			return $tag;
+		}
 	}
 
 	public function enqueue_scripts( $hook ) {
@@ -132,9 +132,24 @@ class ShareASale_WC_Tracker_Analytics {
 	}
 
 	public function woocommerce_before_checkout_form( $checkout ) {
-		error_log( print_r( $checkout, true ) );
+		global $woocommerce;
 
-		$src = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-begin-checkout.js';
+		$src   = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-begin-checkout.js';
+
+		$items = $woocommerce->cart->get_cart();
+		$last_index = array_search( end( $items ), $items, true );
+
+		foreach ( $items as $index => $item ) {
+			$delimiter = $index === $last_index ? '' : ',';
+			$sku = ( new WC_Product( $item['product_id'] ) )->get_sku();
+
+			isset( $skulist ) ? $skulist .= $sku . $delimiter : $skulist = $sku . $delimiter;
+
+			isset( $pricelist ) ? $pricelist .= round( ( $item['line_total'] / $item['quantity'] ), 2 ) . $delimiter : $pricelist = round( ( $item['line_total'] / $item['quantity'] ), 2 ) . $delimiter;
+
+			isset( $quantitylist ) ? $quantitylist .= $item['quantity'] . $delimiter : $quantitylist = $item['quantity'] . $delimiter;
+		}
+
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
 			ob_start();
 			?>
@@ -144,9 +159,9 @@ class ShareASale_WC_Tracker_Analytics {
 				<?php
 				echo wp_json_encode(
 					array(
-						'skulist'      => '',
-						'pricelist'    => '',
-						'quantitylist' => '',
+						'skulist'      => $skulist,
+						'pricelist'    => $pricelist,
+						'quantitylist' => $quantitylist,
 					)
 				) ?>;
 			</script>
@@ -166,9 +181,9 @@ class ShareASale_WC_Tracker_Analytics {
 				'shareasale-wc-tracker-analytics-begin-checkout',
 				'shareasaleWcTrackerAnalyticsBeginCheckout',
 				array(
-					'skulist'      => '',
-					'pricelist'    => '',
-					'quantitylist' => '',
+					'skulist'      => $skulist,
+					'pricelist'    => $pricelist,
+					'quantitylist' => $quantitylist,
 				)
 			);
 		}
