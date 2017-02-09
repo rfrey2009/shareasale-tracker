@@ -24,8 +24,8 @@ if ( ! defined( 'WPINC' ) ) {
 		<form action = "options.php" method = "post">
 			<div id = 'shareasale-wc-tracker-options'>
 			<?php
-			  settings_fields( 'shareasale_wc_tracker_options' );
-			  do_settings_sections( 'shareasale_wc_tracker_datafeed_generation' );
+				settings_fields( 'shareasale_wc_tracker_options' );
+				do_settings_sections( 'shareasale_wc_tracker_datafeed_generation' );
 			?>     
 			</div>
 			<!-- <button id = "tracker-options-save" name = "Submit">Save Settings</button> -->

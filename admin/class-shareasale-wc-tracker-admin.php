@@ -214,6 +214,29 @@ class ShareASale_WC_Tracker_Admin {
 		}
 
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation.php';
+
+		$url   = wp_nonce_url( admin_url( 'admin.php?page=shareasale_wc_tracker_datafeed_generation' ), 'generating-datafeed' );
+		$dir   = plugin_dir_path( __FILE__ ) . 'datafeeds';
+		$creds = request_filesystem_credentials( $url, '', false, $dir, null );
+
+		if ( false === $creds ) {
+			//stop here, we can't even write to /datafeeds yet and need credentials...
+			return;
+		}
+
+		if ( ! WP_Filesystem( $creds ) ) {
+			//we got credentials but they don't work, try again and prompt an error msg
+			request_filesystem_credentials( $url, '', true, $dir, null );
+			return;
+		}
+
+		//now we're cooking! instantiate a ShareASale_WC_Tracker_Datafeeds() object here and get to work exporting if form submitted...
+		global $wp_filesystem;
+
+		//$filename = trailingslashit( $dir ) . 'test.txt';
+		// if ( ! $wp_filesystem->put_contents( $filename, 'Test file contents', FS_CHMOD_FILE ) ) {
+		//     echo 'error saving file!';
+		// }
 	}
 
 	public function render_settings_required_section_text() {
@@ -306,7 +329,7 @@ class ShareASale_WC_Tracker_Admin {
 
 	//add shortcut to settings page from the plugin admin entry for dealsbar
 	public function render_settings_shortcut( $links ) {
-		$settings_link = '<a href="' . get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=shareasale_wc_tracker">Settings</a>';
+		$settings_link = '<a href="' . admin_url( 'admin.php?page=shareasale_wc_tracker' ) . '">Settings</a>';
 		array_unshift( $links, $settings_link );
 		return $links;
 	}
