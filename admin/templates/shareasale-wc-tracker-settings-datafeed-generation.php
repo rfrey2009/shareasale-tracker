@@ -14,10 +14,10 @@ if ( ! defined( 'WPINC' ) ) {
 	    	<a href = "?page=shareasale_wc_tracker" class = "nav-tab">
 	    		Tracking Settings
 	    	</a>
-	    	<a href = "?page=shareasale_wc_tracker_automatic_reconciliation&amp;page_num=1" class = "nav-tab nav-tab-active">
+	    	<a href = "?page=shareasale_wc_tracker_automatic_reconciliation&amp;page_num=1" class = "nav-tab">
 	    		Automatic Reconciliation
 	    	</a>
-	    	<a href = "?page=shareasale_wc_tracker_datafeed_generation" class = "nav-tab">
+	    	<a href = "?page=shareasale_wc_tracker_datafeed_generation" class = "nav-tab nav-tab-active">
 	    		Datafeed Generation
 	    	</a>
 		</h2>
@@ -25,10 +25,10 @@ if ( ! defined( 'WPINC' ) ) {
 			<div id = 'shareasale-wc-tracker-options'>
 			<?php
 			  settings_fields( 'shareasale_wc_tracker_options' );
-			  do_settings_sections( 'shareasale_wc_tracker_automatic_reconciliation' );
+			  do_settings_sections( 'shareasale_wc_tracker_datafeed_generation' );
 			?>     
 			</div>
-			<button id = "tracker-options-save" name = "Submit">Save Settings</button>
+			<!-- <button id = "tracker-options-save" name = "Submit">Save Settings</button> -->
 		</form>
 	</div>
 </div>

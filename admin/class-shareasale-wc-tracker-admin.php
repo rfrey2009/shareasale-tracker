@@ -18,9 +18,16 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function enqueue_styles( $hook ) {
-		if ( 'toplevel_page_shareasale_wc_tracker' === $hook || 'shareasale-wc-tracker_page_shareasale_wc_tracker_automatic_reconciliation' === $hook ) {
+
+		$hooks = array(
+			'toplevel_page_shareasale_wc_tracker',
+			'shareasale-wc-tracker_page_shareasale_wc_tracker_automatic_reconciliation',
+			'shareasale-wc-tracker_page_shareasale_wc_tracker_datafeed_generation',
+		);
+
+		if ( in_array( $hook, $hooks, true ) ) {
 			wp_enqueue_style(
-				'shareasale-wc-tracker-admin-css',
+				'shareasale-wc-tracker-admin',
 				plugin_dir_url( __FILE__ ) . 'css/shareasale-wc-tracker-admin.css',
 				array(),
 				$this->version
@@ -29,7 +36,12 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function enqueue_scripts( $hook ) {
-		if ( 'shareasale-wc-tracker_page_shareasale_wc_tracker_automatic_reconciliation' === $hook ) {
+
+		$hooks = array(
+			'shareasale-wc-tracker_page_shareasale_wc_tracker_automatic_reconciliation',
+		);
+
+		if ( in_array( $hook, $hooks, true ) ) {
 			wp_enqueue_script(
 				'shareasale-wc-tracker-admin-js',
 				plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-admin.js',
@@ -133,6 +145,8 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => 'Enter your API Secret',
 				'class'       => 'shareasale-wc-tracker-option',
 		));
+
+		add_settings_section( 'shareasale_wc_tracker_datafeed', 'Datafeed Settings', array( $this, 'render_settings_datafeed_section_text' ), 'shareasale_wc_tracker_datafeed_generation' );
 	}
 
 	public function admin_menu() {
@@ -154,20 +168,19 @@ class ShareASale_WC_Tracker_Admin {
 	    $submenu_slug       = 'shareasale_wc_tracker_automatic_reconciliation';
 	    $submenu_function   = array( $this, 'render_settings_page_submenu' );
 	   	add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
+
+	   	$submenu_page_title = 'Product Datafeed Generation';
+	    $submenu_title      = 'Product Datafeed Generation';
+	    $submenu_slug       = 'shareasale_wc_tracker_datafeed_generation';
+	    $submenu_function   = array( $this, 'render_settings_page_subsubmenu' );
+	   	add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
 	}
 
 	public function render_settings_page() {
 		include_once 'options-head.php';
 		//errors are stylized off add_settings_error() from WordPress. Can't be called here since not submitting to options.php.
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			echo '<div id="setting-error-plugin-depends" class="error settings-error notice is-dismissible"> 
-						<p>
-							<strong>WooCommerce plugin must be installed and activated to use this plugin.</a></strong>
-						</p>
-						<button type="button" class="notice-dismiss">
-							<span class="screen-reader-text">Dismiss this notice.</span>
-						</button>
-					</div>';
+			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
 			return;
 		}
 
@@ -178,32 +191,29 @@ class ShareASale_WC_Tracker_Admin {
 		include_once 'options-head.php';
 		//errors are stylized off add_settings_error() from WordPress. Can't be called here since not submitting to options.php.
 		if ( ! function_exists( 'curl_version' ) ) {
-			echo '<div id="setting-error-plugin-depends" class="error settings-error notice is-dismissible"> 
-						<p>
-							<strong>cURL is not enabled on your shop\'s server. Please contact your webhost to have cURL enabled to use automatic reconciliation.</a></strong>
-						</p>
-						<button type="button" class="notice-dismiss">
-							<span class="screen-reader-text">Dismiss this notice.</span>
-						</button>
-					</div>';
+			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-curl-warning.php';
 			return;
 		}
 
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			echo '<div id="setting-error-plugin-depends" class="error settings-error notice is-dismissible"> 
-						<p>
-							<strong>WooCommerce plugin must be installed and activated to use this plugin.</a></strong>
-						</p>
-						<button type="button" class="notice-dismiss">
-							<span class="screen-reader-text">Dismiss this notice.</span>
-						</button>
-					</div>';
+			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
 			return;
 		}
 
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-automatic-reconciliation.php';
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-automatic-reconciliation-table.php';
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-automatic-reconciliation-pagination.php';
+	}
+
+	public function render_settings_page_subsubmenu() {
+		include_once 'options-head.php';
+		//errors are stylized off add_settings_error() from WordPress. Can't be called here since not submitting to options.php.
+		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
+			return;
+		}
+
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation.php';
 	}
 
 	public function render_settings_required_section_text() {
@@ -220,6 +230,10 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function render_settings_api_section_text() {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-api-section-text.php';
+	}
+
+	public function render_settings_datafeed_section_text() {
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-section-text.php';
 	}
 
 	public function render_settings_input( $attributes ) {

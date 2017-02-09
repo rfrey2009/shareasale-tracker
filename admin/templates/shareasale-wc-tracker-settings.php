@@ -1,4 +1,5 @@
-<?php if ( ! defined( 'WPINC' ) ) {
+<?php 
+if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 ?>
@@ -15,6 +16,9 @@
 	    	</a>
 	    	<a href = "?page=shareasale_wc_tracker_automatic_reconciliation&amp;page_num=1" class = "nav-tab">
 	    		Automatic Reconciliation
+	    	</a>
+	    	<a href = "?page=shareasale_wc_tracker_datafeed_generation" class = "nav-tab">
+	    		Datafeed Generation
 	    	</a>
 		</h2>
 		<form action = "options.php" method = "post">

@@ -16,11 +16,13 @@ class ShareASale_WC_Tracker_Analytics {
 	}
 
 	public function wp_head() {
-		echo '
+		ob_start();
+		?>		
 			<noscript id="shareasale-wc-tracker-analytics-add-to-cart-ajax-model"></noscript>
 			<noscript id="shareasale-wc-tracker-analytics-add-to-cart-ajax"></noscript>
 			<noscript id="shareasale-wc-tracker-analytics-add-to-cart-ajax-cb"></noscript>
-			';
+		<?php
+		ob_end_flush();
 	}
 
 	public function script_loader_tag( $tag, $handle, $src ) {
@@ -82,24 +84,24 @@ class ShareASale_WC_Tracker_Analytics {
 
 		ob_start();
 		?>
-		<!-- first localize product data -->
-		<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax-model" type="text/javascript">
-			var shareasaleWcTrackerAnalyticsAddToCart = <?php echo wp_json_encode( $this->ajax_product_data ) ?>;
-		</script>
-		<?php
-		$fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-model'] = ob_get_clean();
-		?>
-		<!-- run atc call for ShareASale analytics -->
-		<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax" type="text/javascript" src="<?php echo esc_attr( $src ); ?>"></script>
-		<?php
-		$fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax'] = ob_get_clean();
-		?>
-		<!-- make sure the script tag isn't cached in HTML5 session storage as another WC cart fragment... -->
-		<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax-cb" type="text/javascript" src="<?php echo esc_attr( $src2 ); ?>"></script>
-		<?php
-		$fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-cb'] = ob_get_clean();
+			<!-- first localize product data -->
+			<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax-model" type="text/javascript">
+				var shareasaleWcTrackerAnalyticsAddToCart = <?php echo wp_json_encode( $this->ajax_product_data ) ?>;
+			</script>
 
+		<?php $fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-model'] = ob_get_clean(); ?>
+			
+			<!-- run atc call for ShareASale analytics -->
+			<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax" type="text/javascript" src="<?php echo esc_attr( $src ); ?>"></script>
+
+		<?php $fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax'] = ob_get_clean(); ?>
+			
+			<!-- make sure the script tag isn't cached in HTML5 session storage as another WC cart fragment... -->
+			<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax-cb" type="text/javascript" src="<?php echo esc_attr( $src2 ); ?>"></script>
+
+		<?php $fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-cb'] = ob_get_clean();
 		return $fragments;
+		ob_end_clean();
 	}
 
 	public function woocommerce_add_to_cart( $cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data ) {
@@ -153,20 +155,21 @@ class ShareASale_WC_Tracker_Analytics {
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
 			ob_start();
 			?>
-			<!-- first localize coupon data -->
-			<script type="text/javascript">
-				var shareasaleWcTrackerAnalyticsBeginCheckout = 
-				<?php
-				echo wp_json_encode(
-					array(
-						'skulist'      => $skulist,
-						'pricelist'    => $pricelist,
-						'quantitylist' => $quantitylist,
+				<!-- first localize coupon data -->
+				<script type="text/javascript">
+					var shareasaleWcTrackerAnalyticsBeginCheckout = 
+					<?php
+					echo wp_json_encode(
+						array(
+							'skulist'      => $skulist,
+							'pricelist'    => $pricelist,
+							'quantitylist' => $quantitylist,
+						)
 					)
-				) ?>;
-			</script>
-			<!-- run coupon applied call for ShareASale analytics -->
-			<script type="text/javascript" src="<?php echo esc_attr( $src ); ?>"></script>
+					?>;
+				</script>
+				<!-- run coupon applied call for ShareASale analytics -->
+				<script type="text/javascript" src="<?php echo esc_attr( $src ); ?>"></script>
 			<?php
 			ob_end_flush();
 		} else {
@@ -195,12 +198,12 @@ class ShareASale_WC_Tracker_Analytics {
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
 			ob_start();
 			?>
-			<!-- first localize coupon data -->
-			<script type="text/javascript">
-				var shareasaleWcTrackerAnalyticsAppliedCoupon = <?php echo wp_json_encode( array( 'couponcode' => $coupon_code ) ) ?>;
-			</script>
-			<!-- run coupon applied call for ShareASale analytics -->
-			<script type="text/javascript" src="<?php echo esc_attr( $src ); ?>"></script>
+				<!-- first localize coupon data -->
+				<script type="text/javascript">
+					var shareasaleWcTrackerAnalyticsAppliedCoupon = <?php echo wp_json_encode( array( 'couponcode' => $coupon_code ) ) ?>;
+				</script>
+				<!-- run coupon applied call for ShareASale analytics -->
+				<script type="text/javascript" src="<?php echo esc_attr( $src ); ?>"></script>
 			<?php
 			ob_end_flush();
 		} else {
