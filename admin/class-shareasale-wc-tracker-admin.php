@@ -146,7 +146,7 @@ class ShareASale_WC_Tracker_Admin {
 				'class'       => 'shareasale-wc-tracker-option',
 		));
 
-		add_settings_section( 'shareasale_wc_tracker_datafeed', 'Datafeed Settings', array( $this, 'render_settings_datafeed_section_text' ), 'shareasale_wc_tracker_datafeed_generation' );
+		add_settings_section( 'shareasale_wc_tracker_datafeed', 'Product Datafeed', array( $this, 'render_settings_datafeed_section_text' ), 'shareasale_wc_tracker_datafeed_generation' );
 	}
 
 	public function admin_menu() {
@@ -225,18 +225,18 @@ class ShareASale_WC_Tracker_Admin {
 		}
 
 		if ( ! WP_Filesystem( $creds ) ) {
-			//we got credentials but they don't work, try again and prompt an error msg
+			//we got credentials but they don't work, try again and now prompt an error msg...
 			request_filesystem_credentials( $url, '', true, $dir, null );
 			return;
 		}
-
-		//now we're cooking! instantiate a ShareASale_WC_Tracker_Datafeeds() object here and get to work exporting if form submitted...
+		//now we're cooking! instantiate a ShareASale_WC_Tracker_Datafeeds() object here and get to work exporting products
+		//use the new global $wp_filesystem to write to /datafeeds
 		global $wp_filesystem;
 
-		//$filename = trailingslashit( $dir ) . 'test.txt';
-		// if ( ! $wp_filesystem->put_contents( $filename, 'Test file contents', FS_CHMOD_FILE ) ) {
-		//     echo 'error saving file!';
-		// }
+		$filename = trailingslashit( $dir ) . 'test.txt';
+		if ( ! $wp_filesystem->put_contents( $filename, 'Test file contents2', FS_CHMOD_FILE ) ) {
+		    echo 'error saving file!';
+		}
 	}
 
 	public function render_settings_required_section_text() {

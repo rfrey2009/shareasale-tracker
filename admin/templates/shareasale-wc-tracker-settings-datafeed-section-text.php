@@ -1,1 +1,1 @@
-test!
+<p>Use this tool to automatically export your products into ShareASale's product datafeed .csv format.</p>
