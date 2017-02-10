@@ -3,12 +3,10 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class ShareASale_WC_Tracker_Datafeeds {
+class ShareASale_WC_Tracker_Datafeed {
 
 
 
 
 
 }
-
-

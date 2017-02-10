@@ -7,7 +7,7 @@ if ( ! defined( 'WPINC' ) ) {
 <div id = "shareasale-wc-tracker">
 	<div class = "wrap">    
 		<h2>
-			<img id = "shareasale-logo" src = "<?php echo plugin_dir_url( __FILE__ ) . '../images/star_logo.png' ?>">
+			<img id = "shareasale-logo" src = "<?php echo esc_url( plugin_dir_url( __FILE__ ) . '../images/star_logo.png' ) ?>">
 			ShareASale WooCommerce Tracker Settings
 		</h2>
 		<h2 class = "nav-tab-wrapper">

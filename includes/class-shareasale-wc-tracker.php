@@ -46,10 +46,11 @@ class ShareASale_WC_Tracker {
 
 	private function define_admin_hooks() {
 		$admin = new ShareASale_WC_Tracker_Admin( $this->get_version() );
-		$this->loader->add_action( 'admin_enqueue_scripts', $admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $admin, 'enqueue_scripts' );
-		$this->loader->add_action( 'admin_init',            $admin, 'admin_init' );
-		$this->loader->add_action( 'admin_menu',            $admin, 'admin_menu' );
+		$this->loader->add_action( 'admin_enqueue_scripts',        $admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts',        $admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_init',                   $admin, 'admin_init' );
+		$this->loader->add_action( 'admin_menu',                   $admin, 'admin_menu' );
+		$this->loader->add_action( 'admin_post_generate_datafeed', $admin, 'admin_post_generate_datafeed' );
 		//admin filters
 		$this->loader->add_filter( 'plugin_action_links_' . SHAREASALE_WC_TRACKER_PLUGIN_FILENAME, $admin, 'render_settings_shortcut' );
 	}

@@ -37,7 +37,7 @@ class ShareASale_WC_Tracker_Analytics {
 
 	public function enqueue_scripts( $hook ) {
 		//required base analytics on every page
-		$src         = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics.js';
+		$src         = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics.js' );
 		$options     = get_option( 'shareasale_wc_tracker_options' );
 		$merchant_id = $options['merchant-id'];
 
@@ -79,8 +79,8 @@ class ShareASale_WC_Tracker_Analytics {
 	}
 
 	public function woocommerce_add_to_cart_fragments( $fragments ) {
-		$src  = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js?v=' . $this->version;
-		$src2 = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-cache-buster.js?v=' . $this->version;
+		$src  = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js?v=' . $this->version );
+		$src2 = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-cache-buster.js?v=' . $this->version );
 
 		ob_start();
 		?>
@@ -114,7 +114,7 @@ class ShareASale_WC_Tracker_Analytics {
 		$price   = $product->get_price();
 		$sku     = $product->get_sku();
 
-		$src = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js';
+		$src = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js' );
 		wp_enqueue_script(
 			'shareasale-wc-tracker-analytics-add-to-cart',
 			$src,
@@ -136,7 +136,7 @@ class ShareASale_WC_Tracker_Analytics {
 	public function woocommerce_before_checkout_form( $checkout ) {
 		global $woocommerce;
 
-		$src   = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-begin-checkout.js';
+		$src   = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-begin-checkout.js' );
 
 		$items = $woocommerce->cart->get_cart();
 		$last_index = array_search( end( $items ), $items, true );
@@ -194,7 +194,7 @@ class ShareASale_WC_Tracker_Analytics {
 	}
 
 	public function woocommerce_applied_coupon( $coupon_code ) {
-		$src = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-applied-coupon.js';
+		$src = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-applied-coupon.js' );
 
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
 			ob_start();
@@ -235,7 +235,7 @@ class ShareASale_WC_Tracker_Analytics {
 		$order          = new WC_Order( $order_id );
 		$ordernumber    = $order->get_order_number();
 
-		$src  = plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-conversion.js';
+		$src  = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-conversion.js' );
 		$src2 = 'https://shareasale-analytics.com/j.js';
 
 		wp_enqueue_script(

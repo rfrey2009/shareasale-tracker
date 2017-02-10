@@ -15,6 +15,7 @@ class ShareASale_WC_Tracker_Admin {
 
 	private function load_dependencies() {
 		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-api.php';
+		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-datafeeds.php';
 	}
 
 	public function enqueue_styles( $hook ) {
@@ -28,7 +29,7 @@ class ShareASale_WC_Tracker_Admin {
 		if ( in_array( $hook, $hooks, true ) ) {
 			wp_enqueue_style(
 				'shareasale-wc-tracker-admin',
-				plugin_dir_url( __FILE__ ) . 'css/shareasale-wc-tracker-admin.css',
+				esc_url( plugin_dir_url( __FILE__ ) . 'css/shareasale-wc-tracker-admin.css' ),
 				array(),
 				$this->version
 			);
@@ -44,7 +45,7 @@ class ShareASale_WC_Tracker_Admin {
 		if ( in_array( $hook, $hooks, true ) ) {
 			wp_enqueue_script(
 				'shareasale-wc-tracker-admin-js',
-				plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-admin.js',
+				esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-admin.js' ),
 				array( 'jquery' ),
 				$this->version
 			);
@@ -147,6 +148,17 @@ class ShareASale_WC_Tracker_Admin {
 		));
 
 		add_settings_section( 'shareasale_wc_tracker_datafeed', 'Product Datafeed', array( $this, 'render_settings_datafeed_section_text' ), 'shareasale_wc_tracker_datafeed_generation' );
+		add_settings_field( 'datafeed-action-hidden', '', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed',
+			array(
+				'id'          => 'datafeed-action-hidden',
+				'name'        => 'action',
+				'value'       => 'generate_datafeed',
+				'status'      => '',
+				'size'        => 1,
+				'type'        => 'hidden',
+				'placeholder' => '',
+				'class'       => 'shareasale-wc-tracker-option-hidden',
+		));
 	}
 
 	public function admin_menu() {
@@ -157,7 +169,7 @@ class ShareASale_WC_Tracker_Admin {
 		$capability = 'manage_options';
 		$menu_slug  = 'shareasale_wc_tracker';
 		$callback   = array( $this, 'render_settings_page' );
-		$icon_url   = plugin_dir_url( __FILE__ ) . 'images/star_logo.png';
+		$icon_url   = esc_url( plugin_dir_url( __FILE__ ) . 'images/star_logo.png' );
 		add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $callback, $icon_url );
 
 		$sub_menu_title = 'Tracking Settings';
@@ -214,8 +226,11 @@ class ShareASale_WC_Tracker_Admin {
 		}
 
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation.php';
+	}
 
-		$url   = wp_nonce_url( admin_url( 'admin.php?page=shareasale_wc_tracker_datafeed_generation' ), 'generating-datafeed' );
+	public function admin_post_generate_datafeed() {
+
+		$url   = wp_nonce_url( esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker_datafeed_generation' ) ), 'generate-datafeed' );
 		$dir   = plugin_dir_path( __FILE__ ) . 'datafeeds';
 		$creds = request_filesystem_credentials( $url, '', false, $dir, null );
 
@@ -230,13 +245,9 @@ class ShareASale_WC_Tracker_Admin {
 			return;
 		}
 		//now we're cooking! instantiate a ShareASale_WC_Tracker_Datafeeds() object here and get to work exporting products
-		//use the new global $wp_filesystem to write to /datafeeds
 		global $wp_filesystem;
-
-		// $filename = trailingslashit( $dir ) . 'test.txt';
-		// if ( ! $wp_filesystem->put_contents( $filename, 'Test file contents2', FS_CHMOD_FILE ) ) {
-		//     echo 'error saving file!';
-		// }
+		$datafeed = new ShareASale_WC_Tracker_Datafeed();
+		echo 'TESTAROO!';
 	}
 
 	public function render_settings_required_section_text() {
@@ -329,7 +340,7 @@ class ShareASale_WC_Tracker_Admin {
 
 	//add shortcut to settings page from the plugin admin entry for dealsbar
 	public function render_settings_shortcut( $links ) {
-		$settings_link = '<a href="' . admin_url( 'admin.php?page=shareasale_wc_tracker' ) . '">Settings</a>';
+		$settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker' ) ) . '">Settings</a>';
 		array_unshift( $links, $settings_link );
 		return $links;
 	}
