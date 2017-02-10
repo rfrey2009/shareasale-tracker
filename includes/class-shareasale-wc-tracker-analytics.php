@@ -143,7 +143,8 @@ class ShareASale_WC_Tracker_Analytics {
 
 		foreach ( $items as $index => $item ) {
 			$delimiter = $index === $last_index ? '' : ',';
-			$sku = ( new WC_Product( $item['product_id'] ) )->get_sku();
+			$product   = new WC_Product( $item['product_id'] );
+			$sku       = $product->get_sku();
 
 			isset( $skulist ) ? $skulist .= $sku . $delimiter : $skulist = $sku . $delimiter;
 

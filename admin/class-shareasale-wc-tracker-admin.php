@@ -233,10 +233,10 @@ class ShareASale_WC_Tracker_Admin {
 		//use the new global $wp_filesystem to write to /datafeeds
 		global $wp_filesystem;
 
-		$filename = trailingslashit( $dir ) . 'test.txt';
-		if ( ! $wp_filesystem->put_contents( $filename, 'Test file contents2', FS_CHMOD_FILE ) ) {
-		    echo 'error saving file!';
-		}
+		// $filename = trailingslashit( $dir ) . 'test.txt';
+		// if ( ! $wp_filesystem->put_contents( $filename, 'Test file contents2', FS_CHMOD_FILE ) ) {
+		//     echo 'error saving file!';
+		// }
 	}
 
 	public function render_settings_required_section_text() {
