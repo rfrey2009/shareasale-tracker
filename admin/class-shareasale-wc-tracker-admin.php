@@ -212,7 +212,7 @@ class ShareASale_WC_Tracker_Admin {
 			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
 			return;
 		}
-
+		//stop if this came from a previously posted datafeed generation POST but the return nonce is bad/empty
 		if ( true == $_GET['generated'] && ! wp_verify_nonce( $_GET['_wpnonce'], 'generated-datafeed' ) ) {
 			return;
 		}
@@ -224,14 +224,11 @@ class ShareASale_WC_Tracker_Admin {
 		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'generate-datafeed' ) ) {
 		    return;
 		}
-		//can't use wp_nonce_url since it encodes & to &amp;...
-		$url   =
-		add_query_arg( '_wpnonce',
-			wp_create_nonce( 'generated-datafeed' ),
-			esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker_datafeed_generation' ) )
-		);
-		$dir   = plugin_dir_path( __FILE__ ) . 'datafeeds';
-		$creds = request_filesystem_credentials( $url, '', false, $dir, null );
+		$url    = 'admin-post.php';
+		$dir    = plugin_dir_path( __FILE__ ) . 'datafeeds';
+		//repost hidden nonce and action field in case credentials input fails and needs to be retried
+		$repost = array( '_wpnonce', 'action' );
+		$creds  = request_filesystem_credentials( $url, '', false, $dir, $repost );
 
 		if ( false === $creds ) {
 			//stop here, we can't even write to /datafeeds yet and need credentials...
@@ -239,15 +236,25 @@ class ShareASale_WC_Tracker_Admin {
 		}
 
 		if ( ! WP_Filesystem( $creds ) ) {
-			//we got credentials but they don't work, try again and now prompt an error msg...
-			request_filesystem_credentials( $url, '', true, $dir, null );
+			//we got credentials but they don't work, so try again and now prompt an error msg...
+			request_filesystem_credentials( $url, '', true, $dir, $repost );
 			return;
 		}
 		//now we're cooking! instantiate a ShareASale_WC_Tracker_Datafeed() object here and get to work exporting products
 		global $wp_filesystem;
 		$datafeed = new ShareASale_WC_Tracker_Datafeed();
+		//go back to starting page
+		$goback   =
+			add_query_arg(
+				array(
+					'page'      => 'shareasale_wc_tracker_datafeed_generation',
+			    	'_wpnonce'  => wp_create_nonce( 'generated-datafeed' ),
+			    	'generated' => 'true',
+				),
+				esc_url( admin_url( 'admin.php' ) )
+			);
 
-		wp_redirect( add_query_arg( 'generated', 'true',  $url ) );
+		wp_redirect( $goback );
 		exit();
 	}
 
