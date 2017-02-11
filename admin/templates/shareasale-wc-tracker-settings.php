@@ -1,34 +1,34 @@
-<?php 
+<?php
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 ?>
 
-<div id = "shareasale-wc-tracker">
-	<div class = "wrap">    
+<div id="shareasale-wc-tracker">
+	<div class="wrap">    
 		<h2>
-			<img id = "shareasale-logo" src = "<?php echo esc_url( plugin_dir_url( __FILE__ ) . '../images/star_logo.png' ) ?>">
+			<img id="shareasale-logo" src="<?php echo esc_url( plugin_dir_url( __FILE__ ) . '../images/star_logo.png' ) ?>">
 			ShareASale WooCommerce Tracker Settings
 		</h2>
-		<h2 class = "nav-tab-wrapper">
-	    	<a href = "?page=shareasale_wc_tracker" class = "nav-tab nav-tab-active">
+		<h2 class="nav-tab-wrapper">
+	    	<a href="?page=shareasale_wc_tracker" class="nav-tab nav-tab-active">
 	    		Tracking Settings
 	    	</a>
-	    	<a href = "?page=shareasale_wc_tracker_automatic_reconciliation&amp;page_num=1" class = "nav-tab">
+	    	<a href="?page=shareasale_wc_tracker_automatic_reconciliation&amp;page_num=1" class="nav-tab">
 	    		Automatic Reconciliation
 	    	</a>
-	    	<a href = "?page=shareasale_wc_tracker_datafeed_generation" class = "nav-tab">
+	    	<a href="?page=shareasale_wc_tracker_datafeed_generation" class="nav-tab">
 	    		Datafeed Generation
 	    	</a>
 		</h2>
-		<form action = "options.php" method = "post">
-			<div id = 'shareasale-wc-tracker-options'>
+		<form action="options.php" method="post">
+			<div id="shareasale-wc-tracker-options">
 			<?php
 			  settings_fields( 'shareasale_wc_tracker_options' );
 			  do_settings_sections( 'shareasale_wc_tracker' );
 			?>     
 			</div>
-			<button id = "tracker-options-save" name = "Submit">Save Settings</button>
+			<button id="tracker-options-save" name="Submit">Save Settings</button>
 		</form>
 	</div> 
 </div>

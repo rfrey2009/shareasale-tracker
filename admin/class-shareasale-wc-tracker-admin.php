@@ -11,11 +11,12 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function __construct( $version ) {
 		$this->version = $version;
+		$this->load_dependencies();
 	}
 
 	private function load_dependencies() {
 		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-api.php';
-		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-datafeeds.php';
+		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-datafeed.php';
 	}
 
 	public function enqueue_styles( $hook ) {
@@ -146,19 +147,6 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => 'Enter your API Secret',
 				'class'       => 'shareasale-wc-tracker-option',
 		));
-
-		add_settings_section( 'shareasale_wc_tracker_datafeed', 'Product Datafeed', array( $this, 'render_settings_datafeed_section_text' ), 'shareasale_wc_tracker_datafeed_generation' );
-		add_settings_field( 'datafeed-action-hidden', '', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed',
-			array(
-				'id'          => 'datafeed-action-hidden',
-				'name'        => 'action',
-				'value'       => 'generate_datafeed',
-				'status'      => '',
-				'size'        => 1,
-				'type'        => 'hidden',
-				'placeholder' => '',
-				'class'       => 'shareasale-wc-tracker-option-hidden',
-		));
 	}
 
 	public function admin_menu() {
@@ -244,10 +232,10 @@ class ShareASale_WC_Tracker_Admin {
 			request_filesystem_credentials( $url, '', true, $dir, null );
 			return;
 		}
-		//now we're cooking! instantiate a ShareASale_WC_Tracker_Datafeeds() object here and get to work exporting products
+		//now we're cooking! instantiate a ShareASale_WC_Tracker_Datafeed() object here and get to work exporting products
 		global $wp_filesystem;
 		$datafeed = new ShareASale_WC_Tracker_Datafeed();
-		echo 'TESTAROO!';
+		wp_redirect( 'http://google.com' );
 	}
 
 	public function render_settings_required_section_text() {
@@ -264,10 +252,6 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function render_settings_api_section_text() {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-api-section-text.php';
-	}
-
-	public function render_settings_datafeed_section_text() {
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-section-text.php';
 	}
 
 	public function render_settings_input( $attributes ) {
