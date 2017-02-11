@@ -28,7 +28,7 @@ if ( ! defined( 'WPINC' ) ) {
 			  do_settings_sections( 'shareasale_wc_tracker_automatic_reconciliation' );
 			?>     
 			</div>
-			<button id="tracker-options-save" name="Submit">Save Settings</button>
+			<button id="tracker-options-save" class="button" name="Submit">Save Settings</button>
 		</form>
 	</div>
 </div>

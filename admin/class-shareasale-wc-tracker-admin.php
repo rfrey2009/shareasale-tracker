@@ -219,11 +219,32 @@ class ShareASale_WC_Tracker_Admin {
 
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation.php';
 	}
-
+	public function admin_post() {
+		//if this was a refresh of the POST for admin_post_generate_datafeed() hook, just redirect back to settings page so a blank page isn't displayed...
+		$components = parse_url( wp_get_referer() );
+		parse_str( $components['query'] , $querystring );
+		if ( empty( $_POST ) && 'shareasale_wc_tracker_datafeed_generation' == $querystring['page'] ) {
+			wp_redirect( wp_get_referer() );
+		    exit();
+		};
+	}
 	public function admin_post_generate_datafeed() {
 		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'generate-datafeed' ) ) {
-		    return;
+			//go back from whence you came...
+		    wp_redirect( wp_get_referer() );
+		    exit();
 		}
+
+		include_once 'admin-header.php';
+		print_r($menu);
+		if ( WP_NETWORK_ADMIN ) {
+			require_once 'network/menu.php';
+		} elseif ( WP_USER_ADMIN ) {
+			require_once 'user/menu.php';
+		} else {
+			require_once 'menu.php';
+		}
+
 		$url    = 'admin-post.php';
 		$dir    = plugin_dir_path( __FILE__ ) . 'datafeeds';
 		//repost hidden nonce and action field in case credentials input fails and needs to be retried
@@ -232,15 +253,18 @@ class ShareASale_WC_Tracker_Admin {
 
 		if ( false === $creds ) {
 			//stop here, we can't even write to /datafeeds yet and need credentials...
+			include_once 'admin-footer.php';
 			return;
 		}
 
 		if ( ! WP_Filesystem( $creds ) ) {
 			//we got credentials but they don't work, so try again and now prompt an error msg...
 			request_filesystem_credentials( $url, '', true, $dir, $repost );
+			include_once 'admin-footer.php';
 			return;
 		}
-		//now we're cooking! instantiate a ShareASale_WC_Tracker_Datafeed() object here and get to work exporting products
+
+		//access granted! instantiate a ShareASale_WC_Tracker_Datafeed() object here and get to work exporting WC products
 		global $wp_filesystem;
 		$datafeed = new ShareASale_WC_Tracker_Datafeed();
 		//go back to starting page
