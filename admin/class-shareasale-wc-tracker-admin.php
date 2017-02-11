@@ -178,7 +178,7 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function render_settings_page() {
 		include_once 'options-head.php';
-		//errors are stylized off add_settings_error() from WordPress. Can't be called here since not submitting to options.php.
+		//errors are stylized off add_settings_error() from WordPress. Can't be called here since not submitting to options.php due to dependency failure.
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
 			return;
@@ -189,7 +189,7 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function render_settings_page_submenu() {
 		include_once 'options-head.php';
-		//errors are stylized off add_settings_error() from WordPress. Can't be called here since not submitting to options.php.
+		//errors are stylized off add_settings_error() from WordPress. Can't be called here since not submitting to options.php due to dependency failure.
 		if ( ! function_exists( 'curl_version' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-curl-warning.php';
 			return;
@@ -207,12 +207,12 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function render_settings_page_subsubmenu() {
 		include_once 'options-head.php';
-		//errors are stylized off add_settings_error() from WordPress. Can't be called here since not submitting to options.php.
+		//errors are stylized off add_settings_error() from WordPress. Can't be called here since not submitting to options.php due to dependency failure.
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
 			return;
 		}
-		//stop if this came from a previously posted datafeed generation POST but the return nonce is bad/empty
+		//stop if this returned from a previously sent datafeed generation POST but the nonce is bad/empty
 		if ( true == $_GET['generated'] && ! wp_verify_nonce( $_GET['_wpnonce'], 'generated-datafeed' ) ) {
 			return;
 		}
@@ -220,10 +220,10 @@ class ShareASale_WC_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation.php';
 	}
 	public function admin_post() {
-		//if this was a refresh of the POST for admin_post_generate_datafeed() hook, just redirect back to settings page so a blank page isn't displayed...
+		//if this was a refresh of admin_post_generate_datafeed() hook, just redirect back to settings page
 		$components = parse_url( wp_get_referer() );
-		parse_str( $components['query'] , $querystring );
-		if ( empty( $_POST ) && 'shareasale_wc_tracker_datafeed_generation' == $querystring['page'] ) {
+		parse_str( $components['query'] , $query );
+		if ( empty( $_POST ) && 'shareasale_wc_tracker_datafeed_generation' == $query['page'] ) {
 			wp_redirect( wp_get_referer() );
 		    exit();
 		};
@@ -235,39 +235,38 @@ class ShareASale_WC_Tracker_Admin {
 		    exit();
 		}
 
-		include_once 'admin-header.php';
-		print_r($menu);
 		if ( WP_NETWORK_ADMIN ) {
-			require_once 'network/menu.php';
+			include_once 'network/menu.php';
 		} elseif ( WP_USER_ADMIN ) {
-			require_once 'user/menu.php';
+			include_once 'user/menu.php';
 		} else {
-			require_once 'menu.php';
+			include_once 'menu.php';
 		}
+		include_once 'admin-header.php';
 
 		$url    = 'admin-post.php';
 		$dir    = plugin_dir_path( __FILE__ ) . 'datafeeds';
-		//repost hidden nonce and action field in case credentials input fails and needs to be retried
+		//repost hidden nonce and action field in case credentials input fails and needs to be reattempted
 		$repost = array( '_wpnonce', 'action' );
 		$creds  = request_filesystem_credentials( $url, '', false, $dir, $repost );
 
 		if ( false === $creds ) {
-			//stop here, we can't even write to /datafeeds yet and need credentials...
+			//stop here, we can't even write to /datafeeds yet and need credentials form...
 			include_once 'admin-footer.php';
 			return;
 		}
 
 		if ( ! WP_Filesystem( $creds ) ) {
-			//we got credentials but they don't work, so try again and now prompt an error msg...
+			//we got credentials but they don't work, so try form again and now also prompt an error msg...
 			request_filesystem_credentials( $url, '', true, $dir, $repost );
 			include_once 'admin-footer.php';
 			return;
 		}
 
-		//access granted! instantiate a ShareASale_WC_Tracker_Datafeed() object here and get to work exporting WC products
+		//access granted! instantiate a ShareASale_WC_Tracker_Datafeed() object here and start exporting products to csv
 		global $wp_filesystem;
 		$datafeed = new ShareASale_WC_Tracker_Datafeed();
-		//go back to starting page
+		//all done, so go back to starting page
 		$goback   =
 			add_query_arg(
 				array(
