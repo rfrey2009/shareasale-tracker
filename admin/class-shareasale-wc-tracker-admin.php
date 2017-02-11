@@ -213,12 +213,23 @@ class ShareASale_WC_Tracker_Admin {
 			return;
 		}
 
+		if ( true == $_GET['generated'] && ! wp_verify_nonce( $_GET['_wpnonce'], 'generated-datafeed' ) ) {
+			return;
+		}
+
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation.php';
 	}
 
 	public function admin_post_generate_datafeed() {
-
-		$url   = wp_nonce_url( esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker_datafeed_generation' ) ), 'generate-datafeed' );
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'generate-datafeed' ) ) {
+		    return;
+		}
+		//can't use wp_nonce_url since it encodes & to &amp;...
+		$url   =
+		add_query_arg( '_wpnonce',
+			wp_create_nonce( 'generated-datafeed' ),
+			esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker_datafeed_generation' ) )
+		);
 		$dir   = plugin_dir_path( __FILE__ ) . 'datafeeds';
 		$creds = request_filesystem_credentials( $url, '', false, $dir, null );
 
@@ -235,7 +246,9 @@ class ShareASale_WC_Tracker_Admin {
 		//now we're cooking! instantiate a ShareASale_WC_Tracker_Datafeed() object here and get to work exporting products
 		global $wp_filesystem;
 		$datafeed = new ShareASale_WC_Tracker_Datafeed();
-		wp_redirect( 'http://google.com' );
+
+		wp_redirect( add_query_arg( 'generated', 'true',  $url ) );
+		exit();
 	}
 
 	public function render_settings_required_section_text() {
