@@ -16,13 +16,7 @@ class ShareASale_WC_Tracker_Analytics {
 	}
 
 	public function wp_head() {
-		ob_start();
-		?>		
-			<noscript id="shareasale-wc-tracker-analytics-add-to-cart-ajax-model"></noscript>
-			<noscript id="shareasale-wc-tracker-analytics-add-to-cart-ajax"></noscript>
-			<noscript id="shareasale-wc-tracker-analytics-add-to-cart-ajax-cb"></noscript>
-		<?php
-		ob_end_flush();
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-analytics-noscript.php';
 	}
 
 	public function script_loader_tag( $tag, $handle, $src ) {

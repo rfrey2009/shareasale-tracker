@@ -21,14 +21,15 @@ if ( ! defined( 'WPINC' ) ) {
 				Datafeed Generation
 			</a>
 		</h2>
-		<form action="admin-post.php" method="post">
+		<form id="generate-datafeed" action="" method="post">
 			<div id="shareasale-wc-tracker-options">
 			  <h2>Product Datafeed</h2>
 			  <p>Use this tool to automatically export your products into ShareASale's product datafeed .csv format.</p>
-			  <input id="datafeed-action-hidden" class="shareasale-wc-tracker-option-hidden" type="hidden" name="action" value="generate_datafeed" size="1">
+			  <input class="shareasale-wc-tracker-option-hidden" type="hidden" name="action" value="generate_datafeed">
 			<?php wp_nonce_field( 'generate-datafeed', '_wpnonce', false ) ?>
 			</div>
 			<button id="tracker-options-save" class="button" name="Submit">Generate Datafeed</button>
 		</form>
+		<div id="generate-datafeed-results"></div>
 	</div>
 </div>
