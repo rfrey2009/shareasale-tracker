@@ -223,8 +223,8 @@ class ShareASale_WC_Tracker_Admin {
 
 		$url    = add_query_arg( 'page', 'shareasale_wc_tracker_datafeed_generation', esc_url( admin_url( 'admin.php' ) ) );
 		$dir    = plugin_dir_path( __FILE__ ) . 'datafeeds';
-		$repost = array( '_wpnonce', 'action' );
-		$creds  = request_filesystem_credentials( $url, '', false, $dir, $repost );
+		$inputs = array( '_wpnonce', 'action' );
+		$creds  = request_filesystem_credentials( $url, '', false, $dir, $inputs );
 
 		if ( false === $creds ) {
 			//stop here, we can't even write to /datafeeds yet and need credentials form...
@@ -233,17 +233,17 @@ class ShareASale_WC_Tracker_Admin {
 
 		if ( ! WP_Filesystem( $creds ) ) {
 			//we got credentials but they don't work, so try form again and now also prompt an error msg...
-			request_filesystem_credentials( $url, '', true, $dir, $repost );
+			request_filesystem_credentials( $url, '', true, $dir, $inputs );
 			wp_die();
 		}
 
 		//access granted! instantiate a ShareASale_WC_Tracker_Datafeed() object here and start exporting products to csv
 		global $wp_filesystem;
-		$datafeed = new ShareASale_WC_Tracker_Datafeed();
-		// $filename = trailingslashit( $dir ) . 'test.txt';
-		// if ( ! $wp_filesystem->put_contents( $filename, 'Test file contents', FS_CHMOD_FILE ) ) {
-		//     echo 'error saving file!';
-		// }
+		$datafeed = new ShareASale_WC_Tracker_Datafeed( $this->version, $wp_filesystem );
+		if ( $datafeed ) {
+			$datafeed->export( $dir );
+		}
+
 		//then show the csv files and their info in the table template
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation-table.php';
 		wp_die();

@@ -9,10 +9,13 @@ jQuery(document).ready(function() {
     }
     is setting the fields' values to string 'undefined'
     */
+    jQuery('#tracker-options-save').prop('disabled', true);
+
     var datastring = jQuery(this).find('input[value!="undefined"]').serialize();
 
     jQuery.post( ajaxurl, datastring, function( data ) {
       jQuery( '#generate-datafeed-results' ).html( data );
+      jQuery('#tracker-options-save').prop('disabled', false);
       window.scrollTo(0,0);
     });
 

@@ -9,7 +9,7 @@ class ShareASale_WC_Tracker_Analytics {
 	* @var float $version Plugin version
 	*/
 
-	private $merchant_id, $version;
+	private $version;
 
 	public function __construct( $version ) {
 		$this->version = $version;
