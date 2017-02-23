@@ -223,6 +223,7 @@ class ShareASale_WC_Tracker_Admin {
 
 		$url    = add_query_arg( 'page', 'shareasale_wc_tracker_datafeed_generation', esc_url( admin_url( 'admin.php' ) ) );
 		$dir    = plugin_dir_path( __FILE__ ) . 'datafeeds';
+		$file   = trailingslashit( $dir ) . date( 'mdY' ) . '.csv';
 		$inputs = array( '_wpnonce', 'action' );
 		$creds  = request_filesystem_credentials( $url, '', false, $dir, $inputs );
 
@@ -241,7 +242,7 @@ class ShareASale_WC_Tracker_Admin {
 		global $wp_filesystem;
 		$datafeed = new ShareASale_WC_Tracker_Datafeed( $this->version, $wp_filesystem );
 		if ( $datafeed ) {
-			$datafeed->export( $dir );
+			$datafeed->export( $file );
 		}
 
 		//then show the csv files and their info in the table template

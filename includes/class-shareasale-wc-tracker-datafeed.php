@@ -17,33 +17,48 @@ class ShareASale_WC_Tracker_Datafeed {
 		$this->filesystem = $filesystem;
 
 		if ( ! $this->filesystem instanceof WP_Filesystem ) {
-			$this->error_msg = 'WP Filesystem API not initialized properly';
+			$this->error_msg = 'WP Filesystem API not initialized properly!';
 			return false;
 		}
 
 		return $this;
 	}
 
-	public function export( $dir ) {
+	public function export( $file ) {
 		$product_posts  = $this->get_all_product_posts();
 		$rows = array();
 
 		foreach ( $product_posts as $product_post ) {
-			//WC_Product constructor accepts WP post objects
+			//WC_Product constructor actually accepts WP post objects
 			$product                  = new WC_Product( $product_post );
 			$product->cross_sell_skus = $this->get_cross_sell_skus( $product );
 			$rows[]                   = $this->make_row( $product );
 			unset( $product );
 		}
 
-		$content = '';
-		foreach ( $rows as $row ) {
-			$content .= implode( ',', $row ) . "\r\n";
-		}
-		unset( $rows );
+		if ( ! empty( $rows ) ) {
+			$header  = implode( ',', array_keys( $rows[0] ) );
+			$content = $header . "\r\n";
 
-		$this->write_file( $dir, $content );
-		$this->compress();
+			foreach ( $rows as $row ) {
+				$content .= implode( ',', $row ) . "\r\n";
+			}
+			unset( $rows );
+
+			$csv = $this->write_file( $file, $content );
+			if ( false !== $csv ) {
+				$compressed = $csv->compress( $file );
+				if ( false !== $compressed ) {
+					$this->log();
+				} else {
+					//couldn't compress, so just a csv is available
+					error_log( $this->get_error_msg() );
+				}
+			} else {
+				//couldn't even create csv...
+				error_log( $this->get_error_msg() );
+			}
+		}
 
 		return $this;
 	}
@@ -132,25 +147,47 @@ class ShareASale_WC_Tracker_Datafeed {
 		return array_map( array( $this, 'wrap_row' ), $row );
 	}
 
-	private static function wrap_row( $value ) {
+	private function wrap_row( $value ) {
 		$value = trim( $value );
 		return '"' . str_replace( '"', '""', $value ) . '"';
 	}
 
-	private function write_file( $dir, $content ) {
-		$header = '"SKU","Name","URL","Price","Retailprice","FullImage","ThumbnailImage","Commission","Category","Subcategory","Description","SearchTerms","Status","MerchantID","Custom1","Custom2","Custom3","Custom4","Custom5","Manufacturer","PartNumber","MerchantCategory","MerchantSubcategory","ShortDescription","ISBN","UPC","CrossSell","MerchantGroup","MerchantSubgroup","CompatibleWith","CompareTo","QuantityDiscount","Bestseller","AddToCartURL","ReviewsRSSURL","Option1","Option2","Option3","Option4","Option5","customCommissions","customCommissionIsFlatRate","customCommissionNewCustomerMultiplier","mobileURL","mobileImage","mobileThumbnail","ReservedForFutureUse","ReservedForFutureUse","ReservedForFutureUse","ReservedForFutureUse"' . "\r\n";
-
-		$content = $header . $content;
-
-		$filename = trailingslashit( $dir ) . 'datafeed.csv';
-
-		if ( ! $this->filesystem->put_contents( $filename, $content, FS_CHMOD_FILE ) ) {
-			error_log( 'couldn\'t write!' );
+	private function write_file( $file, $content ) {
+		if ( ! $this->filesystem->put_contents( $file, $content, FS_CHMOD_FILE ) ) {
+			return false;
+			$this->error_msg = 'Couldn\'t write CSV file!';
 		}
+
+		return $this;
 	}
 
-	private function compress() {
+	private function compress( $file ) {
+		if( ! class_exists( 'ZipArchive' ) ) {
+			$this->error_msg = 'Couldn\'t compress. PHP ZipArchive Class not installed or enabled.';
+			return false;
+		}
 
+		$zip        = new ZipArchive;
+		$compressed = $file . '.zip';
+
+		if ( true !== $zip->open( $compressed, ZipArchive::CREATE ) ) {
+			$this->error_msg = 'Couldn\'t compress because archive cannot be opened.';
+			return false;
+		}
+
+		if ( ! $zip->addFile( $file, basename( $file ) ) ) {
+		    $this->error_msg = 'Couldn\'t compress because CSV file not found.';
+			return false;
+		}
+
+		$zip->close();
+		//clean up
+		$this->filesystem->delete( $file );
+		return $this;
+	}
+
+	private function log() {
+		return $this;
 	}
 
 	public function get_error_msg() {
