@@ -243,6 +243,7 @@ class ShareASale_WC_Tracker_Admin {
 		$datafeed = new ShareASale_WC_Tracker_Datafeed( $this->version, $wp_filesystem );
 		if ( $datafeed ) {
 			$datafeed->export( $file );
+			$datafeed->clean_up( $dir, 60 );
 		}
 
 		//then show the csv files and their info in the table template

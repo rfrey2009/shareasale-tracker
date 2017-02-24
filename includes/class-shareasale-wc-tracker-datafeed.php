@@ -92,7 +92,7 @@ class ShareASale_WC_Tracker_Datafeed {
 		$merchant_id = @$options['merchant-id'];
 
 		$row = array(
-				'SKU'                                   => $product->get_sku(),
+				'SKU'                                   => $product->get_sku() ? $product->get_sku() : error_log( 'no sku!' ),
 				'Name'                                  => $product->get_title(),
 				'URL'                                   => $product->get_permalink(),
 				'Price'                                 => $product->get_sale_price(),
@@ -155,14 +155,14 @@ class ShareASale_WC_Tracker_Datafeed {
 	private function write_file( $file, $content ) {
 		if ( ! $this->filesystem->put_contents( $file, $content, FS_CHMOD_FILE ) ) {
 			return false;
-			$this->error_msg = 'Couldn\'t write CSV file!';
+			$this->error_msg = $this->filesystem->errors->get_error_message();
 		}
 
 		return $this;
 	}
 
 	private function compress( $file ) {
-		if( ! class_exists( 'ZipArchive' ) ) {
+		if ( ! class_exists( 'ZipArchive' ) ) {
 			$this->error_msg = 'Couldn\'t compress. PHP ZipArchive Class not installed or enabled.';
 			return false;
 		}
@@ -184,6 +184,21 @@ class ShareASale_WC_Tracker_Datafeed {
 		//clean up
 		$this->filesystem->delete( $file );
 		return $this;
+	}
+
+	public function clean_up( $dir, $days_age = 30 ) {
+		if ( ! is_numeric( $days_age ) ) {
+			$days_age = 30;
+		}
+
+		$files = $this->filesystem->dirlist( $dir );
+
+		foreach ( $files as $file_details ) {
+			$filename = trailingslashit( $dir ) . $file_details['name'];
+			if ( time() - $file_details['lastmodunix'] > ( 60 * 60 * 24 * $days_age ) ) {
+				$this->filesystem->delete( $filename );
+			}
+		}
 	}
 
 	private function log() {
