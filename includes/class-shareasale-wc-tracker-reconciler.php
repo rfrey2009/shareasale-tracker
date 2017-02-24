@@ -45,7 +45,7 @@ class ShareASale_WC_Tracker_Reconciler {
 			if ( $req ) {
 				$result = $this->api->get_response();
 			} else {
-				$result = $this->api->get_error_msg();
+				$result = $this->api->errors->get_error_message();
 			}
 			//if not an API error but still not a success, don't log
 			if ( 'Transaction Not Found' !== $result && 'Multiple Transactions Found (ambiguous order number)' !== $result ) {
@@ -84,7 +84,7 @@ class ShareASale_WC_Tracker_Reconciler {
 			if ( $req ) {
 				$result = $this->api->get_response();
 			} else {
-				$result = $this->api->get_error_msg();
+				$result = $this->api->errors->get_error_message();
 			}
 			//if not an API error but still not a success, don't log
 			if ( 'Transaction Not Found' !== $result && 'Multiple Transactions Found (ambiguous order number)' !== $result ) {

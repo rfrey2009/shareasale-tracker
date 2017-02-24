@@ -6,18 +6,20 @@ if ( ! defined( 'WPINC' ) ) {
 class ShareASale_WC_Tracker_Datafeed {
 
 	/**
+	* Generates, compresses, and cleans up product datafeed files
 	* @var float $version Plugin version
 	* @var WP_Filesystem $filesystem WordPress filesystem object https://codex.wordpress.org/Filesystem_API
-	* @var string $error_msg any failure messages
+	* @var WP_Error $errors any datafeed generation failure errors
 	*/
-	private $version, $filesystem, $error_msg;
+	private $version, $filesystem, $errors;
 
 	public function __construct( $version, $filesystem ) {
 		$this->version    = $version;
 		$this->filesystem = $filesystem;
+		$this->errors     = new WP_Error();
 
 		if ( ! $this->filesystem instanceof WP_Filesystem ) {
-			$this->error_msg = 'WP Filesystem API not initialized properly!';
+			$this->errors->add( 'filesystem', 'WP Filesystem API not initialized properly!' );
 			return false;
 		}
 
@@ -45,18 +47,18 @@ class ShareASale_WC_Tracker_Datafeed {
 			}
 			unset( $rows );
 
-			$csv = $this->write_file( $file, $content );
+			$csv = $this->write( $file, $content );
 			if ( false !== $csv ) {
 				$compressed = $csv->compress( $file );
 				if ( false !== $compressed ) {
 					$this->log();
 				} else {
 					//couldn't compress, so just a csv is available
-					error_log( $this->get_error_msg() );
+					error_log( $this->errors->get_error_message( 'compress' ) );
 				}
 			} else {
 				//couldn't even create csv...
-				error_log( $this->get_error_msg() );
+				error_log( $this->errors->get_error_message( 'write' ) );
 			}
 		}
 
@@ -92,19 +94,25 @@ class ShareASale_WC_Tracker_Datafeed {
 		$merchant_id = @$options['merchant-id'];
 
 		$row = array(
+				//required
 				'SKU'                                   => $product->get_sku() ? $product->get_sku() : error_log( 'no sku!' ),
 				'Name'                                  => $product->get_title(),
+				//required
 				'URL'                                   => $product->get_permalink(),
+				//required
 				'Price'                                 => $product->get_sale_price(),
 				'Retailprice'                           => $product->get_price(),
 				'FullImage'                             => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_single' )[0],
 				'ThumbnailImage'                        => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_thumbnail' )[0],
 				'Commission'                            => '',
+				//required
 				'Category'                              => '',
+				//required
 				'Subcategory'                           => '',
 				'Description'                           => $product->get_post_data()->post_content,
 				'SearchTerms'                           => '',
-				'Status'                                => 'instock' == $product->stock_status? 'instock' : 'soldout',
+				'Status'                                => 'instock' === $product->stock_status? 'instock' : 'soldout',
+				//required
 				'MerchantID'                            => empty( $merchant_id ) ? '' : $merchant_id,
 				'Custom1'                               => '',
 				'Custom2'                               => '',
@@ -125,7 +133,7 @@ class ShareASale_WC_Tracker_Datafeed {
 				'CompareTo'                             => '',
 				'QuantityDiscount'                      => '',
 				'Bestseller'                            => $product->is_featured() ? 1 : 0,
-				'AddToCartURL'                          => $prodcut->add_to_cart_url,
+				'AddToCartURL'                          => $product->add_to_cart_url,
 				'ReviewsRSSURL'                         => '',
 				'Option1'                               => '',
 				'Option2'                               => '',
@@ -152,10 +160,10 @@ class ShareASale_WC_Tracker_Datafeed {
 		return '"' . str_replace( '"', '""', $value ) . '"';
 	}
 
-	private function write_file( $file, $content ) {
+	private function write( $file, $content ) {
 		if ( ! $this->filesystem->put_contents( $file, $content, FS_CHMOD_FILE ) ) {
 			return false;
-			$this->error_msg = $this->filesystem->errors->get_error_message();
+			$this->errors->add( 'write', $this->filesystem->errors->get_error_message() );
 		}
 
 		return $this;
@@ -163,7 +171,7 @@ class ShareASale_WC_Tracker_Datafeed {
 
 	private function compress( $file ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			$this->error_msg = 'Couldn\'t compress. PHP ZipArchive Class not installed or enabled.';
+			$this->errors->add( 'compress', 'Couldn\'t compress. PHP ZipArchive Class not installed or enabled.' );
 			return false;
 		}
 
@@ -171,12 +179,12 @@ class ShareASale_WC_Tracker_Datafeed {
 		$compressed = $file . '.zip';
 
 		if ( true !== $zip->open( $compressed, ZipArchive::CREATE ) ) {
-			$this->error_msg = 'Couldn\'t compress because archive cannot be opened.';
+			$this->errors->add( 'compress', 'Couldn\'t compress because archive cannot be opened.' );
 			return false;
 		}
 
 		if ( ! $zip->addFile( $file, basename( $file ) ) ) {
-		    $this->error_msg = 'Couldn\'t compress because CSV file not found.';
+		    $this->errors->add( 'compress', 'Couldn\'t compress because CSV file not found.' );
 			return false;
 		}
 
@@ -203,9 +211,5 @@ class ShareASale_WC_Tracker_Datafeed {
 
 	private function log() {
 		return $this;
-	}
-
-	public function get_error_msg() {
-		return $this->error_msg;
 	}
 }

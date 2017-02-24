@@ -369,7 +369,7 @@ class ShareASale_WC_Tracker_Admin {
 						'api',
 						'Your API credentials did not work. Check your merchant ID, API token, and API key.
 						<span style = "font-size: 10px">'
-						. $shareasale_api->get_error_msg() .
+						. $shareasale_api->errors->get_error_message() .
 						'</span>'
 					);
 					//if API credentials failed, sanitize those options prior to saving and turn off automatic reconcilation

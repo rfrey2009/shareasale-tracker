@@ -14,13 +14,14 @@ class ShareASale_WC_Tracker_API {
 	private $action;
 	private $query;
 	private $last_query;
-	private $error_msg;
+	private $errors;
 	private $response;
 
 	public function __construct( $merchant_id, $api_token, $api_secret ) {
-		$this->merchant_id  = $merchant_id;
-		$this->api_token    = $api_token;
-		$this->api_secret   = $api_secret;
+		$this->merchant_id = $merchant_id;
+		$this->api_token   = $api_token;
+		$this->api_secret  = $api_secret;
+		$this->errors      = new WP_Error();
 		return $this;
 	}
 
@@ -94,7 +95,7 @@ class ShareASale_WC_Tracker_API {
 	public function exec() {
 		//build authentication headers before making API request
 		if ( ! $this->authenticate() ) {
-			$this->error_msg = 'Could not authenticate. No API action value.';
+			$this->errors->add( 'auth', 'Could not authenticate. No API action value.' );
 			return false;
 		}
 
@@ -110,9 +111,14 @@ class ShareASale_WC_Tracker_API {
 		//set last_query property and clear out current query property
 		$this->last_query = $this->query;
 		$this->query      = '';
+
 		if ( strpos( $response, 'Error Code' ) ) {
+			$pieces  = array_map( 'trim', explode( '-', $response ) );
+			$code    = str_replace( 'Error Code', '', $pieces[1] );
+			$message = $pieces[0];
+			$data    = $this->last_query;
 			// error occurred... store it and return false
-			$this->error_msg = trim( $response );
+			$this->errors->add( $code, $message, $data );
 			return false;
 		}
 		$this->response = trim( $response );
@@ -131,9 +137,4 @@ class ShareASale_WC_Tracker_API {
 	public function get_response() {
 		return $this->response;
 	}
-
-	public function get_error_msg() {
-		return $this->error_msg;
-	}
 }
-
