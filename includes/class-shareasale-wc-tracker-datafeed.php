@@ -93,15 +93,16 @@ class ShareASale_WC_Tracker_Datafeed {
 	private function make_row( $product ) {
 		$options     = get_option( 'shareasale_wc_tracker_options' );
 		$merchant_id = @$options['merchant-id'];
+		$product_id  = $product->get_id();
 
 		$row = array(
 				//required
-				'SKU'                                   => $product->get_sku() ? $product->get_sku() : error_log( 'no sku!' ),
+				'SKU'                                   => $product->get_sku() ? $product->get_sku() : $this->errors->add( 'sku', $product_id . ' is missing a SKU.' , $this->push_error_data( 'sku', $product_id ) ),
 				'Name'                                  => $product->get_title(),
 				//required
-				'URL'                                   => $product->get_permalink(),
+				'URL'                                   => $product->get_permalink() ? $product->get_permalink() : $this->errors->add( 'url', $product_id . ' is missing a URL.', $this->push_error_data( 'url', $product_id ) ),
 				//required
-				'Price'                                 => $product->get_sale_price(),
+				'Price'                                 => $product->get_sale_price() ? $product->get_sale_price() : $this->errors->add( 'price', $product_id . ' is missing a price.', $this->push_error_data( 'price', $product_id ) ),
 				'Retailprice'                           => $product->get_price(),
 				'FullImage'                             => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_single' )[0],
 				'ThumbnailImage'                        => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_thumbnail' )[0],
@@ -114,7 +115,7 @@ class ShareASale_WC_Tracker_Datafeed {
 				'SearchTerms'                           => '',
 				'Status'                                => 'instock' === $product->stock_status? 'instock' : 'soldout',
 				//required
-				'MerchantID'                            => empty( $merchant_id ) ? '' : $merchant_id,
+				'MerchantID'                            => ! empty( $merchant_id ) ? $merchant_id : $this->errors->add( 'merchant_id', 'No Merchant ID entered yet.' ),
 				'Custom1'                               => '',
 				'Custom2'                               => '',
 				'Custom3'                               => '',
@@ -152,8 +153,18 @@ class ShareASale_WC_Tracker_Datafeed {
 				'ReservedForFutureUse'                  => '',
 				'ReservedForFutureUse'                  => '',
 			);
-
+		error_log( print_r( $this->errors->get_error_data( 'sku' ), true ) );
 		return array_map( array( $this, 'wrap_row' ), $row );
+	}
+
+	private function push_error_data( $code, $data ) {
+		$error_data = $this->errors->get_error_data( $code );
+		if ( is_array( $error_data ) ) {
+			$error_data[] = $data;
+			return $error_data;
+		} else {
+			return array( $data );
+		}
 	}
 
 	private function wrap_row( $value ) {
