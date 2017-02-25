@@ -11,7 +11,8 @@ class ShareASale_WC_Tracker_Datafeed {
 	* @var WP_Filesystem $filesystem WordPress filesystem object https://codex.wordpress.org/Filesystem_API
 	* @var WP_Error $errors any datafeed generation failure errors
 	*/
-	private $version, $filesystem, $errors;
+	private $version, $filesystem;
+	public $errors;
 
 	public function __construct( $version, $filesystem ) {
 		$this->version    = $version;

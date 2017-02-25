@@ -14,8 +14,8 @@ class ShareASale_WC_Tracker_API {
 	private $action;
 	private $query;
 	private $last_query;
-	private $errors;
 	private $response;
+	public $errors;
 
 	public function __construct( $merchant_id, $api_token, $api_secret ) {
 		$this->merchant_id = $merchant_id;

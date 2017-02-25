@@ -178,9 +178,10 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page() {
+		include_once 'options-head.php';
 		/*
-		won't have ?updated= URL query param if accessing settings first time with WooCommerce/cURL not activated
-		so using add_settings_error() and manually including WP 'options-head.php' does us no good...
+		won't have ?updated= URL query param if accessing settings *first time* with WooCommerce not activated
+		so using add_settings_error() and manually including WP 'options-head.php' does us no good in that case...
 		*/
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
@@ -191,6 +192,11 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page_submenu() {
+		include_once 'options-head.php'; 
+		/*
+		won't have ?updated= URL query param if accessing settings *first time* with WooCommerce/cURL not enabled
+		so using add_settings_error() and manually including WP 'options-head.php' does us no good in that case...
+		*/
 		if ( ! function_exists( 'curl_version' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-curl-warning.php';
 			return;
@@ -207,6 +213,7 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page_subsubmenu() {
+		include_once 'options-head.php'; 
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
 			return;
@@ -366,10 +373,10 @@ class ShareASale_WC_Tracker_Admin {
 				if ( ! $req ) {
 					add_settings_error(
 						'shareasale_wc_tracker_api',
-						'api',
+						esc_attr( 'api' ),
 						'Your API credentials did not work. Check your merchant ID, API token, and API key.
 						<span style = "font-size: 10px">'
-						. $shareasale_api->errors->get_error_message() .
+						. $shareasale_api->errors->get_error_code() . ' - ' . $shareasale_api->errors->get_error_message() .
 						'</span>'
 					);
 					//if API credentials failed, sanitize those options prior to saving and turn off automatic reconcilation
