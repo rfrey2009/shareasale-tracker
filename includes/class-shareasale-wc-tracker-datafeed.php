@@ -184,7 +184,8 @@ class ShareASale_WC_Tracker_Datafeed {
 
 	private function write( $file, $content ) {
 		if ( ! $this->filesystem->put_contents( $file, $content, FS_CHMOD_FILE ) ) {
-			$this->errors->add( 'write', 'Couldn\'t write CSV file.' );
+			//unfortunately WP_Filesystem doesn't have a more useful WP_Error for put_contents()...
+			$this->errors->add( 'write', 'Couldn\'t write CSV file.', $file );
 			return false;
 		}
 

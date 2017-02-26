@@ -148,8 +148,6 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => 'Enter your API Secret',
 				'class'       => 'shareasale-wc-tracker-option',
 		));
-		add_settings_section( 'shareasale_wc_tracker_datafeed', '', '', 'shareasale_wc_tracker_datafeed_generation' );
-
 	}
 
 	public function admin_menu() {
