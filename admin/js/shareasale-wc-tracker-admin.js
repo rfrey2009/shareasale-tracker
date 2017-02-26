@@ -7,7 +7,7 @@ jQuery(document).ready(function() {
     if(typeof(Storage)!=="undefined" && localStorage.privateKeyFile) {
       jQuery("#private_key").val(localStorage.privateKeyFile);
     }
-    is setting the fields' values to string 'undefined'
+    is setting the fields' values to string 'undefined'...
     */
     jQuery('#tracker-options-save').prop('disabled', true);
 

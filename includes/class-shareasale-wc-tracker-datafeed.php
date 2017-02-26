@@ -55,11 +55,21 @@ class ShareASale_WC_Tracker_Datafeed {
 					$this->log();
 				} else {
 					//couldn't compress, so just a csv is available
-					error_log( $this->errors->get_error_message( 'compress' ) );
+					add_settings_error(
+						'',
+						esc_attr( 'datafeed' ),
+						$this->errors->get_error_message( 'compress' ) . ' You will need to manually compress the csv file into a gz or zip archive before uploading to ShareASale.'
+					);
+					settings_errors();
 				}
 			} else {
 				//couldn't even create csv...
-				error_log( $this->errors->get_error_message( 'write' ) );
+				add_settings_error(
+					'',
+					esc_attr( 'datafeed' ),
+					$this->errors->get_error_message( 'write' ) . ' Please contact your webhost for more information.'
+				);
+				settings_errors();
 			}
 		}
 
@@ -153,7 +163,7 @@ class ShareASale_WC_Tracker_Datafeed {
 				'ReservedForFutureUse'                  => '',
 				'ReservedForFutureUse'                  => '',
 			);
-		error_log( print_r( $this->errors->get_error_data( 'sku' ), true ) );
+
 		return array_map( array( $this, 'wrap_row' ), $row );
 	}
 
@@ -174,8 +184,8 @@ class ShareASale_WC_Tracker_Datafeed {
 
 	private function write( $file, $content ) {
 		if ( ! $this->filesystem->put_contents( $file, $content, FS_CHMOD_FILE ) ) {
+			$this->errors->add( 'write', 'Couldn\'t write CSV file.' );
 			return false;
-			$this->errors->add( 'write', $this->filesystem->errors->get_error_message() );
 		}
 
 		return $this;
@@ -183,7 +193,7 @@ class ShareASale_WC_Tracker_Datafeed {
 
 	private function compress( $file ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			$this->errors->add( 'compress', 'Couldn\'t compress. PHP ZipArchive Class not installed or enabled.' );
+			$this->errors->add( 'compress', 'Couldn\'t compress because PHP Zip extension not installed or enabled.' );
 			return false;
 		}
 
@@ -191,12 +201,12 @@ class ShareASale_WC_Tracker_Datafeed {
 		$compressed = $file . '.zip';
 
 		if ( true !== $zip->open( $compressed, ZipArchive::CREATE ) ) {
-			$this->errors->add( 'compress', 'Couldn\'t compress because archive cannot be opened.' );
+			$this->errors->add( 'compress', 'Couldn\'t compress because the zip archive cannot be opened.', $compressed );
 			return false;
 		}
 
 		if ( ! $zip->addFile( $file, basename( $file ) ) ) {
-		    $this->errors->add( 'compress', 'Couldn\'t compress because CSV file not found.' );
+		    $this->errors->add( 'compress', 'Couldn\'t compress because CSV file not found.', $file );
 			return false;
 		}
 

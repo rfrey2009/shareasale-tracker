@@ -148,6 +148,8 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => 'Enter your API Secret',
 				'class'       => 'shareasale-wc-tracker-option',
 		));
+		add_settings_section( 'shareasale_wc_tracker_datafeed', '', '', 'shareasale_wc_tracker_datafeed_generation' );
+
 	}
 
 	public function admin_menu() {
@@ -192,7 +194,7 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page_submenu() {
-		include_once 'options-head.php'; 
+		include_once 'options-head.php';
 		/*
 		won't have ?updated= URL query param if accessing settings *first time* with WooCommerce/cURL not enabled
 		so using add_settings_error() and manually including WP 'options-head.php' does us no good in that case...
@@ -213,7 +215,7 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page_subsubmenu() {
-		include_once 'options-head.php'; 
+		include_once 'options-head.php';
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
 			return;
@@ -358,7 +360,7 @@ class ShareASale_WC_Tracker_Admin {
 		if ( empty( $final_settings['merchant-id'] ) ) {
 			add_settings_error(
 				'shareasale_wc_tracker_required',
-				'merchant-id',
+				esc_attr( 'merchant-id' ),
 				'You must enter a ShareASale Merchant ID in the <a href = "?page=shareasale_wc_tracker">Tracking Settings</a> tab.'
 			);
 		}
