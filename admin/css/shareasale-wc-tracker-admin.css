@@ -7,68 +7,68 @@
 .shareasale-wc-tracker-option-number{
 	width: 50px;
 }
-.shareasale-wc-tracker-logs-table{
+.shareasale-wc-tracker-logs-table, .shareasale-wc-tracker-datafeeds-table{
 	background: #ffffff;
 	border-collapse: collapse;
 	border: 1px solid #b4b9be;
 	margin: 0.5em 0;
 	padding: 0.5em;
 }
-.shareasale-wc-tracker-logs-head{
+.shareasale-wc-tracker-logs-head, .shareasale-wc-tracker-datafeeds-head{
 	border-bottom: 1px solid #b4b9be;
 }
-.shareasale-wc-tracker-logs-header{
+.shareasale-wc-tracker-logs-header, .shareasale-wc-tracker-datafeeds-header{
 	background: #ffffff;
 	font-weight: normal;
 }
-.shareasale-wc-tracker-logs-header-align-left{
+.shareasale-wc-tracker-logs-header-align-left, .shareasale-wc-tracker-datafeeds-header-align-left{
 	padding: 0.5em 1.5em 0.5em 0.25em;
 	text-align: left;
 }
-.shareasale-wc-tracker-logs-header-align-right{
+.shareasale-wc-tracker-logs-header-align-right, .shareasale-wc-tracker-datafeeds-header-align-right{
 	padding: 0.5em 0.25em 0.5em 1.5em;
 	text-align: right;
 }
-.shareasale-wc-tracker-logs-body{
+.shareasale-wc-tracker-logs-body, .shareasale-wc-tracker-datafeeds-body{
 	height: 1em;
 	border-bottom: 1px solid #b4b9be;
 }
-.shareasale-wc-tracker-logs-row{
+.shareasale-wc-tracker-logs-row, .shareasale-wc-tracker-datafeeds-row{
 	margin: 20px;
 }
-.shareasale-wc-tracker-logs-row:nth-child(odd){
+.shareasale-wc-tracker-logs-row:nth-child(odd), .shareasale-wc-tracker-datafeeds-row:nth-child(odd){
 	background: #f1f1f1;
 }
-.shareasale-wc-tracker-logs-cell{
+.shareasale-wc-tracker-logs-cell, .shareasale-wc-tracker-datafeeds-cell{
 	background-color: inherit;
 	padding: 0.5em 1.5em 0.5em 0.25em;
 	text-align: left;
 }
-.shareasale-wc-tracker-logs-cell:first-child:not(:empty) {
+.shareasale-wc-tracker-logs-cell:first-child:not(:empty), .shareasale-wc-tracker-datafeeds-cell:first-child:not(:empty) {
     background: #e0e0e0;
 }
 /*
-.shareasale-wc-tracker-logs-cell:first-child:not(:empty)::before {
+.shareasale-wc-tracker-logs-cell:first-child:not(:empty)::before, .shareasale-wc-tracker-datafeeds-cell:first-child:not(:empty)::before {
     content: "#";
 }
 */
-.shareasale-wc-tracker-logs-cell:first-child:empty {
+.shareasale-wc-tracker-logs-cell:first-child:empty, .shareasale-wc-tracker-datafeeds-cell:first-child:empty {
     background: #ffffff;
 }
-.shareasale-wc-tracker-logs-cell:nth-child(7) {
+.shareasale-wc-tracker-logs-cell:nth-child(7), .shareasale-wc-tracker-datafeeds-cell:nth-child(7) {
     font-style: italic;
     font-weight: bolder;
 }
-.shareasale-wc-tracker-logs-cell:nth-child(7), .shareasale-wc-tracker-logs-header:nth-child(7) {
+.shareasale-wc-tracker-logs-cell:nth-child(7), .shareasale-wc-tracker-logs-header:nth-child(7), .shareasale-wc-tracker-datafeeds-cell:nth-child(7), .shareasale-wc-tracker-datafeeds-header:nth-child(7) {
 	padding-left: 3em;
 }
-.shareasale-wc-tracker-logs-cell:nth-child(1), .shareasale-wc-tracker-logs-cell:nth-child(n+4):nth-child(-n+6) {
+.shareasale-wc-tracker-logs-cell:nth-child(1), .shareasale-wc-tracker-logs-cell:nth-child(n+4):nth-child(-n+6), .shareasale-wc-tracker-datafeeds-cell:nth-child(1), .shareasale-wc-tracker-datafeeds-cell:nth-child(n+4):nth-child(-n+6) {
     text-align: right;
 	padding: 0.5em 0.25em 0.5em 1.5em;
  }
-.shareasale-wc-tracker-logs-cell:nth-child(n+4):nth-child(-n+6)::before {
+.shareasale-wc-tracker-logs-cell:nth-child(n+4):nth-child(-n+6)::before, .shareasale-wc-tracker-datafeeds-cell:nth-child(n+4):nth-child(-n+6)::before {
     content: "$";
  }
-.shareasale-wc-tracker-logs-pagination{
+.shareasale-wc-tracker-logs-pagination, .shareasale-wc-tracker-datafeeds-pagination{
 	float: left !important;
 }

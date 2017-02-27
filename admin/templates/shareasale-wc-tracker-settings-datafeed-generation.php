@@ -17,7 +17,7 @@ if ( ! defined( 'WPINC' ) ) {
 			<a href="?page=shareasale_wc_tracker_automatic_reconciliation&amp;page_num=1" class="nav-tab">
 				Automatic Reconciliation
 			</a>
-			<a href="?page=shareasale_wc_tracker_datafeed_generation" class="nav-tab nav-tab-active">
+			<a href="?page=shareasale_wc_tracker_datafeed_generation&amp;page_num=1" class="nav-tab nav-tab-active">
 				Datafeed Generation
 			</a>
 		</h2>

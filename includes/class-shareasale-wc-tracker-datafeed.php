@@ -131,12 +131,24 @@ class ShareASale_WC_Tracker_Datafeed {
 
 		$row = array(
 				//required
-				'SKU'                                   => $product->get_sku() ? $product->get_sku() : $this->errors->add( 'sku', $product_id . ' is missing a SKU.' , $this->push_error_data( 'sku', $product_id ) ),
+				'SKU'                                   => $product->get_sku() ? $product->get_sku() : $this->errors->add(
+					'sku',
+					$product_id . ' is missing a SKU.' ,
+					$this->push_error_data( 'sku', $product_id )
+				),
 				'Name'                                  => $product->get_title(),
 				//required
-				'URL'                                   => $product->get_permalink() ? $product->get_permalink() : $this->errors->add( 'url', $product_id . ' is missing a URL.', $this->push_error_data( 'url', $product_id ) ),
+				'URL'                                   => $product->get_permalink() ? $product->get_permalink() : $this->errors->add(
+					'url',
+					$product_id . ' is missing a URL.',
+					$this->push_error_data( 'url', $product_id )
+				),
 				//required
-				'Price'                                 => $product->get_sale_price() ? $product->get_sale_price() : $this->errors->add( 'price', $product_id . ' is missing a price.', $this->push_error_data( 'price', $product_id ) ),
+				'Price'                                 => $product->get_sale_price() ? $product->get_sale_price() : $this->errors->add( 
+					'price',
+					$product_id . ' is missing a price.',
+					$this->push_error_data( 'price', $product_id )
+				),
 				'Retailprice'                           => $product->get_price(),
 				'FullImage'                             => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_single' )[0],
 				'ThumbnailImage'                        => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_thumbnail' )[0],
@@ -149,7 +161,10 @@ class ShareASale_WC_Tracker_Datafeed {
 				'SearchTerms'                           => '',
 				'Status'                                => 'instock' === $product->stock_status? 'instock' : 'soldout',
 				//required
-				'MerchantID'                            => ! empty( $merchant_id ) ? $merchant_id : $this->errors->add( 'merchant_id', 'No Merchant ID entered yet.' ),
+				'MerchantID'                            => ! empty( $merchant_id ) ? $merchant_id : $this->errors->add(
+					'merchant_id',
+					'No Merchant ID entered yet.'
+				),
 				'Custom1'                               => '',
 				'Custom2'                               => '',
 				'Custom3'                               => '',

@@ -41,9 +41,9 @@ class ShareASale_WC_Tracker_Installer {
 
 		dbDelta( $query );
 
-		$datafeed_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
+		$datafeeds_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
 		$query          =
-			'CREATE TABLE IF NOT EXISTS ' . $datafeed_table . ' ( 
+			'CREATE TABLE IF NOT EXISTS ' . $datafeeds_table . ' ( 
 			id INT(11) NOT NULL AUTO_INCREMENT,
 			file VARCHAR(255) NOT NULL,
 			warnings BLOB NOT NULL,
@@ -65,9 +65,9 @@ class ShareASale_WC_Tracker_Installer {
 
 		//begin upgrade to v1.1 from v1.0
 		global $wpdb;
-		$datafeed_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
+		$datafeeds_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
 		$query          =
-			'CREATE TABLE IF NOT EXISTS ' . $datafeed_table . ' ( 
+			'CREATE TABLE IF NOT EXISTS ' . $datafeeds_table . ' ( 
 			id INT(11) NOT NULL AUTO_INCREMENT,
 			file VARCHAR(255) NOT NULL,
 			warnings BLOB NOT NULL,
