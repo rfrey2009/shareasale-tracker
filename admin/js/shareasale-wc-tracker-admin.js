@@ -10,6 +10,7 @@ jQuery(document).ready(function() {
     is setting the fields' values to string 'undefined'...
     */
     jQuery('#tracker-options-save').prop('disabled', true);
+    jQuery('#generate-datafeed-confirmation').css('display', 'none');
 
     var datastring = jQuery(this).find('input[value!="undefined"]').serialize();
 

@@ -15,7 +15,7 @@ $datafeeds = $wpdb->get_results(
 	$wpdb->prepare(
 		"
 		SELECT
-		MAX(DATE_FORMAT( generation_date, '%%m/%%d/%%Y %%h:%%i %%p' )),
+		MAX(DATE_FORMAT( generation_date, '%%m/%%d/%%Y %%h:%%i %%p' )) as generation_date,
 		file,
 		product_count,
 		warnings
@@ -43,8 +43,25 @@ foreach ( $datafeeds as $datafeed ) : ?>
 	<?php if ( ! file_exists( $datafeed->file ) ) continue; ?>
 		<tbody class="shareasale-wc-tracker-datafeeds-body">
 			<tr class="shareasale-wc-tracker-datafeeds-row">
-	<?php foreach ( $datafeed as $value ) : ?>
-				<td class="shareasale-wc-tracker-datafeeds-cell"><?php echo esc_html( $value ); ?></td>
+	<?php foreach ( $datafeed as $detail => $value ) : ?>
+				<td class="shareasale-wc-tracker-datafeeds-cell">
+
+					<?php switch ( $detail ) :
+					case 'generation_date' : ?>
+						<?php echo esc_html( $value ); ?>
+					<?php break; ?>
+					<?php case 'file' : ?>
+						<a href="<?php echo esc_url( plugins_url( 'datafeeds/' . basename( $datafeed->file ), __DIR__ ) ); ?>">Download</a>
+					<?php break; ?>
+					<?php case 'product_count' : ?>
+						<?php echo esc_html( $value ); ?>
+					<?php break; ?>
+					<?php case 'warnings' : ?>
+						<?php echo esc_html( $value ); ?>
+					<?php break; ?>
+					<?php endswitch ?>
+
+				</td>
 	<?php endforeach; ?>
 			</tr>
 <?php endforeach; ?>
