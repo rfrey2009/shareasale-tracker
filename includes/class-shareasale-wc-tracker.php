@@ -10,12 +10,12 @@ class ShareASale_WC_Tracker {
 	* @var string $plugin_slug WordPress Slug for this plugin
 	* @var float $version Plugin version
 	*/
-	protected $analytics, $loader, $plugin_slug, $version;
+	private $analytics, $loader, $plugin_slug, $version;
 
-	public function __construct() {
+	public function __construct( $version ) {
 
 		$this->plugin_slug = 'shareasale-wc-tracker-slug';
-		$this->version     = '1.1';
+		$this->version     = $version;
 
 		$this->load_dependencies();
 
@@ -37,7 +37,7 @@ class ShareASale_WC_Tracker {
 
 		$this->loader    = new ShareASale_WC_Tracker_Loader();
 		//both define_frontend_hooks() and define_woocommerce_hooks() rely on $analytics object so instantiate it here instead
-		$this->analytics = new ShareASale_WC_Tracker_Analytics( $this->get_version() );
+		$this->analytics = new ShareASale_WC_Tracker_Analytics( $this->version );
 	}
 
 	private function define_frontend_hooks() {
@@ -45,10 +45,11 @@ class ShareASale_WC_Tracker {
 	}
 
 	private function define_admin_hooks() {
-		$admin = new ShareASale_WC_Tracker_Admin( $this->get_version() );
+		$admin = new ShareASale_WC_Tracker_Admin( $this->version );
 		$this->loader->add_action( 'admin_enqueue_scripts',     $admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts',     $admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_init',                $admin, 'admin_init' );
+		$this->loader->add_action( 'admin_init',                $admin, 'plugin_upgrade' );
 		$this->loader->add_action( 'admin_menu',                $admin, 'admin_menu' );
 		$this->loader->add_action( 'wp_ajax_generate_datafeed', $admin, 'wp_ajax_generate_datafeed' );
 		//admin filters
@@ -57,10 +58,10 @@ class ShareASale_WC_Tracker {
 
 	private function define_woocommerce_hooks() {
 		//conversion tracking pixel
-		$pixel = new ShareASale_WC_Tracker_Pixel( $this->get_version() );
+		$pixel = new ShareASale_WC_Tracker_Pixel( $this->version );
 		$this->loader->add_action( 'woocommerce_thankyou', $pixel, 'woocommerce_thankyou' );
 		//automatic reconciliation
-		$reconciler = new ShareASale_WC_Tracker_Reconciler( $this->get_version() );
+		$reconciler = new ShareASale_WC_Tracker_Reconciler( $this->version );
 		$this->loader->add_action( 'woocommerce_order_partially_refunded', $reconciler, 'woocommerce_order_partially_refunded',
 			array( 'priority' => 10, 'args' => 2 )
 		);
@@ -68,8 +69,8 @@ class ShareASale_WC_Tracker {
 			array( 'priority' => 10, 'args' => 2 )
 		);
 		//advanced analytics
-		$this->loader->add_action( 'wp_head',                        $this->analytics, 'wp_head' );
-		$this->loader->add_action( 'woocommerce_add_to_cart',        $this->analytics, 'woocommerce_add_to_cart',
+		$this->loader->add_action( 'wp_head',                          $this->analytics, 'wp_head' );
+		$this->loader->add_action( 'woocommerce_add_to_cart',          $this->analytics, 'woocommerce_add_to_cart',
 			array( 'priority' => 10, 'args' => 6 )
 		);
 		$this->loader->add_action( 'woocommerce_ajax_added_to_cart',   $this->analytics, 'woocommerce_ajax_added_to_cart' );
@@ -96,9 +97,5 @@ class ShareASale_WC_Tracker {
 
 	public function run() {
 		$this->loader->run();
-	}
-
-	public function get_version() {
-		return $this->version;
 	}
 }

@@ -17,6 +17,7 @@ class ShareASale_WC_Tracker_Admin {
 	private function load_dependencies() {
 		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-api.php';
 		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-datafeed.php';
+		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-installer.php';
 	}
 
 	public function enqueue_styles( $hook ) {
@@ -148,6 +149,15 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => 'Enter your API Secret',
 				'class'       => 'shareasale-wc-tracker-option',
 		));
+	}
+	//this is here because it runs on admin_init hook unfortunately
+	public function plugin_upgrade() {
+		$current_version = get_option( 'shareasale_wc_tracker_version' );
+		$latest_version  = $this->version;
+
+		if ( -1 === version_compare( $current_version, $latest_version ) ) {
+			ShareASale_WC_Tracker_Installer::upgrade( $current_version, $latest_version );
+		}
 	}
 
 	public function admin_menu() {

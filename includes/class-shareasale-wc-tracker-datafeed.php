@@ -18,6 +18,7 @@ class ShareASale_WC_Tracker_Datafeed {
 		$this->version    = $version;
 		$this->filesystem = $filesystem;
 		$this->errors     = new WP_Error();
+		$this->load_dependencies();
 
 		if ( ! $this->filesystem instanceof WP_Filesystem ) {
 			$this->errors->add( 'filesystem', 'WP Filesystem API not initialized properly!' );
@@ -25,6 +26,11 @@ class ShareASale_WC_Tracker_Datafeed {
 		}
 
 		return $this;
+	}
+
+	private function load_dependencies() {
+		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-datafeed-logger.php';
+		$this->logger = new ShareASale_WC_Tracker_Datafeed_Logger( $this->version );
 	}
 
 	public function export( $file ) {
@@ -46,15 +52,14 @@ class ShareASale_WC_Tracker_Datafeed {
 			foreach ( $rows as $row ) {
 				$content .= implode( ',', $row ) . "\r\n";
 			}
+			$product_count = count( $rows );
 			unset( $rows );
 
 			$csv = $this->write( $file, $content );
 			if ( false !== $csv ) {
 				$compressed = $csv->compress( $file );
-				if ( false !== $compressed ) {
-					$this->log();
-				} else {
-					//couldn't compress, so just a csv is available
+				if ( false == $compressed ) {
+					//couldn't compress, so notify user just a csv is available.
 					add_settings_error(
 						'',
 						esc_attr( 'datafeed' ),
@@ -62,6 +67,10 @@ class ShareASale_WC_Tracker_Datafeed {
 					);
 					settings_errors();
 				}
+				//will serialize $this->errors for sku, url, price, merchant_id into $product_warnings
+				$product_warnings = '';
+				$path             = ($file . ( $compressed ? '.zip' : '' ) );
+				$this->logger->log( $path, $product_warnings, $product_count, date( 'Y-m-d H:i:s' ) );
 			} else {
 				//couldn't even create csv...
 				add_settings_error(
@@ -79,7 +88,7 @@ class ShareASale_WC_Tracker_Datafeed {
 	private function get_all_product_posts() {
 		$product_posts = get_posts(
 			array(
-				'post_type'   => array( 'product', 'product_variation' ),
+				'post_type'   => array( 'product' /*, 'product_variation' */ ),
 				'numberposts' => -1,
 				'post_status' => 'publish',
 				'order'       => 'ASC',
@@ -225,14 +234,10 @@ class ShareASale_WC_Tracker_Datafeed {
 		$files = $this->filesystem->dirlist( $dir );
 
 		foreach ( $files as $file_details ) {
-			$filename = trailingslashit( $dir ) . $file_details['name'];
+			$file = trailingslashit( $dir ) . $file_details['name'];
 			if ( time() - $file_details['lastmodunix'] > ( 60 * 60 * 24 * $days_age ) ) {
-				$this->filesystem->delete( $filename );
+				$this->filesystem->delete( $file );
 			}
 		}
-	}
-
-	private function log() {
-		return $this;
 	}
 }

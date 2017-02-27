@@ -11,13 +11,21 @@ class ShareASale_WC_Tracker_Installer {
 	}
 
 	public static function install() {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
+
 		self::load_dependencies();
 
 		add_option( 'shareasale_wc_tracker_options', '' );
+		//version will be purposely empty at first install even if up to date.
+		//can't pass version arg to register_activation_hook...
+		add_option( 'shareasale_wc_tracker_version', '' );
 
 		global $wpdb;
 		$logs_table = $wpdb->prefix . 'shareasale_wc_tracker_logs';
-		$query = 'CREATE TABLE IF NOT EXISTS ' . $logs_table . ' (
+		$query      =
+			'CREATE TABLE IF NOT EXISTS ' . $logs_table . ' (
 			id int(11) NOT NULL AUTO_INCREMENT,
 			action varchar(20) DEFAULT NULL,
 			reason varchar(255) NOT NULL,
@@ -29,8 +37,48 @@ class ShareASale_WC_Tracker_Installer {
 			refund_date datetime NOT NULL,
 			PRIMARY KEY  (id),
 			UNIQUE KEY date (refund_date)
-			) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1';
+			) ENGINE=InnoDB';
 
 		dbDelta( $query );
+
+		$datafeed_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
+		$query          =
+			'CREATE TABLE IF NOT EXISTS ' . $datafeed_table . ' ( 
+			id INT(11) NOT NULL AUTO_INCREMENT,
+			file VARCHAR(255) NOT NULL,
+			warnings BLOB NOT NULL,
+			product_count INT(7) NOT NULL, 
+			generation_date DATETIME NOT NULL,
+			generation_version varchar(20) NOT NULL,
+			PRIMARY KEY (id)
+			) ENGINE = InnoDB';
+
+		dbDelta( $query );
+	}
+
+	/*
+	*@var string $old_version used for selective modifications to options and db
+	*/
+	public static function upgrade( $old_version, $latest_version ) {
+		self::load_dependencies();
+
+		//begin upgrade to v1.1 from v1.0
+		global $wpdb;
+		$datafeed_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
+		$query          =
+			'CREATE TABLE IF NOT EXISTS ' . $datafeed_table . ' ( 
+			id INT(11) NOT NULL AUTO_INCREMENT,
+			file VARCHAR(255) NOT NULL,
+			warnings BLOB NOT NULL,
+			product_count INT(7) NOT NULL, 
+			generation_date DATETIME NOT NULL,
+			generation_version varchar(20) NOT NULL,
+			PRIMARY KEY (id)
+			) ENGINE = InnoDB';
+
+		dbDelta( $query );
+		//end upgrade to v1.1 from v1.0
+
+		update_option( 'shareasale_wc_tracker_version', $latest_version );
 	}
 }

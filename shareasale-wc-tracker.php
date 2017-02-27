@@ -18,9 +18,10 @@ define( 'SHAREASALE_WC_TRACKER_PLUGIN_FILENAME', plugin_basename( __FILE__ ) );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-shareasale-wc-tracker.php';
 
-function run_shareasale_wc_tracker() {
-	$shareasale_wc_tracker = new ShareASale_WC_Tracker();
+function run_shareasale_wc_tracker( $version ) {
+	$shareasale_wc_tracker = new ShareASale_WC_Tracker( $version );
 	$shareasale_wc_tracker->run();
 }
 
-run_shareasale_wc_tracker();
+$version = 1.1;
+run_shareasale_wc_tracker( $version );
