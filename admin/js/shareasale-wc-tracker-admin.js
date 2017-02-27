@@ -13,9 +13,10 @@ jQuery(document).ready(function() {
 
     var datastring = jQuery(this).find('input[value!="undefined"]').serialize();
 
-    jQuery.post( ajaxurl, datastring, function( data ) {
-      jQuery( '#generate-datafeed-results' ).html( data );
+    jQuery.post( ajaxurl, datastring, function(data) {
+      jQuery('#generate-datafeed-results').html(data);
       jQuery('#tracker-options-save').prop('disabled', false);
+      jQuery('#generate-datafeed-confirmation').css('display', 'inline');
       window.scrollTo(0,0);
     });
 

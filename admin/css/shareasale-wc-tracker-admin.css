@@ -66,9 +66,15 @@
     text-align: right;
 	padding: 0.5em 0.25em 0.5em 1.5em;
  }
-.shareasale-wc-tracker-logs-cell:nth-child(n+4):nth-child(-n+6)::before, .shareasale-wc-tracker-datafeeds-cell:nth-child(n+4):nth-child(-n+6)::before {
+.shareasale-wc-tracker-logs-cell:nth-child(n+4):nth-child(-n+6)::before{
     content: "$";
  }
 .shareasale-wc-tracker-logs-pagination, .shareasale-wc-tracker-datafeeds-pagination{
 	float: left !important;
+}
+#generate-datafeed-confirmation{
+	display: none;
+    vertical-align: middle;
+    padding: 1em;
+    color: green;
 }
