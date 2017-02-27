@@ -30,6 +30,11 @@ if ( ! defined( 'WPINC' ) ) {
 			</div>
 			<button id="tracker-options-save" class="button" name="Submit">Generate Datafeed</button>
 		</form>
-		<div id="generate-datafeed-results"></div>
+		<div id="generate-datafeed-results">
+		<?php
+			require_once plugin_dir_path( __FILE__ ) . 'shareasale-wc-tracker-settings-datafeed-generation-table.php';
+			require_once plugin_dir_path( __FILE__ ) . 'shareasale-wc-tracker-settings-datafeed-generation-pagination.php';
+		?>
+		</div>
 	</div>
 </div>

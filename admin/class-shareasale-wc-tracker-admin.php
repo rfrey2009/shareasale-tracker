@@ -265,6 +265,7 @@ class ShareASale_WC_Tracker_Admin {
 
 		//then show the csv files and their info in the table template
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation-table.php';
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation-pagination.php';
 		wp_die();
 	}
 

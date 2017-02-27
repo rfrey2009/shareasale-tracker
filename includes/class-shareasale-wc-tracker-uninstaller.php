@@ -11,7 +11,7 @@ class ShareASale_WC_Tracker_Uninstaller {
 		}
 
 		global $wpdb;
-		$logs_table     = $wpdb->prefix . 'shareasale_wc_tracker_logs';
+		$logs_table      = $wpdb->prefix . 'shareasale_wc_tracker_logs';
 		$datafeeds_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
 		//drop tables
 		$query = 'DROP TABLE ' . $logs_table . ', ' . $datafeeds_table;

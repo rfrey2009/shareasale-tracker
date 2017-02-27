@@ -11,7 +11,7 @@ $offset       = ( $page_num - 1 ) * $limit;
 $total        = $wpdb->get_var( "SELECT COUNT(id) FROM $logs_table" );
 $num_of_pages = ceil( $total / $limit );
 
-$logs       = $wpdb->get_results(
+$logs = $wpdb->get_results(
 	$wpdb->prepare(
 		"
 		SELECT 
