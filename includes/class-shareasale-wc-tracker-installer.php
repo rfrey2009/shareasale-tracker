@@ -56,8 +56,9 @@ class ShareASale_WC_Tracker_Installer {
 		dbDelta( $query );
 	}
 
-	/*
-	*@var string $old_version used for selective modifications to options and db
+	/**
+	* @var string $old_version used for selective modifications to options and db
+	* @var string $latest_version used for knowing what to update to
 	*/
 	public static function upgrade( $old_version, $latest_version ) {
 		self::load_dependencies();

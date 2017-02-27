@@ -67,10 +67,25 @@ class ShareASale_WC_Tracker_Datafeed {
 					);
 					settings_errors();
 				}
-				//will serialize $this->errors for sku, url, price, merchant_id into $product_warnings
-				$product_warnings = '';
-				$path             = ($file . ( $compressed ? '.zip' : '' ) );
-				$this->logger->log( $path, $product_warnings, $product_count, date( 'Y-m-d H:i:s' ) );
+				$path             = ( $file . ( $compressed ? '.zip' : '' ) );
+				$product_warnings = array(
+					'sku'         => array(
+						'messages' => $this->errors->get_error_messages( 'sku' ),
+						'data'     => $this->errors->get_error_data( 'sku' ),
+					),
+					'url'         => array(
+						'messages' => $this->errors->get_error_messages( 'url' ),
+						'data'     => $this->errors->get_error_data( 'url' ),
+					),
+					'price'       => array(
+						'messages' => $this->errors->get_error_messages( 'price' ),
+						'data'     => $this->errors->get_error_data( 'price' ),
+					),
+					'merchant_id' => array(
+						'messages' => $this->errors->get_error_messages( 'merchant_id' ),
+					),
+				);
+				$this->logger->log( $path, maybe_serialize( $product_warnings ), $product_count, date( 'Y-m-d H:i:s' ) );
 			} else {
 				//couldn't even create csv...
 				add_settings_error(
