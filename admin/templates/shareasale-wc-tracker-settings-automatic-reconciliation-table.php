@@ -52,8 +52,7 @@ foreach ( $logs as $log ) : ?>
 		<tbody class="shareasale-wc-tracker-logs-body">
 	<?php endif; ?>
 			<tr class="shareasale-wc-tracker-logs-row">
-	<?php
-	foreach ( $log as $value ) : ?>
+	<?php foreach ( $log as $value ) : ?>
 	<?php
 		$value        = $value === $order_number ? '' : $value;
 		$order_number = $log->order_number;

@@ -112,7 +112,6 @@ class ShareASale_WC_Tracker_Pixel {
 								)
 		);
 		add_post_meta( $order_id, 'shareasale-wc-tracker-triggered', date( 'Y-m-d H:i:s' ), true );
-		//delete_post_meta( $order_id, 'shareasale-wc-tracker-triggered' );
 	}
 
 	private function get_order_amount() {
