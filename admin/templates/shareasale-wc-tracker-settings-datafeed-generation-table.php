@@ -32,10 +32,10 @@ $datafeeds = $wpdb->get_results(
 <table class="shareasale-wc-tracker-datafeeds-table">
 	<thead class="shareasale-wc-tracker-datafeeds-head">
 		<tr class="shareasale-wc-tracker-datafeeds-row">
-			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-right">Date</th>
+			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left">Date</th>
 			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left">Link</th>
-			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left">Product Count</th>
-			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-right">Warnings</th>
+			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-right">Product Count</th>
+			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left">Warnings</th>
 		</tr>
 	</thead>
 <?php
@@ -57,7 +57,10 @@ foreach ( $datafeeds as $datafeed ) : ?>
 						<?php echo esc_html( $value ); ?>
 					<?php break; ?>
 					<?php case 'warnings' : ?>
-						<?php echo esc_html( $value ); ?>
+						<?php $warnings = maybe_unserialize( $datafeed->warnings );	?>
+						<?php foreach ( $warnings as $type => $warning ) : ?>
+							<?php echo $type; ?>
+						<?php endforeach; ?>
 					<?php break; ?>
 					<?php endswitch ?>
 
