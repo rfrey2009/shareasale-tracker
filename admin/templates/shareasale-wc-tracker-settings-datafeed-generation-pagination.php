@@ -5,12 +5,12 @@ if ( ! defined( 'WPINC' ) ) {
 
 $page_links = paginate_links( 
 	array(
-		'base' => add_query_arg( 
+		'base' => add_query_arg(
 			array(
 	    		'page_num' => '%#%',
 	    		'page'     => 'shareasale_wc_tracker_datafeed_generation',
-			), 
-			esc_url( admin_url( 'admin.php' ) ) 
+			),
+			esc_url( admin_url( 'admin.php' ) )
 		),
 		'format'    => '',
 		'prev_text' => __( '&laquo;', 'text-domain' ),

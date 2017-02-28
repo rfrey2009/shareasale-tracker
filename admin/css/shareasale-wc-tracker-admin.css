@@ -39,7 +39,7 @@
 .shareasale-wc-tracker-logs-row, .shareasale-wc-tracker-datafeeds-row{
 	margin: 20px;
 }
-.shareasale-wc-tracker-logs-row:nth-child(odd), .shareasale-wc-tracker-datafeeds-row:nth-child(odd){
+.shareasale-wc-tracker-logs-row:nth-child(odd), .shareasale-wc-tracker-datafeeds-body:nth-child(even){
 	background: #f1f1f1;
 }
 .shareasale-wc-tracker-logs-cell, .shareasale-wc-tracker-datafeeds-cell{
@@ -62,15 +62,24 @@
     font-style: italic;
     font-weight: bolder;
 }
-.shareasale-wc-tracker-logs-cell:nth-child(7), .shareasale-wc-tracker-logs-header:nth-child(7){
+.shareasale-wc-tracker-logs-cell:nth-child(7), .shareasale-wc-tracker-logs-header:nth-child(7), .shareasale-wc-tracker-datafeeds-cell:nth-child(4), .shareasale-wc-tracker-datafeeds-header:nth-child(4){
 	padding-left: 3em;
 }
-.shareasale-wc-tracker-logs-cell:nth-child(1), .shareasale-wc-tracker-logs-cell:nth-child(n+4):nth-child(-n+6), .shareasale-wc-tracker-datafeeds-cell:nth-child(3){
+.shareasale-wc-tracker-logs-cell:nth-child(1), .shareasale-wc-tracker-logs-cell:nth-child(n+4):nth-child(-n+6){
     text-align: right;
 	padding: 0.5em 0.25em 0.5em 1.5em;
  }
+.shareasale-wc-tracker-datafeeds-cell:nth-child(3){
+	text-align: center;
+	font-style: italic;
+	padding: 0.5em 0.25em 0.5em 1.5em;
+	margin: 0;
+}
 .shareasale-wc-tracker-logs-cell:nth-child(n+4):nth-child(-n+6)::before{
     content: "$";
+ }
+ .shareasale-wc-tracker-datafeeds-error-count{
+ 	float: right;
  }
 .shareasale-wc-tracker-logs-pagination, .shareasale-wc-tracker-datafeeds-pagination{
 	float: left !important;

@@ -13,13 +13,16 @@ $num_of_pages    = ceil( $total / $limit );
 
 $datafeeds = $wpdb->get_results(
 	$wpdb->prepare(
-		"
-		SELECT
+		"SELECT 
 		DATE_FORMAT( MAX(generation_date), '%%m/%%d/%%Y %%h:%%i %%p' ) as generation_date,
 		file,
 		product_count,
 		warnings
-		FROM $datafeeds_table
+		FROM (
+			SELECT *
+			FROM $datafeeds_table
+			ORDER BY generation_date DESC
+		) x
 		GROUP BY file
 		ORDER BY generation_date DESC
 		LIMIT %d, %d
@@ -33,7 +36,7 @@ $datafeeds = $wpdb->get_results(
 	<thead class="shareasale-wc-tracker-datafeeds-head">
 		<tr class="shareasale-wc-tracker-datafeeds-row">
 			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left">Date</th>
-			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left">Link</th>
+			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left">File</th>
 			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-right">Product Count</th>
 			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left shareasale-wc-tracker-datafeeds-header-warning">Column Warnings</th>
 		</tr>
@@ -46,23 +49,23 @@ $datafeeds = $wpdb->get_results(
 			<td class="shareasale-wc-tracker-datafeeds-cell">
 			<?php
 			switch ( $detail ) {
-			    case 'file':
-			        echo
-			        	'<a href="' . esc_url( plugins_url( 'datafeeds/' . basename( $datafeed->file ), __DIR__ ) ) . '">
-			        		Download
-			        	</a>';
-			        break;
-			    case 'warnings':
-			        $warnings = maybe_unserialize( $value );
+				case 'file':
+					echo
+						'<a href="' . esc_url( plugins_url( 'datafeeds/' . basename( $datafeed->file ), __DIR__ ) ) . '">
+							Download
+						</a>';
+					break;
+				case 'warnings':
+					$warnings = maybe_unserialize( $value );
 					foreach ( $warnings as $code => $warning ) {
 						$count = count( $warning['messages'] );
 						if ( $count > 0 ) {
-							echo '<b>' . esc_html( strtoupper( $code ) . ': ' . $count ) . '</b><br>';
+							echo '<b>' . esc_html( strtoupper( $code ) ) . '</b><a class="shareasale-wc-tracker-datafeeds-error-count" href="#">' . esc_html( $count ) . '</a><br>';
 						}
 					}
-			        break;
-			    default :
-			    	echo esc_html( $value );
+					break;
+				default :
+					echo esc_html( $value );
 			}
 			?>
 			</td>
