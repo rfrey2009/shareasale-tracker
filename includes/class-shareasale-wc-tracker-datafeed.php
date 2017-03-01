@@ -85,7 +85,7 @@ class ShareASale_WC_Tracker_Datafeed {
 					just get first merchant_id error code message since rest will be identical, store in an array for uniformity
 					*/
 					'merchant_id' => array(
-						'messages' => array( $this->errors->get_error_message( 'merchant_id' ) ),
+						'messages' => ! empty( $this->errors->get_error_message( 'merchant_id' ) ) ? array( $this->errors->get_error_message( 'merchant_id' ) ) : array(),
 					),
 				);
 				$this->logger->log( $path, maybe_serialize( $product_warnings ), $product_count, date( 'Y-m-d H:i:s' ) );
@@ -147,12 +147,12 @@ class ShareASale_WC_Tracker_Datafeed {
 					$this->push_error_data( 'url', $product_id )
 				),
 				//required
-				'Price'                                 => $product->get_sale_price() ? $product->get_sale_price() : $this->errors->add(
+				'Price'                                 => $product->get_price() ? $product->get_price() : $this->errors->add(
 					'price',
 					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a price.',
 					$this->push_error_data( 'price', $product_id )
 				),
-				'Retailprice'                           => $product->get_price(),
+				'Retailprice'                           => $product->get_regular_price(),
 				'FullImage'                             => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_single' )[0],
 				'ThumbnailImage'                        => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_thumbnail' )[0],
 				'Commission'                            => '',
