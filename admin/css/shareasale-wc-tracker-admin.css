@@ -79,7 +79,13 @@
     content: "$";
  }
  .shareasale-wc-tracker-datafeeds-error-count{
+ 	cursor: pointer;
  	float: right;
+ }
+ .shareasale-wc-tracker-datafeeds-error-message-hidden{
+ 	visibility: hidden;
+ 	height: 0;
+ 	width: 100%;
  }
 .shareasale-wc-tracker-logs-pagination, .shareasale-wc-tracker-datafeeds-pagination{
 	float: left !important;

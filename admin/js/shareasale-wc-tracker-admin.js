@@ -16,9 +16,11 @@ jQuery(document).ready(function() {
 
     jQuery.post( ajaxurl, datastring, function(data) {
       jQuery('#generate-datafeed-results').html(data);
+      window.scrollTo(0,0);
       jQuery('#tracker-options-save').prop('disabled', false);
       jQuery('#generate-datafeed-confirmation').css('display', 'inline');
-      window.scrollTo(0,0);
+      jQuery('.shareasale-wc-tracker-datafeeds-table').find('tbody > tr').first().fadeOut().fadeIn();
+
     });
 
   });
@@ -32,5 +34,10 @@ jQuery(document).ready(function() {
       jQuery('#api-token').prop('disabled', false);
       jQuery('#api-secret').prop('disabled', false);
     }
+  });
+
+  jQuery(document).on('click', '.shareasale-wc-tracker-datafeeds-error-count', function(e){
+    e.preventDefault();
+    jQuery(this).siblings('.shareasale-wc-tracker-datafeeds-error-message').toggleClass('shareasale-wc-tracker-datafeeds-error-message-hidden');
   });
 });

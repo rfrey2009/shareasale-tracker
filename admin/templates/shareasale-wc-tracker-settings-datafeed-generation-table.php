@@ -38,7 +38,7 @@ $datafeeds = $wpdb->get_results(
 			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left">Date</th>
 			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left">File</th>
 			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-right">Product Count</th>
-			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left shareasale-wc-tracker-datafeeds-header-warning">Column Warnings</th>
+			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left shareasale-wc-tracker-datafeeds-header-warning">Column | # Warnings</th>
 		</tr>
 	</thead>
 <?php foreach ( $datafeeds as $datafeed ) : ?>
@@ -51,16 +51,32 @@ $datafeeds = $wpdb->get_results(
 			switch ( $detail ) {
 				case 'file':
 					echo
-						'<a href="' . esc_url( plugins_url( 'datafeeds/' . basename( $datafeed->file ), __DIR__ ) ) . '">
+						'<a href="' . esc_url( plugins_url( 'datafeeds/' . basename( $datafeed->file ), __DIR__ ) ) . '" download>
 							Download
 						</a>';
 					break;
 				case 'warnings':
 					$warnings = maybe_unserialize( $value );
 					foreach ( $warnings as $code => $warning ) {
-						$count = count( $warning['messages'] );
+						$messages = $warning['messages'];
+						$count    = count( $messages );
 						if ( $count > 0 ) {
-							echo '<b>' . esc_html( strtoupper( $code ) ) . '</b><a class="shareasale-wc-tracker-datafeeds-error-count" href="#">' . esc_html( $count ) . '</a><br>';
+							echo '<div class="shareasale-wc-tracker-datafeeds-error-code">';
+							echo '<b>' . esc_html( strtoupper( $code ) ) . '</b>';
+							echo '<a class="shareasale-wc-tracker-datafeeds-error-count">'
+									. esc_html( $count ) .
+								 '</a><br>';
+							foreach ( $messages as $message ) {
+								echo '<div class="shareasale-wc-tracker-datafeeds-error-message shareasale-wc-tracker-datafeeds-error-message-hidden">';
+								echo wp_kses( $message, array(
+									'a' => array(
+										'target'  => true,
+										'href'    => true,
+										),
+									)
+								) . '</div>';
+							}
+							echo '</div>';
 						}
 					}
 					break;

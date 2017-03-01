@@ -67,7 +67,7 @@ class ShareASale_WC_Tracker_Datafeed {
 					);
 					settings_errors();
 				}
-				$path             = ( $file . ( $compressed ? '.zip' : '' ) );
+				$path             = esc_url( $file . ( $compressed ? '.zip' : '' ) );
 				$product_warnings = array(
 					'sku'         => array(
 						'messages' => $this->errors->get_error_messages( 'sku' ),
@@ -81,8 +81,11 @@ class ShareASale_WC_Tracker_Datafeed {
 						'messages' => $this->errors->get_error_messages( 'price' ),
 						'data'     => $this->errors->get_error_data( 'price' ),
 					),
+					/*
+					just get first merchant_id error code message since rest will be identical, store in an array for uniformity
+					*/
 					'merchant_id' => array(
-						'messages' => $this->errors->get_error_messages( 'merchant_id' ),
+						'messages' => array( $this->errors->get_error_message( 'merchant_id' ) ),
 					),
 				);
 				$this->logger->log( $path, maybe_serialize( $product_warnings ), $product_count, date( 'Y-m-d H:i:s' ) );
@@ -133,20 +136,20 @@ class ShareASale_WC_Tracker_Datafeed {
 				//required
 				'SKU'                                   => $product->get_sku() ? $product->get_sku() : $this->errors->add(
 					'sku',
-					$product_id . ' is missing a SKU.' ,
+					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a SKU.',
 					$this->push_error_data( 'sku', $product_id )
 				),
 				'Name'                                  => $product->get_title(),
 				//required
 				'URL'                                   => $product->get_permalink() ? $product->get_permalink() : $this->errors->add(
 					'url',
-					$product_id . ' is missing a URL.',
+					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a URL.',
 					$this->push_error_data( 'url', $product_id )
 				),
 				//required
-				'Price'                                 => $product->get_sale_price() ? $product->get_sale_price() : $this->errors->add( 
+				'Price'                                 => $product->get_sale_price() ? $product->get_sale_price() : $this->errors->add(
 					'price',
-					$product_id . ' is missing a price.',
+					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a price.',
 					$this->push_error_data( 'price', $product_id )
 				),
 				'Retailprice'                           => $product->get_price(),
@@ -163,7 +166,7 @@ class ShareASale_WC_Tracker_Datafeed {
 				//required
 				'MerchantID'                            => ! empty( $merchant_id ) ? $merchant_id : $this->errors->add(
 					'merchant_id',
-					'No Merchant ID entered yet.'
+					'No <a href="' . esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker' ) ) . '">Merchant ID</a> entered yet.'
 				),
 				'Custom1'                               => '',
 				'Custom2'                               => '',
