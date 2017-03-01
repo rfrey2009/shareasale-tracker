@@ -58,11 +58,11 @@ class ShareASale_WC_Tracker_Datafeed {
 			$csv = $this->write( $file, $content );
 			if ( false !== $csv ) {
 				$compressed = $csv->compress( $file );
-				if ( false == $compressed ) {
+				if ( false === $compressed ) {
 					//couldn't compress, so notify user just a csv is available.
 					add_settings_error(
 						'',
-						esc_attr( 'datafeed' ),
+						esc_attr( 'datafeed-zip' ),
 						$this->errors->get_error_message( 'compress' ) . ' You will need to manually compress the csv file into a gz or zip archive before uploading to ShareASale.'
 					);
 					settings_errors();
@@ -93,7 +93,7 @@ class ShareASale_WC_Tracker_Datafeed {
 				//couldn't even create csv...
 				add_settings_error(
 					'',
-					esc_attr( 'datafeed' ),
+					esc_attr( 'datafeed-csv' ),
 					$this->errors->get_error_message( 'write' ) . ' Please contact your webhost for more information.'
 				);
 				settings_errors();
@@ -242,6 +242,9 @@ class ShareASale_WC_Tracker_Datafeed {
 
 		$zip        = new ZipArchive;
 		$compressed = $file . '.zip';
+		$dir        = dirname( $file );
+		//use the WP_Filesystem instance to 777 chmod the /datafeeds directory so less of a chance ZipArchive::Open() fails
+		$this->filesystem->chmod( $dir, 0777 );
 
 		if ( true !== $zip->open( $compressed, ZipArchive::CREATE ) ) {
 			$this->errors->add( 'compress', 'Couldn\'t compress because the zip archive cannot be opened.', $compressed );
@@ -253,9 +256,14 @@ class ShareASale_WC_Tracker_Datafeed {
 			return false;
 		}
 
-		$zip->close();
-		//clean up
+		if ( ! $zip->close() ) {
+		    $this->errors->add( 'compress', 'Couldn\'t compress because the zip archive cannot be closed.', $compressed );
+			return false;
+		}
+
+		//clean up leftover csv now compressed, and change /datafeeds back to defined directory permissions for WP config...
 		$this->filesystem->delete( $file );
+		$this->filesystem->chmod( $dir, FS_CHMOD_DIR );
 		return $this;
 	}
 

@@ -7,6 +7,9 @@
 .shareasale-wc-tracker-option-number{
 	width: 50px;
 }
+#setting-error-datafeed-zip{
+	border-left-color: yellow !important;
+}
 .shareasale-wc-tracker-logs-table, .shareasale-wc-tracker-datafeeds-table{
 	background: #ffffff;
 	border-collapse: collapse;
