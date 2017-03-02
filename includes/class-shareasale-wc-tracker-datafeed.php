@@ -180,7 +180,7 @@ class ShareASale_WC_Tracker_Datafeed {
 				'ShortDescription'                      => '',
 				'ISBN'                                  => $product->get_attribute( 'ISBN' ),
 				'UPC'                                   => $product->get_attribute( 'UPC' ),
-				'CrossSell'                             => implode( ',', $product->cross_sell_skus ),
+				'CrossSell'                             => implode( ',', array_filter( $product->cross_sell_skus ) ),
 				'MerchantGroup'                         => '',
 				'MerchantSubgroup'                      => '',
 				'CompatibleWith'                        => '',
@@ -243,7 +243,7 @@ class ShareASale_WC_Tracker_Datafeed {
 		$zip        = new ZipArchive;
 		$compressed = $file . '.zip';
 		$dir        = dirname( $file );
-		//use the WP_Filesystem instance to 777 chmod the /datafeeds directory so less of a chance ZipArchive::Open() fails
+		//use the WP_Filesystem instance to 777 chmod the /datafeeds directory so less of a chance ZipArchive::open() and ::addFile() failing
 		$this->filesystem->chmod( $dir, 0777 );
 
 		if ( true !== $zip->open( $compressed, ZipArchive::CREATE ) ) {
@@ -261,7 +261,7 @@ class ShareASale_WC_Tracker_Datafeed {
 			return false;
 		}
 
-		//clean up leftover csv now compressed, and change /datafeeds back to defined directory permissions for WP config...
+		//delete leftover csv now compressed, and change /datafeeds back to defined directory permissions for WP config...
 		$this->filesystem->delete( $file );
 		$this->filesystem->chmod( $dir, FS_CHMOD_DIR );
 		return $this;

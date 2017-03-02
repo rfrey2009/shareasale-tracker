@@ -23,7 +23,7 @@ class ShareASale_WC_Tracker_Analytics {
 		$async_scripts = array( 'shareasale-wc-tracker-analytics-second-chance' );
 
 		if ( in_array( $handle, $async_scripts, true ) ) {
-			return '<script type="text/javascript" src="' . $src . '" defer></script>' . "\n";
+			return '<script type="text/javascript" src="' . $src . '" defer async></script>' . "\n";
 		} else {
 			return $tag;
 		}

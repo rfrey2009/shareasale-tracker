@@ -55,6 +55,23 @@ class ShareASale_WC_Tracker_Admin {
 		}
 	}
 
+	public function woocommerce_product_options_general_product_data() {
+		woocommerce_wp_text_input( array(
+	        'id'          => '_custom_text_field',
+	        'label'       => 'Custom Text Field',
+	        'description' => 'This is a custom field, you can write here anything you want.',
+	        'desc_tip'    => 'true',
+	        'placeholder' => 'Custom text',
+			)
+		);
+	}
+
+	public function woocommerce_process_product_meta( $post_id ) {
+		if ( ! empty( $_POST['_custom_text_field'] ) ) {
+			update_post_meta( $post_id, '_custom_text_field', esc_attr( $_POST['_custom_text_field'] ) );
+		}
+	}
+
 	public function admin_init() {
 		$options = get_option( 'shareasale_wc_tracker_options' );
 		register_setting( 'shareasale_wc_tracker_options', 'shareasale_wc_tracker_options', array( $this, 'sanitize_settings' ) );

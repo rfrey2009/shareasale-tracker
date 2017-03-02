@@ -41,7 +41,12 @@ class ShareASale_WC_Tracker {
 	}
 
 	private function define_frontend_hooks() {
+		$this->loader->add_action( 'wp_head',            $this->analytics, 'wp_head' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->analytics, 'enqueue_scripts' );
+		//analytics filter
+		$this->loader->add_filter( 'script_loader_tag',  $this->analytics, 'script_loader_tag',
+			array( 'priority' => 10, 'args' => 3 )
+		);
 	}
 
 	private function define_admin_hooks() {
@@ -52,6 +57,9 @@ class ShareASale_WC_Tracker {
 		$this->loader->add_action( 'admin_init',                $admin, 'plugin_upgrade' );
 		$this->loader->add_action( 'admin_menu',                $admin, 'admin_menu' );
 		$this->loader->add_action( 'wp_ajax_generate_datafeed', $admin, 'wp_ajax_generate_datafeed' );
+		//for adding and saving custom post meta (ShareASale category/subactegory number values) to the WC products page general section
+		$this->loader->add_action( 'woocommerce_product_options_general_product_data', $admin, 'woocommerce_product_options_general_product_data' );
+		$this->loader->add_action( 'woocommerce_process_product_meta',                 $admin, 'woocommerce_process_product_meta' );
 		//admin filters
 		$this->loader->add_filter( 'plugin_action_links_' . SHAREASALE_WC_TRACKER_PLUGIN_FILENAME, $admin, 'render_settings_shortcut' );
 	}
@@ -69,21 +77,16 @@ class ShareASale_WC_Tracker {
 			array( 'priority' => 10, 'args' => 2 )
 		);
 		//advanced analytics
-		$this->loader->add_action( 'wp_head',                          $this->analytics, 'wp_head' );
 		$this->loader->add_action( 'woocommerce_add_to_cart',          $this->analytics, 'woocommerce_add_to_cart',
 			array( 'priority' => 10, 'args' => 6 )
 		);
 		$this->loader->add_action( 'woocommerce_ajax_added_to_cart',   $this->analytics, 'woocommerce_ajax_added_to_cart' );
 		$this->loader->add_action( 'woocommerce_before_checkout_form', $this->analytics, 'woocommerce_before_checkout_form' );
 		$this->loader->add_action( 'woocommerce_applied_coupon',       $this->analytics, 'woocommerce_applied_coupon' );
+		//this action MUST stay priority number lower than the woocommerce_thankyou $pixel action above, so it executes before post meta is added to the order
 		$this->loader->add_action( 'woocommerce_thankyou',             $this->analytics, 'woocommerce_thankyou',
 			array( 'priority' => 9, 'args' => 1 )
 		);
-		//analytics filter
-		$this->loader->add_filter( 'script_loader_tag',                $this->analytics, 'script_loader_tag',
-			array( 'priority' => 10, 'args' => 3 )
-		);
-
 	}
 
 	private function define_installer_hooks() {
