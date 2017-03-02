@@ -57,18 +57,31 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function woocommerce_product_options_general_product_data() {
 		woocommerce_wp_text_input( array(
-	        'id'          => '_custom_text_field',
-	        'label'       => 'Custom Text Field',
-	        'description' => 'This is a custom field, you can write here anything you want.',
-	        'desc_tip'    => 'true',
-	        'placeholder' => 'Custom text',
+			'id'          => 'shareasale_wc_tracker_datafeed_product_category',
+			'label'       => '<img style="vertical-align:middle;" src="' . esc_url( plugin_dir_url( __FILE__ ) . 'images/star_logo.png' ) . '"> Product Category',
+			'desc_tip'    => 'true',
+			'placeholder' => 'Enter a valid ShareASale category number',
+			'type'        => 'number',
 			)
 		);
+		woocommerce_wp_text_input( array(
+			'id'          => 'shareasale_wc_tracker_datafeed_product_subcategory',
+			'label'       => '<img style="vertical-align:middle;" src="' . esc_url( plugin_dir_url( __FILE__ ) . 'images/star_logo.png' ) . '"> Product Subcategory',
+			'desc_tip'    => 'true',
+			'placeholder' => 'Enter a valid ShareASale subcategory number',
+			'type'        => 'number',
+			)
+		);
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-woocommerce-product-category-subcategory-out-link.php';
 	}
 
 	public function woocommerce_process_product_meta( $post_id ) {
-		if ( ! empty( $_POST['_custom_text_field'] ) ) {
-			update_post_meta( $post_id, '_custom_text_field', esc_attr( $_POST['_custom_text_field'] ) );
+		//woocommerce_save_data nonce already safely checked by now
+		if ( ! empty( $_POST['shareasale_wc_tracker_datafeed_product_category'] ) ) {
+			update_post_meta( $post_id, 'shareasale_wc_tracker_datafeed_product_category', esc_attr( $_POST['shareasale_wc_tracker_datafeed_product_category'] ) );
+		}
+		if ( ! empty( $_POST['shareasale_wc_tracker_datafeed_product_subcategory'] ) ) {
+			update_post_meta( $post_id, 'shareasale_wc_tracker_datafeed_product_subcategory', esc_attr( $_POST['shareasale_wc_tracker_datafeed_product_subcategory'] ) );
 		}
 	}
 
@@ -191,17 +204,17 @@ class ShareASale_WC_Tracker_Admin {
 		$sub_menu_title = 'Tracking Settings';
 		add_submenu_page( $menu_slug, $page_title, $sub_menu_title, $capability, $menu_slug, $callback );
 
-	    $submenu_page_title = 'Automatic Reconciliation';
-	    $submenu_title      = 'Automatic Reconciliation';
-	    $submenu_slug       = 'shareasale_wc_tracker_automatic_reconciliation';
-	    $submenu_function   = array( $this, 'render_settings_page_submenu' );
-	   	add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
+		$submenu_page_title = 'Automatic Reconciliation';
+		$submenu_title      = 'Automatic Reconciliation';
+		$submenu_slug       = 'shareasale_wc_tracker_automatic_reconciliation';
+		$submenu_function   = array( $this, 'render_settings_page_submenu' );
+		add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
 
-	   	$submenu_page_title = 'Product Datafeed Generation';
-	    $submenu_title      = 'Product Datafeed Generation';
-	    $submenu_slug       = 'shareasale_wc_tracker_datafeed_generation';
-	    $submenu_function   = array( $this, 'render_settings_page_subsubmenu' );
-	   	add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
+		$submenu_page_title = 'Product Datafeed Generation';
+		$submenu_title      = 'Product Datafeed Generation';
+		$submenu_slug       = 'shareasale_wc_tracker_datafeed_generation';
+		$submenu_function   = array( $this, 'render_settings_page_subsubmenu' );
+		add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
 	}
 
 	public function render_settings_page() {

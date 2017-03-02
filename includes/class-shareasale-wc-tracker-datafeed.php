@@ -81,6 +81,14 @@ class ShareASale_WC_Tracker_Datafeed {
 						'messages' => $this->errors->get_error_messages( 'price' ),
 						'data'     => $this->errors->get_error_data( 'price' ),
 					),
+					'category'    => array(
+						'messages' => $this->errors->get_error_messages( 'category' ),
+						'data'     => $this->errors->get_error_data( 'category' ),
+					),
+					'subcategory' => array(
+						'messages' => $this->errors->get_error_messages( 'subcategory' ),
+						'data'     => $this->errors->get_error_data( 'subcategory' ),
+					),
 					/*
 					just get first merchant_id error code message since rest will be identical, store in an array for uniformity
 					*/
@@ -131,6 +139,8 @@ class ShareASale_WC_Tracker_Datafeed {
 		$options     = get_option( 'shareasale_wc_tracker_options' );
 		$merchant_id = @$options['merchant-id'];
 		$product_id  = $product->get_id();
+		$category    = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_category', true );
+		$subcategory = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_subcategory', true );
 
 		$row = array(
 				//required
@@ -157,9 +167,17 @@ class ShareASale_WC_Tracker_Datafeed {
 				'ThumbnailImage'                        => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_thumbnail' )[0],
 				'Commission'                            => '',
 				//required
-				'Category'                              => '',
+				'Category'                              => $category ? $category : $this->errors->add(
+					'category',
+					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a ShareASale category number.',
+					$this->push_error_data( 'category', $product_id )
+				),
 				//required
-				'Subcategory'                           => '',
+				'Subcategory'                           => $subcategory ? $subcategory : $this->errors->add(
+					'subcategory',
+					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a ShareASale subcategory number.',
+					$this->push_error_data( 'subcategory', $product_id )
+				),
 				'Description'                           => $product->get_post_data()->post_content,
 				'SearchTerms'                           => '',
 				'Status'                                => 'instock' === $product->stock_status? 'instock' : 'soldout',

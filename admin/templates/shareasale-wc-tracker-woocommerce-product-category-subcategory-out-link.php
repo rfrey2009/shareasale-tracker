@@ -1,0 +1,1 @@
+<p><a target="_blank" href="http://shareasale.com/out-productcategories.cfm">Click here for the full list of ShareASale product datafeed categories and subcategories.</a></p>
