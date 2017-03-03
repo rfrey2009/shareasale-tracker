@@ -267,12 +267,13 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function render_settings_page() {
 		include_once 'options-head.php';
-		/*
-		won't have ?updated= URL query param if accessing settings *first time* with WooCommerce not activated
-		so using add_settings_error() and manually including WP 'options-head.php' does us no good in that case...
-		*/
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
+			add_settings_error(
+				'',
+				esc_attr( 'woocommerce-warning' ),
+				'WooCommerce plugin must be installed and activated to use this plugin.'
+			);
+			settings_errors();
 			return;
 		}
 
@@ -281,17 +282,23 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function render_settings_page_submenu() {
 		include_once 'options-head.php';
-		/*
-		won't have ?updated= URL query param if accessing settings *first time* with WooCommerce/cURL not enabled
-		so using add_settings_error() and manually including WP 'options-head.php' does us no good in that case...
-		*/
 		if ( ! function_exists( 'curl_version' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-curl-warning.php';
+			add_settings_error(
+				'',
+				esc_attr( 'cURL-warning' ),
+				'cURL is not enabled on your server. Please contact your webhost to have cURL enabled to use automatic reconciliation.'
+			);
+			settings_errors();
 			return;
 		}
 
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
+			add_settings_error(
+				'',
+				esc_attr( 'woocommerce-warning' ),
+				'WooCommerce plugin must be installed and activated to use this plugin.'
+			);
+			settings_errors();
 			return;
 		}
 
@@ -303,7 +310,12 @@ class ShareASale_WC_Tracker_Admin {
 	public function render_settings_page_subsubmenu() {
 		include_once 'options-head.php';
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
+			add_settings_error(
+				'',
+				esc_attr( 'woocommerce-warning' ),
+				'WooCommerce plugin must be installed and activated to use this plugin.'
+			);
+			settings_errors();
 			return;
 		}
 
@@ -313,7 +325,12 @@ class ShareASale_WC_Tracker_Admin {
 	public function render_settings_page_subsubsubmenu() {
 		include_once 'options-head.php';
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
+			add_settings_error(
+				'',
+				esc_attr( 'woocommerce-warning' ),
+				'WooCommerce plugin must be installed and activated to use this plugin.'
+			);
+			settings_errors();
 			return;
 		}
 
@@ -322,7 +339,12 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function wp_ajax_generate_datafeed() {
 		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'generate-datafeed' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation-error.php';
+			add_settings_error(
+				'',
+				esc_attr( 'datafeed-security' ),
+				'There was a security error generating this datafeed. Try refreshing the page and generating again.'
+			);
+			settings_errors();
 			wp_die();
 		}
 
@@ -332,7 +354,7 @@ class ShareASale_WC_Tracker_Admin {
 		$inputs = array( '_wpnonce', 'action' );
 		$creds  = request_filesystem_credentials( $url, '', false, $dir, $inputs );
 
-		if ( false === $creds ) {
+		if ( ! $creds ) {
 			//stop here, we can't even write to /datafeeds yet and need credentials form...
 			wp_die();
 		}
@@ -492,6 +514,18 @@ class ShareASale_WC_Tracker_Admin {
 				}
 			}
 		}
+
+		if ( 1 == $final_settings['analytics-setting'] ) {
+			$final_settings['analytics-passkey'] = '';
+			$final_settings['analytics-setting'] = 0;
+
+			add_settings_error(
+				'shareasale_wc_tracker_analytics',
+				esc_attr( 'analytics' ),
+				'Enter a valid passkey from the ShareASale Tech Team.'
+			);
+		}
+
 		return $final_settings;
 	}
 }

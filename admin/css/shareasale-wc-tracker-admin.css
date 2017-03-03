@@ -93,9 +93,3 @@
 .shareasale-wc-tracker-logs-pagination, .shareasale-wc-tracker-datafeeds-pagination{
 	float: left !important;
 }
-#generate-datafeed-confirmation{
-	display: none;
-    vertical-align: middle;
-    padding: 1em;
-    color: green;
-}

@@ -55,18 +55,16 @@ class ShareASale_WC_Tracker_Datafeed {
 			$product_count = count( $rows );
 			unset( $rows );
 
-			$csv = $this->write( $file, $content );
-			if ( false !== $csv ) {
-				$compressed = $csv->compress( $file );
-				if ( false === $compressed ) {
+			if ( $csv = $this->write( $file, $content ) ) {
+				if ( ! $compressed = $csv->compress( $file ) ) {
 					//couldn't compress, so notify user just a csv is available.
 					add_settings_error(
 						'',
 						esc_attr( 'datafeed-zip' ),
-						$this->errors->get_error_message( 'compress' ) . ' You will need to manually compress the csv file into a gz or zip archive before uploading to ShareASale.'
+						$this->errors->get_error_message( 'compress' ) . ' You will need to manually compress the generated csv file into a gz or zip archive before uploading to ShareASale.'
 					);
-					settings_errors();
 				}
+
 				$path             = esc_url( $file . ( $compressed ? '.zip' : '' ) );
 				$product_warnings = array(
 					'sku'         => array(
@@ -96,6 +94,7 @@ class ShareASale_WC_Tracker_Datafeed {
 						'messages' => ! empty( $this->errors->get_error_message( 'merchant_id' ) ) ? array( $this->errors->get_error_message( 'merchant_id' ) ) : array(),
 					),
 				);
+
 				$this->logger->log( $path, maybe_serialize( $product_warnings ), $product_count, date( 'Y-m-d H:i:s' ) );
 			} else {
 				//couldn't even create csv...
@@ -105,7 +104,16 @@ class ShareASale_WC_Tracker_Datafeed {
 					$this->errors->get_error_message( 'write' ) . ' Please contact your webhost for more information.'
 				);
 				settings_errors();
+				return false;
 			}
+
+			add_settings_error(
+				'',
+				esc_attr( 'datafeed-success' ),
+				'Generating complete! Download from the link in the table below.',
+				'updated'
+			);
+			settings_errors();
 		}
 
 		return $this;

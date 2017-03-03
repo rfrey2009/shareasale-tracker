@@ -3,25 +3,20 @@ jQuery(document).ready(function() {
   jQuery(document).on('submit', '#generate-datafeed, #generate-datafeed-results > form', function(e) {
     e.preventDefault();
     /*
-    I have to do this because WP 'SSH SFTP Updater Support' plugin's JS code below is broken...
+    I have to do this datastring because WP 'SSH SFTP Updater Support' plugin's JS code below is broken...
     if(typeof(Storage)!=="undefined" && localStorage.privateKeyFile) {
       jQuery("#private_key").val(localStorage.privateKeyFile);
     }
     is setting the fields' values to string 'undefined'...
     */
-    jQuery('#tracker-options-save').prop('disabled', true);
-    jQuery('#generate-datafeed-confirmation').css('display', 'none');
-
     var datastring = jQuery(this).find('input[value!="undefined"]').serialize();
+    jQuery('#tracker-options-save').prop('disabled', true);
 
     jQuery.post( ajaxurl, datastring, function(data) {
       jQuery('#generate-datafeed-results').html(data);
       window.scrollTo(0,0);
       jQuery('#tracker-options-save').prop('disabled', false);
-      if(jQuery('.shareasale-wc-tracker-datafeeds-table').length){
-        jQuery('#generate-datafeed-confirmation').css('display', 'inline');
-        jQuery('.shareasale-wc-tracker-datafeeds-table').find('tbody > tr').first().fadeOut().fadeIn();
-      }
+      jQuery('.shareasale-wc-tracker-datafeeds-table').find('tbody > tr').first().fadeOut().fadeIn();
     });
 
   });

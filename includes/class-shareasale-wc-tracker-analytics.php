@@ -230,7 +230,7 @@ class ShareASale_WC_Tracker_Analytics {
 		$ordernumber    = $order->get_order_number();
 
 		$src  = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-conversion.js' );
-		$src2 = 'https://shareasale-analytics.com/j.js';
+		$src2 = esc_url( 'https://shareasale-analytics.com/j.js' );
 
 		wp_enqueue_script(
 			'shareasale-wc-tracker-analytics-conversion',
