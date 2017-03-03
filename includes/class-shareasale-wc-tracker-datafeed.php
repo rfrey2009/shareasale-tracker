@@ -274,22 +274,24 @@ class ShareASale_WC_Tracker_Datafeed {
 
 		if ( true !== $zip->open( $compressed, ZipArchive::CREATE ) ) {
 			$this->errors->add( 'compress', 'Couldn\'t compress because the zip archive cannot be opened.', $compressed );
+			$this->filesystem->chmod( $dir, FS_CHMOD_DIR );
 			return false;
 		}
 
 		if ( ! $zip->addFile( $file, basename( $file ) ) ) {
 		    $this->errors->add( 'compress', 'Couldn\'t compress because CSV file not found.', $file );
+			$this->filesystem->chmod( $dir, FS_CHMOD_DIR );
 			return false;
 		}
 
 		if ( ! $zip->close() ) {
 		    $this->errors->add( 'compress', 'Couldn\'t compress because the zip archive cannot be closed.', $compressed );
+			$this->filesystem->chmod( $dir, FS_CHMOD_DIR );
 			return false;
 		}
 
 		//delete leftover csv now compressed, and change /datafeeds back to defined directory permissions for WP config...
 		$this->filesystem->delete( $file );
-		$this->filesystem->chmod( $dir, FS_CHMOD_DIR );
 		return $this;
 	}
 

@@ -16,7 +16,11 @@ jQuery(document).ready(function() {
       jQuery('#generate-datafeed-results').html(data);
       window.scrollTo(0,0);
       jQuery('#tracker-options-save').prop('disabled', false);
-      jQuery('.shareasale-wc-tracker-datafeeds-table').find('tbody > tr').first().fadeOut().fadeIn();
+      if(jQuery('#setting-error-datafeed-csv')){
+        console.log('test');
+      }else{
+        jQuery('.shareasale-wc-tracker-datafeeds-table').find('tbody > tr').first().fadeOut().fadeIn();
+      }
     });
 
   });

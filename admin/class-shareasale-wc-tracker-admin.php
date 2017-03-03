@@ -62,7 +62,7 @@ class ShareASale_WC_Tracker_Admin {
 			'id'          => 'shareasale_wc_tracker_datafeed_product_category',
 			'label'       => '<img style="vertical-align:middle;" src="' . esc_url( plugin_dir_url( __FILE__ ) . 'images/star_logo.png' ) . '"> Product Category',
 			'desc_tip'    => 'true',
-			'placeholder' => 'Enter a valid ShareASale category number',
+			'placeholder' => 'Enter a valid ShareASale category',
 			'type'        => 'number',
 			)
 		);
@@ -70,7 +70,7 @@ class ShareASale_WC_Tracker_Admin {
 			'id'          => 'shareasale_wc_tracker_datafeed_product_subcategory',
 			'label'       => '<img style="vertical-align:middle;" src="' . esc_url( plugin_dir_url( __FILE__ ) . 'images/star_logo.png' ) . '"> Product Subcategory',
 			'desc_tip'    => 'true',
-			'placeholder' => 'Enter a valid ShareASale subcategory number',
+			'placeholder' => 'Enter a valid ShareASale subcategory',
 			'type'        => 'number',
 			)
 		);
