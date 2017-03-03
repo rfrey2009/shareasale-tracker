@@ -20,7 +20,6 @@ jQuery(document).ready(function() {
         jQuery('.shareasale-wc-tracker-datafeeds-table').find('tbody > tr').first().fadeOut().fadeIn();
       }
     });
-
   });
 
   //disable customization controls if toolbar not enabled
@@ -31,6 +30,15 @@ jQuery(document).ready(function() {
     }else if(this.checked){
       jQuery('#api-token').prop('disabled', false);
       jQuery('#api-secret').prop('disabled', false);
+    }
+  });
+
+    //disable customization controls if toolbar not enabled
+  jQuery('#analytics-setting').click(function(){
+    if(!this.checked){
+      jQuery('#analytics-passkey').prop('disabled', true);
+    }else if(this.checked){
+      jQuery('#analytics-passkey').prop('disabled', false);
     }
   });
 

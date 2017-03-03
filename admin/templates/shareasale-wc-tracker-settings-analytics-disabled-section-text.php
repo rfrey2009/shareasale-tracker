@@ -26,4 +26,4 @@ $prefixed    = 'MID ' . $merchant_id;
 <hr>
 <p>Go beyond just basic sale tracking!</p>
 <p>Advanced analytics allows ShareASale to capture when products are added to cart, coupons applied, checkout sessions started, and other events. Use these to fine tune your Affiliate attribution and commissions.</p>
-<p>Already have a passkey? Enter it below to enable advanced analytics.</p>
+<p>Already have a passkey? Check the box below to enable advanced analytics and then insert the passkey.</p>

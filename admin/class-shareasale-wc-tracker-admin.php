@@ -214,7 +214,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'analytics-passkey',
 				'name'        => 'analytics-passkey',
 				'value'       => ! empty( $options['analytics-passkey'] ) ? $options['analytics-passkey'] : '',
-				'status'      => disabled( @$options['analytics-passkey'], 0, false ),
+				'status'      => disabled( @$options['analytics-setting'], 0, false ),
 				'size'        => 28,
 				'type'        => 'text',
 				'placeholder' => 'Enter your Required Passkey',
@@ -516,16 +516,25 @@ class ShareASale_WC_Tracker_Admin {
 		}
 
 		if ( 1 == $final_settings['analytics-setting'] ) {
-			$final_settings['analytics-passkey'] = '';
-			$final_settings['analytics-setting'] = 0;
-
-			add_settings_error(
-				'shareasale_wc_tracker_analytics',
-				esc_attr( 'analytics' ),
-				'Enter a valid passkey from the ShareASale Tech Team.'
-			);
+			/*
+			* If you're reading this, the passkey we provide is not really intended to be a secure form of authentication whatsoever...
+			* It's just there to ensure Merchants have first contacted ShareASale and reached a plan for actually using advanced analytics with our Conversion Lines feature.
+			* So don't just reverse engineer this to get your "passkey" (a simple crc32 hash of your Merchant ID...) or hack the db option directly.
+			* It won't do any good if Conversion Lines isn't already setup on our end too.
+			* Email us first to talk about your Affiliate attribution/commission strategy. We'd love to help!
+			* - Ryan Stark, Technical Team Lead, ShareASale.com, Inc.
+			*/
+			$checksum = hash( 'crc32', $final_settings['merchant-id'] );
+			if ( trim( $final_settings['analytics-passkey'] ) !== $checksum ) {
+				add_settings_error(
+					'shareasale_wc_tracker_analytics',
+					esc_attr( 'analytics' ),
+					'Enter a valid passkey from the ShareASale Tech Team.'
+				);
+				$final_settings['analytics-passkey'] = '';
+				$final_settings['analytics-setting'] = 0;
+			}
 		}
-
 		return $final_settings;
 	}
 }
