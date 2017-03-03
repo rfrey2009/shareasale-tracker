@@ -16,9 +16,7 @@ jQuery(document).ready(function() {
       jQuery('#generate-datafeed-results').html(data);
       window.scrollTo(0,0);
       jQuery('#tracker-options-save').prop('disabled', false);
-      if(jQuery('#setting-error-datafeed-csv')){
-        console.log('test');
-      }else{
+      if(!jQuery('#setting-error-datafeed-csv').length){        
         jQuery('.shareasale-wc-tracker-datafeeds-table').find('tbody > tr').first().fadeOut().fadeIn();
       }
     });
