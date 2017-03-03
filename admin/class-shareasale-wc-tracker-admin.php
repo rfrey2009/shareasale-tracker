@@ -26,6 +26,7 @@ class ShareASale_WC_Tracker_Admin {
 			'toplevel_page_shareasale_wc_tracker',
 			'shareasale-wc-tracker_page_shareasale_wc_tracker_automatic_reconciliation',
 			'shareasale-wc-tracker_page_shareasale_wc_tracker_datafeed_generation',
+			'shareasale-wc-tracker_page_shareasale_wc_tracker_advanced_analytics',
 		);
 
 		if ( in_array( $hook, $hooks, true ) ) {
@@ -43,6 +44,7 @@ class ShareASale_WC_Tracker_Admin {
 		$hooks = array(
 			'shareasale-wc-tracker_page_shareasale_wc_tracker_automatic_reconciliation',
 			'shareasale-wc-tracker_page_shareasale_wc_tracker_datafeed_generation',
+			'shareasale-wc-tracker_page_shareasale_wc_tracker_advanced_analytics',
 		);
 
 		if ( in_array( $hook, $hooks, true ) ) {
@@ -179,6 +181,46 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => 'Enter your API Secret',
 				'class'       => 'shareasale-wc-tracker-option',
 		));
+
+		$callback = $options['analytics-setting'] ? 'render_settings_analytics_enabled_section_text' : 'render_settings_analytics_disabled_section_text';
+
+		add_settings_section( 'shareasale_wc_tracker_analytics', 'Advanced Analytics', array( $this, $callback ), 'shareasale_wc_tracker_advanced_analytics' );
+		add_settings_field( 'analytics-setting-hidden', '', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_advanced_analytics', 'shareasale_wc_tracker_analytics',
+			array(
+				'id'          => 'analytics-setting-hidden',
+				'name'        => 'analytics-setting',
+				'value'       => 0,
+				'status'      => '',
+				'size'        => 1,
+				'type'        => 'hidden',
+				'placeholder' => '',
+				'class'       => 'shareasale-wc-tracker-option-hidden',
+		));
+		add_settings_field( 'analytics-setting', 'Enable', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_advanced_analytics', 'shareasale_wc_tracker_analytics',
+			array(
+				'label_for'   => 'analytics-setting',
+				'id'          => 'analytics-setting',
+				'name'        => 'analytics-setting',
+				'value'       => 1,
+				'status'      => checked( @$options['analytics-setting'], 1, false ),
+				'size'        => 18,
+				'type'        => 'checkbox',
+				'placeholder' => '',
+				'class'       => 'shareasale-wc-tracker-option',
+		));
+		add_settings_field( 'analytics-passkey', 'Analytics Passkey', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_advanced_analytics', 'shareasale_wc_tracker_analytics',
+			array(
+				'label_for'   => 'analytics-passkey',
+				'id'          => 'analytics-passkey',
+				'name'        => 'analytics-passkey',
+				'value'       => ! empty( $options['analytics-passkey'] ) ? $options['analytics-passkey'] : '',
+				'status'      => disabled( @$options['analytics-passkey'], 0, false ),
+				'size'        => 28,
+				'type'        => 'text',
+				'placeholder' => 'Enter your Required Passkey',
+				'class'       => 'shareasale-wc-tracker-option',
+		));
+
 	}
 	//this is here because it runs on admin_init hook unfortunately
 	public function plugin_upgrade() {
@@ -214,6 +256,12 @@ class ShareASale_WC_Tracker_Admin {
 		$submenu_title      = 'Product Datafeed Generation';
 		$submenu_slug       = 'shareasale_wc_tracker_datafeed_generation';
 		$submenu_function   = array( $this, 'render_settings_page_subsubmenu' );
+		add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
+
+		$submenu_page_title = 'Advanced Analytics';
+		$submenu_title      = 'Advanced Analytics';
+		$submenu_slug       = 'shareasale_wc_tracker_advanced_analytics';
+		$submenu_function   = array( $this, 'render_settings_page_subsubsubmenu' );
 		add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
 	}
 
@@ -260,6 +308,16 @@ class ShareASale_WC_Tracker_Admin {
 		}
 
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation.php';
+	}
+
+	public function render_settings_page_subsubsubmenu() {
+		include_once 'options-head.php';
+		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+			require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-woocommerce-warning.php';
+			return;
+		}
+
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-advanced-analytics.php';
 	}
 
 	public function wp_ajax_generate_datafeed() {
@@ -313,6 +371,14 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function render_settings_api_section_text() {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-api-section-text.php';
+	}
+
+	public function render_settings_analytics_enabled_section_text() {
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-analytics-enabled-section-text.php';
+	}
+
+	public function render_settings_analytics_disabled_section_text() {
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-analytics-disabled-section-text.php';
 	}
 
 	public function render_settings_input( $attributes ) {

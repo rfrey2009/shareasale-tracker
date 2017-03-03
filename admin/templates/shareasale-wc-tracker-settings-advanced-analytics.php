@@ -11,7 +11,7 @@ if ( ! defined( 'WPINC' ) ) {
 			ShareASale WooCommerce Tracker Settings
 		</h2>
 		<h2 class="nav-tab-wrapper">
-	    	<a href="?page=shareasale_wc_tracker" class="nav-tab nav-tab-active">
+	    	<a href="?page=shareasale_wc_tracker" class="nav-tab">
 	    		Tracking Settings
 	    	</a>
 	    	<a href="?page=shareasale_wc_tracker_automatic_reconciliation&amp;page_num=1" class="nav-tab">
@@ -20,7 +20,7 @@ if ( ! defined( 'WPINC' ) ) {
 	    	<a href="?page=shareasale_wc_tracker_datafeed_generation&amp;page_num=1" class="nav-tab">
 	    		Datafeed Generation
 	    	</a>
-	    	<a href="?page=shareasale_wc_tracker_advanced_analytics" class="nav-tab nav-tab-analytics">
+	    	<a href="?page=shareasale_wc_tracker_advanced_analytics" class="nav-tab nav-tab-active nav-tab-analytics nav-tab-analytics-active">
 	    		Advanced Analytics
 	    	</a>
 		</h2>
@@ -28,10 +28,10 @@ if ( ! defined( 'WPINC' ) ) {
 			<div id="shareasale-wc-tracker-options">
 			<?php
 			  settings_fields( 'shareasale_wc_tracker_options' );
-			  do_settings_sections( 'shareasale_wc_tracker' );
+			  do_settings_sections( 'shareasale_wc_tracker_advanced_analytics' );
 			?>     
 			</div>
-			<button id="tracker-options-save" class="button" name="Submit">Save Settings</button>
+			<button id="tracker-options-save" class="button" name="Submit">Enable advanced analytics</button>
 		</form>
 	</div> 
 </div>

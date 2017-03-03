@@ -83,7 +83,7 @@ class ShareASale_WC_Tracker {
 		$this->loader->add_action( 'woocommerce_ajax_added_to_cart',   $this->analytics, 'woocommerce_ajax_added_to_cart' );
 		$this->loader->add_action( 'woocommerce_before_checkout_form', $this->analytics, 'woocommerce_before_checkout_form' );
 		$this->loader->add_action( 'woocommerce_applied_coupon',       $this->analytics, 'woocommerce_applied_coupon' );
-		//this action MUST stay priority number lower than the woocommerce_thankyou $pixel action above, so it executes before post meta is added to the order
+		//this action MUST stay priority number lower than the woocommerce_thankyou $pixel action above, so it executes BEFORE post meta is added to the order
 		$this->loader->add_action( 'woocommerce_thankyou',             $this->analytics, 'woocommerce_thankyou',
 			array( 'priority' => 9, 'args' => 1 )
 		);

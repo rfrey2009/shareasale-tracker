@@ -20,6 +20,9 @@ if ( ! defined( 'WPINC' ) ) {
 			<a href="?page=shareasale_wc_tracker_datafeed_generation&amp;page_num=1" class="nav-tab nav-tab-active">
 				Datafeed Generation
 			</a>
+			<a href="?page=shareasale_wc_tracker_advanced_analytics" class="nav-tab nav-tab-analytics">
+	    		Advanced Analytics
+	    	</a>
 		</h2>
 		<form id="generate-datafeed" action="" method="post">
 			<div id="shareasale-wc-tracker-options">
