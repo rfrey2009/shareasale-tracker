@@ -155,7 +155,6 @@ class ShareASale_WC_Tracker_Datafeed {
 				'fields' => 'names',
 			)
 		);
-		error_log( print_r( $product->get_children(), true ) );
 
 		$row = array(
 				//required

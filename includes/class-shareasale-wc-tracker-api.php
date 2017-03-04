@@ -116,6 +116,9 @@ class ShareASale_WC_Tracker_API {
 			$pieces  = array_map( 'trim', explode( '-', $response ) );
 			$code    = str_replace( 'Error Code', '', $pieces[1] );
 			$message = $pieces[0];
+			if ( 4002 == $code ) {
+				$message .= ' &middot; Input your webhost\'s IP address (' . $pieces[2] . ') or turn off IP address matching <a target="_blank" href ="' . esc_url( 'https://account.shareasale.com/m-apiips.cfm' ) . '">in ShareASale</a>';
+			}
 			$data    = $this->last_query;
 			// error occurred... store it and return false
 			$this->errors->add( $code, $message, $data );

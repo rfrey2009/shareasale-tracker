@@ -505,7 +505,7 @@ class ShareASale_WC_Tracker_Admin {
 						esc_attr( 'api' ),
 						'Your API credentials did not work. Check your merchant ID, API token, and API key.
 						<span style = "font-size: 10px">'
-						. $shareasale_api->errors->get_error_code() . ' - ' . $shareasale_api->errors->get_error_message() .
+						. $shareasale_api->errors->get_error_code() . ' &middot; ' . $shareasale_api->errors->get_error_message() .
 						'</span>'
 					);
 					//if API credentials failed, sanitize those options prior to saving and turn off automatic reconcilation
@@ -515,7 +515,7 @@ class ShareASale_WC_Tracker_Admin {
 			}
 		}
 
-		if ( 1 == $final_settings['analytics-setting'] ) {
+		if ( 1 == $final_settings['analytics-setting'] && $final_settings['merchant-id'] ) {
 			/*
 			* If you're reading this, the passkey we provide is not really intended to be a secure form of authentication whatsoever...
 			* It's just there to ensure Merchants have first contacted ShareASale and reached a plan for actually using advanced analytics with our Conversion Lines feature.
@@ -534,6 +534,8 @@ class ShareASale_WC_Tracker_Admin {
 				$final_settings['analytics-passkey'] = '';
 				$final_settings['analytics-setting'] = 0;
 			}
+		} elseif ( empty( $final_settings['merchant-id'] ) ) {
+				$final_settings['analytics-setting'] = 0;
 		}
 		return $final_settings;
 	}
