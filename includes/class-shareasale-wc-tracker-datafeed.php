@@ -144,11 +144,18 @@ class ShareASale_WC_Tracker_Datafeed {
 	}
 
 	private function make_row( $product ) {
-		$options     = get_option( 'shareasale_wc_tracker_options' );
-		$merchant_id = @$options['merchant-id'];
-		$product_id  = $product->get_id();
-		$category    = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_category', true );
-		$subcategory = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_subcategory', true );
+		$options           = get_option( 'shareasale_wc_tracker_options' );
+		$merchant_id       = @$options['merchant-id'];
+		$product_id        = $product->get_id();
+		$category          = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_category', true );
+		$subcategory       = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_subcategory', true );
+		$merchant_taxonomy = wc_get_product_terms( $product_id, 'product_cat',
+			array(
+				'orderby' => 'parent',
+				'fields' => 'names',
+			)
+		);
+		error_log( print_r( $product->get_children(), true ) );
 
 		$row = array(
 				//required
@@ -171,8 +178,8 @@ class ShareASale_WC_Tracker_Datafeed {
 					$this->push_error_data( 'price', $product_id )
 				),
 				'Retailprice'                           => $product->get_regular_price(),
-				'FullImage'                             => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_single' )[0],
-				'ThumbnailImage'                        => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_thumbnail' )[0],
+				'FullImage'                             => get_the_post_thumbnail_url( $product_id, 'shop_single' ),
+				'ThumbnailImage'                        => get_the_post_thumbnail_url( $product_id, 'shop_thumbnail' ),
 				'Commission'                            => '',
 				//required
 				'Category'                              => $category ? $category : $this->errors->add(
@@ -187,8 +194,8 @@ class ShareASale_WC_Tracker_Datafeed {
 					$this->push_error_data( 'subcategory', $product_id )
 				),
 				'Description'                           => $product->get_post_data()->post_content,
-				'SearchTerms'                           => '',
-				'Status'                                => 'instock' === $product->stock_status? 'instock' : 'soldout',
+				'SearchTerms'                           => strip_tags( $product->get_tags( ',' ) ),
+				'Status'                                => $product->is_in_stock() ? 'instock' : 'soldout',
 				//required
 				'MerchantID'                            => ! empty( $merchant_id ) ? $merchant_id : $this->errors->add(
 					'merchant_id',
@@ -201,14 +208,14 @@ class ShareASale_WC_Tracker_Datafeed {
 				'Custom5'                               => '',
 				'Manufacturer'                          => $product->get_attribute( 'manufacturer' ),
 				'PartNumber'                            => $product->get_attribute( 'partnumber' ),
-				'MerchantCategory'                      => '',
-				'MerchantSubcategory'                   => '',
+				'MerchantCategory'                      => end( $merchant_taxonomy ),
+				'MerchantSubcategory'                   => prev( $merchant_taxonomy ),
 				'ShortDescription'                      => '',
 				'ISBN'                                  => $product->get_attribute( 'ISBN' ),
 				'UPC'                                   => $product->get_attribute( 'UPC' ),
 				'CrossSell'                             => implode( ',', array_filter( $product->cross_sell_skus ) ),
-				'MerchantGroup'                         => '',
-				'MerchantSubgroup'                      => '',
+				'MerchantGroup'                         => prev( $merchant_taxonomy ),
+				'MerchantSubgroup'                      => prev( $merchant_taxonomy ),
 				'CompatibleWith'                        => '',
 				'CompareTo'                             => '',
 				'QuantityDiscount'                      => '',
@@ -224,8 +231,8 @@ class ShareASale_WC_Tracker_Datafeed {
 				'customCommissionIsFlatRate'            => 0,
 				'customCommissionNewCustomerMultiplier' => 1,
 				'mobileURL'                             => '',
-				'mobileImage'                           => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_single' )[0],
-				'mobileThumbnail'                       => wp_get_attachment_image_src( $product->get_gallery_attachment_ids()[0], 'shop_thumbnail' )[0],
+				'mobileImage'                           => get_the_post_thumbnail_url( $product_id, 'shop_single' ),
+				'mobileThumbnail'                       => get_the_post_thumbnail_url( $product_id, 'shop_thumbnail' ),
 				'ReservedForFutureUse'                  => '',
 				'ReservedForFutureUse'                  => '',
 				'ReservedForFutureUse'                  => '',
