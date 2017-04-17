@@ -7,7 +7,7 @@ class ShareASale_WC_Tracker_Pixel {
 
 	/**
 	* @var WC_Order $order WooCommere order object https://docs.woothemes.com/wc-apidocs/class-WC_Order.html
-	* @var float $version Plugin version
+	* @var string $version Plugin version
 	*/
 
 	private $order, $version;

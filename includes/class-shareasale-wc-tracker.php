@@ -8,7 +8,7 @@ class ShareASale_WC_Tracker {
 	* @var ShareASale_WC_Tracker_Analytics $analytics object that controls advanced analytics (add-to-cart, coupon code, etc.) setup
 	* @var ShareASale_WC_Tracker_Loader $loader Loader object that coordinates actions and filters between core plugin and admin classes
 	* @var string $plugin_slug WordPress Slug for this plugin
-	* @var float $version Plugin version
+	* @var string $version Plugin version
 	*/
 	private $analytics, $loader, $plugin_slug, $version;
 

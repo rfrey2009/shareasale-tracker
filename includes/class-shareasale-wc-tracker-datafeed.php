@@ -7,7 +7,8 @@ class ShareASale_WC_Tracker_Datafeed {
 
 	/**
 	* Generates, compresses, and cleans up product datafeed files
-	* @var float $version Plugin version
+	* @var string $version Plugin version
+	* @var string $version WooCommerce version
 	* @var WP_Filesystem $filesystem WordPress filesystem object https://codex.wordpress.org/Filesystem_API
 	* @var WP_Error $errors any datafeed generation failure errors
 	*/
@@ -16,6 +17,7 @@ class ShareASale_WC_Tracker_Datafeed {
 
 	public function __construct( $version, $filesystem ) {
 		$this->version    = $version;
+		$this->wc_version = WC()->version;
 		$this->filesystem = $filesystem;
 		$this->errors     = new WP_Error();
 		$this->load_dependencies();
@@ -136,7 +138,13 @@ class ShareASale_WC_Tracker_Datafeed {
 	private function get_cross_sell_skus( $product ) {
 		$cross_sell_skus = array();
 
-		foreach ( $product->get_cross_sells() as $cross_sell_product_id ) {
+		if ( version_compare( $this->wc_version, '3.0' ) >= 0 ) {
+			$cross_sell_product_ids = $product->get_cross_sells();
+		} else {
+			$cross_sell_product_ids = $product->get_cross_sell_ids();
+		}
+
+		foreach ( $cross_sell_product_ids as $cross_sell_product_id ) {
 			$cross_sell_skus[] = get_post_meta( $cross_sell_product_id, '_sku', true );
 		}
 
@@ -192,8 +200,8 @@ class ShareASale_WC_Tracker_Datafeed {
 					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a ShareASale subcategory number.',
 					$this->push_error_data( 'subcategory', $product_id )
 				),
-				'Description'                           => $product->get_post_data()->post_content,
-				'SearchTerms'                           => strip_tags( $product->get_tags( ',' ) ),
+				'Description'                           => version_compare( $this->wc_version, '3.0' ) >= 0 ? get_post( $product_id )->post_content : $product->get_post_data()->post_content,
+				'SearchTerms'                           => version_compare( $this->wc_version, '3.0' ) >= 0 ? strip_tags( wc_get_product_tag_list( $product_id, ',' ) ) : strip_tags( $product->get_tags( ',' ) ),
 				'Status'                                => $product->is_in_stock() ? 'instock' : 'soldout',
 				//required
 				'MerchantID'                            => ! empty( $merchant_id ) ? $merchant_id : $this->errors->add(
@@ -212,6 +220,7 @@ class ShareASale_WC_Tracker_Datafeed {
 				'ShortDescription'                      => '',
 				'ISBN'                                  => $product->get_attribute( 'ISBN' ),
 				'UPC'                                   => $product->get_attribute( 'UPC' ),
+				//array_filter used without callback argument to remove false values from array
 				'CrossSell'                             => implode( ',', array_filter( $product->cross_sell_skus ) ),
 				'MerchantGroup'                         => prev( $merchant_taxonomy ),
 				'MerchantSubgroup'                      => prev( $merchant_taxonomy ),
@@ -219,7 +228,7 @@ class ShareASale_WC_Tracker_Datafeed {
 				'CompareTo'                             => '',
 				'QuantityDiscount'                      => '',
 				'Bestseller'                            => $product->is_featured() ? 1 : 0,
-				'AddToCartURL'                          => $product->add_to_cart_url,
+				'AddToCartURL'                          => version_compare( $this->wc_version, '3.0' ) >= 0 ? $product->add_to_cart_url() : $product->add_to_cart_url,
 				'ReviewsRSSURL'                         => '',
 				'Option1'                               => '',
 				'Option2'                               => '',

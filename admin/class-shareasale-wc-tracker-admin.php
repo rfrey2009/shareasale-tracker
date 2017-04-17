@@ -5,7 +5,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 class ShareASale_WC_Tracker_Admin {
 	/**
-	* @var float $version Plugin version
+	* @var string $version Plugin version
 	*/
 	private $version;
 

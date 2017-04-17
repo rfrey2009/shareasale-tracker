@@ -5,7 +5,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 class ShareASale_WC_Tracker_Datafeed_Logger {
 	/**
-	* @var float $version Plugin version
+	* @var string $version Plugin version
 	* @var Wpdb $wpdb WordPress global database connection singleton
 	* @var string $table datafeeds table name
 	*/

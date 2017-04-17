@@ -6,7 +6,7 @@ if ( ! defined( 'WPINC' ) ) {
 class ShareASale_WC_Tracker_Analytics {
 
 	/**
-	* @var float $version Plugin version
+	* @var string $version Plugin version
 	* @var mixed $options Plugin settings for use in a few places
 	*/
 
@@ -121,8 +121,8 @@ class ShareASale_WC_Tracker_Analytics {
 		}
 
 		$product = new WC_Product( $product_id );
-		$price   = $product->get_price();
 		$sku     = $product->get_sku();
+		$price   = $product->get_price();
 
 		$src = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js' );
 		wp_enqueue_script(
