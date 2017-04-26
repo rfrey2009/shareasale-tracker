@@ -226,7 +226,7 @@ class ShareASale_WC_Tracker_Admin {
 	public function plugin_upgrade() {
 		$current_version = get_option( 'shareasale_wc_tracker_version' );
 		$latest_version  = $this->version;
-
+		//at first installation, shareasale_wc_tracker_version actually gets defined here even if not an upgrade
 		if ( -1 === version_compare( $current_version, $latest_version ) ) {
 			ShareASale_WC_Tracker_Installer::upgrade( $current_version, $latest_version );
 		}
