@@ -182,7 +182,7 @@ class ShareASale_WC_Tracker_Admin {
 				'class'       => 'shareasale-wc-tracker-option',
 		));
 
-		$callback = $options['analytics-setting'] ? 'render_settings_analytics_enabled_section_text' : 'render_settings_analytics_disabled_section_text';
+		$callback = @$options['analytics-setting'] ? 'render_settings_analytics_enabled_section_text' : 'render_settings_analytics_disabled_section_text';
 
 		add_settings_section( 'shareasale_wc_tracker_analytics', 'Advanced Analytics', array( $this, $callback ), 'shareasale_wc_tracker_advanced_analytics' );
 		add_settings_field( 'analytics-setting-hidden', '', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_advanced_analytics', 'shareasale_wc_tracker_analytics',

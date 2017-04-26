@@ -41,31 +41,31 @@ class ShareASale_WC_Tracker_Pixel {
 
 		switch ( $xtype ) {
 			case 'customer_billing_country_code':
-				$xtype = '&xtype=' . (string) $this->order->get_billing_country();
+				$xtype = '&xtype=' . ( version_compare( WC()->version, '3.0' ) >= 0 ? $this->order->get_billing_country() : $this->order->billing_country );
 				break;
 
 			case 'customer_billing_state_code':
-				$xtype = '&xtype=' . (string) $this->order->get_billing_state();
+				$xtype = '&xtype=' . ( version_compare( WC()->version, '3.0' ) >= 0 ? $this->order->get_billing_state() : $this->order->billing_state );
 				break;
 
 			case 'customer_billing_city_code':
-				$xtype = '&xtype=' . (string) $this->order->get_billing_city();
+				$xtype = '&xtype=' . ( version_compare( WC()->version, '3.0' ) >= 0 ? $this->order->get_billing_city() : $this->order->billing_city );
 				break;
 
 			case 'customer_shipping_country_code':
-				$xtype = '&xtype=' . (string) $this->order->get_shipping_country();
+				$xtype = '&xtype=' . ( version_compare( WC()->version, '3.0' ) >= 0 ? $this->order->get_shipping_country() : $this->order->shipping_country );
 				break;
 
 			case 'customer_shipping_state_code':
-				$xtype = '&xtype=' . (string) $this->order->get_shipping_state();
+				$xtype = '&xtype=' . ( version_compare( WC()->version, '3.0' ) >= 0 ? $this->order->get_shipping_state() : $this->order->shipping_state );
 				break;
 
 			case 'customer_shipping_city_code':
-				$xtype = '&xtype=' . (string) $this->order->get_shipping_city();
+				$xtype = '&xtype=' . ( version_compare( WC()->version, '3.0' ) >= 0 ? $this->order->get_shipping_city() : $this->order->shipping_city );
 				break;
 
 			case 'customer_id':
-				$xtype = '&xtype=' . (string) $this->order->get_user_id();
+				$xtype = '&xtype=' . $this->order->get_user_id();
 				break;
 
 			case 'customer_device_type':
@@ -73,11 +73,11 @@ class ShareASale_WC_Tracker_Pixel {
 				break;
 
 			case 'payment_type':
-				$xtype = '&xtype=' . (string) $this->order->get_payment_method_title();
+				$xtype = '&xtype=' . ( version_compare( WC()->version, '3.0' ) >= 0 ? $this->order->get_payment_method_title() : $this->order->payment_method_title );
 				break;
 
 			case 'payment_shipping':
-				$xtype = '&xtype=' . (string) $this->order->get_shipping_method();
+				$xtype = '&xtype=' . $this->order->get_shipping_method();
 				break;
 
 			default:
