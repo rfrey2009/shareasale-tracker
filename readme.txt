@@ -32,8 +32,27 @@ iii. In the plugin's settings page "Automate Reconciliation" tab back in WordPre
 
 iv. Any automatically edited or voided sales in ShareASale will be logged in the table at the bottom of this tab for reference.
 
+d. If you would like to create a product datafeed file for upload to ShareASale, go to the "Datafeed Generation" tab. With a few easy clicks our plugin will generate a basic product datafeed file you can upload to Creatives >> Datafeed in ShareASale. Be sure to review the errors/warnings after generating a product datafeed in case you need to make some fixes yourself. See this blog post for more information on the importance of a product datafeed.
+
+http://blog.shareasale.com/2014/04/21/free-slide-deck-from-shareasales-datafeed-tune-up-webinar/
+
+You can view or re-download the product datafeed files you've generated in the past 30 days in the table at the bottom of this tab.
+
+e. If you're interested in our Conversion Lines feature that lets Merchants setup advanced Affiliate attribution beyond just standard last-click crediting, go to the "Advanced Analytics" tab. You can enter your advanced analytics passkey or if you do not have one yet, request it by contacting ShareASale support (shareasale@shareasale.com), subj: attn Ryan - tech team.
+
+For example, Affiliates can have their credit determined by when items are added to cart, whether coupons are used, or if other special Affiliates also referred a click. Read more on our Conversion Lines feature here:
+
+http://blog.shareasale.com/2015/02/04/conversion-lines-where-the-tracking-gap-ends/
+
 == Changelog ==
 
+= 1.1 =
+* Second release. Compatible with WooCommerce 3.0!
+* Added product datafeed generation to help Merchants create product datafeed files, a useful type of creative asset Affiliates can use to promote individual products.
+* Added advanced analytics, which lets ShareASale track various pre-conversion cart events (coupon added, items added to cart, etc). Useful with the ShareASale Conversion Lines feature.
+* General bug fixes and improvements under the hood.
+* Send any feedback to shareasale@shareasale.com, subj: attn Ryan - tech team.
+
 = 1.0 =
-* Initial release
-* Send any feedback to shareasale@shareasale.com, subj: attn Ryan - tech team
+* Initial release.
+* Send any feedback to shareasale@shareasale.com, subj: attn Ryan - tech team.

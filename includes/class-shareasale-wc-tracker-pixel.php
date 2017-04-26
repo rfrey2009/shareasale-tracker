@@ -14,6 +14,8 @@ class ShareASale_WC_Tracker_Pixel {
 
 	public function __construct( $version ) {
 		$this->version = $version;
+
+		return $this;
 	}
 
 	public function woocommerce_thankyou( $order_id ) {
@@ -39,27 +41,27 @@ class ShareASale_WC_Tracker_Pixel {
 
 		switch ( $xtype ) {
 			case 'customer_billing_country_code':
-				$xtype = '&xtype=' . (string) $this->order->billing_country;
+				$xtype = '&xtype=' . (string) $this->order->get_billing_country();
 				break;
 
 			case 'customer_billing_state_code':
-				$xtype = '&xtype=' . (string) $this->order->billing_state;
+				$xtype = '&xtype=' . (string) $this->order->get_billing_state();
 				break;
 
 			case 'customer_billing_city_code':
-				$xtype = '&xtype=' . (string) $this->order->billing_city;
+				$xtype = '&xtype=' . (string) $this->order->get_billing_city();
 				break;
 
 			case 'customer_shipping_country_code':
-				$xtype = '&xtype=' . (string) $this->order->shipping_country;
+				$xtype = '&xtype=' . (string) $this->order->get_shipping_country();
 				break;
 
 			case 'customer_shipping_state_code':
-				$xtype = '&xtype=' . (string) $this->order->shipping_state;
+				$xtype = '&xtype=' . (string) $this->order->get_shipping_state();
 				break;
 
 			case 'customer_shipping_city_code':
-				$xtype = '&xtype=' . (string) $this->order->shipping_city;
+				$xtype = '&xtype=' . (string) $this->order->get_shipping_city();
 				break;
 
 			case 'customer_id':
@@ -71,7 +73,7 @@ class ShareASale_WC_Tracker_Pixel {
 				break;
 
 			case 'payment_type':
-				$xtype = '&xtype=' . (string) $this->order->payment_method_title;
+				$xtype = '&xtype=' . (string) $this->order->get_payment_method_title();
 				break;
 
 			case 'payment_shipping':
@@ -184,7 +186,7 @@ class ShareASale_WC_Tracker_Pixel {
 
 	private function get_currency() {
 
-		$currency = $this->order->get_order_currency();
+		$currency = version_compare( WC()->version, '3.0' ) >= 0 ? $this->order->get_currency() : $this->order->get_order_currency();
 
 		return $currency;
 	}

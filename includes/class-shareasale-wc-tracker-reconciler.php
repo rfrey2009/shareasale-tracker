@@ -20,7 +20,7 @@ class ShareASale_WC_Tracker_Reconciler {
 
 		if ( @$settings['merchant-id'] && @$settings['api-token'] && @$settings['api-secret'] && 1 == @$settings['reconciliation-setting'] ) {
 
-			$this->api = new ShareASale_WC_Tracker_API( $settings['merchant-id'], $settings['api-token'], $settings['api-secret'] );
+			$this->api    = new ShareASale_WC_Tracker_API( $settings['merchant-id'], $settings['api-token'], $settings['api-secret'] );
 			$this->logger = new ShareASale_WC_Tracker_Reconciliation_Logger( $this->version );
 		}
 	}
@@ -104,7 +104,7 @@ class ShareASale_WC_Tracker_Reconciler {
 
 	private function crunch( $order, $refund ) {
 		$order_number = $order->get_order_number();
-		$order_date   = date( 'm/d/Y', strtotime( $order->order_date ) );
+		$order_date   = date( 'm/d/Y', strtotime( version_compare( WC()->version, '3.0' ) >= 0 ? $order->get_date_created() : $order->order_date ) );
 
 		$grand_total       = $order->get_total();
 		$total_shipping    = $order->get_total_shipping();
@@ -120,8 +120,8 @@ class ShareASale_WC_Tracker_Reconciler {
 
 		$previous_amount = ( $this->logger->get_previous_log_subtotal_after( $order_number ) ? $this->logger->get_previous_log_subtotal_after( $order_number ) : $subtotal );
 		$current_refund  = ( $subtotal === $previous_amount ? $subtotal_refunded : round( $previous_amount - $new_amount, 3 ) );
-		$refund_date     = $refund->date;
-		$refund_reason   = $refund->get_refund_reason();
+		$refund_date     = version_compare( WC()->version, '3.0' ) >= 0 ? $refund->get_date_created() : $refund->date;
+		$refund_reason   = version_compare( WC()->version, '3.0' ) >= 0 ? $refund->get_reason() : $refund->get_refund_reason();
 
 		return array(
 			'order_number'    => $order_number,

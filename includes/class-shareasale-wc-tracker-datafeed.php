@@ -12,7 +12,7 @@ class ShareASale_WC_Tracker_Datafeed {
 	* @var WP_Filesystem $filesystem WordPress filesystem object https://codex.wordpress.org/Filesystem_API
 	* @var WP_Error $errors any datafeed generation failure errors
 	*/
-	private $version, $filesystem;
+	private $version, $wc_version, $filesystem;
 	public $errors;
 
 	public function __construct( $version, $filesystem ) {
@@ -139,9 +139,9 @@ class ShareASale_WC_Tracker_Datafeed {
 		$cross_sell_skus = array();
 
 		if ( version_compare( $this->wc_version, '3.0' ) >= 0 ) {
-			$cross_sell_product_ids = $product->get_cross_sells();
-		} else {
 			$cross_sell_product_ids = $product->get_cross_sell_ids();
+		} else {
+			$cross_sell_product_ids = $product->get_cross_sells();
 		}
 
 		foreach ( $cross_sell_product_ids as $cross_sell_product_id ) {
