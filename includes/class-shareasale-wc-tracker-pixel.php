@@ -119,7 +119,7 @@ class ShareASale_WC_Tracker_Pixel {
 	private function get_order_amount() {
 
 		$grand_total    = $this->order->get_total();
-		$total_shipping = $this->order->get_shipping_total();
+		$total_shipping = version_compare( WC()->version, '3.0' ) >= 0 ? $this->order->get_shipping_total() : $this->order->get_total_shipping();
 		$total_taxes    = $this->order->get_total_tax();
 		$subtotal       = $grand_total - ( $total_shipping + $total_taxes );
 

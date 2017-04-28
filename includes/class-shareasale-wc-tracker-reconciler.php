@@ -107,7 +107,7 @@ class ShareASale_WC_Tracker_Reconciler {
 		$order_date   = date( 'm/d/Y', strtotime( version_compare( WC()->version, '3.0' ) >= 0 ? $order->get_date_created() : $order->order_date ) );
 
 		$grand_total       = $order->get_total();
-		$total_shipping    = $order->get_shipping_total();
+		$total_shipping    = version_compare( WC()->version, '3.0' ) >= 0 ? $order->get_shipping_total() : $order->get_total_shipping();
 		$total_taxes       = $order->get_total_tax();
 		$subtotal          = $grand_total - ( $total_shipping + $total_taxes );
 		$subtotal_refunded =
