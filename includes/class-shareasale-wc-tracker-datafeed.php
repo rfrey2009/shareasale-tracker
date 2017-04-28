@@ -40,8 +40,14 @@ class ShareASale_WC_Tracker_Datafeed {
 		$rows = array();
 
 		foreach ( $product_posts as $product_post ) {
-			//WC_Product constructor actually accepts WP post objects
-			$product                  = new WC_Product( $product_post );
+			//WC_Product constructor actually accepts WP post objects!
+			$product = 'product_variation' === $product_post->post_type ? new WC_Product_Variation( $product_post ) : new WC_Product( $product_post );
+			//don't bother with a variant product if it has the same non-unique SKU as its parent
+			if ( $product instanceof WC_Product_Variation && $product->get_sku() === $product->get_parent_data()['sku'] ) {
+				unset( $product );
+				continue;
+			}
+
 			$product->cross_sell_skus = $this->get_cross_sell_skus( $product );
 			$rows[]                   = $this->make_row( $product );
 			unset( $product );
@@ -124,7 +130,7 @@ class ShareASale_WC_Tracker_Datafeed {
 	private function get_all_product_posts() {
 		$product_posts = get_posts(
 			array(
-				'post_type'   => array( 'product' /*, 'product_variation' */ ),
+				'post_type'   => array( 'product', 'product_variation' ),
 				'numberposts' => -1,
 				'post_status' => 'publish',
 				'order'       => 'ASC',
