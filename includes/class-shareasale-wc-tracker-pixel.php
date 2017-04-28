@@ -119,7 +119,7 @@ class ShareASale_WC_Tracker_Pixel {
 	private function get_order_amount() {
 
 		$grand_total    = $this->order->get_total();
-		$total_shipping = $this->order->get_total_shipping();
+		$total_shipping = $this->order->get_shipping_total();
 		$total_taxes    = $this->order->get_total_tax();
 		$subtotal       = $grand_total - ( $total_shipping + $total_taxes );
 
@@ -139,7 +139,7 @@ class ShareASale_WC_Tracker_Pixel {
 
 		foreach ( $items as $index => $item ) {
 			$delimiter = $index === $last_index ? '' : ',';
-			$product   = 0 !== $item['variation_id'] ? new WC_Product_Variation( $item['variation_id'] ) : new WC_Product( $item['product_id'] );
+			$product   = 0 != $item['variation_id'] ? new WC_Product_Variation( $item['variation_id'] ) : new WC_Product( $item['product_id'] );
 			$sku       = $product->get_sku();
 
 			isset( $product_data->skulist ) ? $product_data->skulist .= $sku . $delimiter : $product_data->skulist = $sku . $delimiter;

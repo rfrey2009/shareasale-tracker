@@ -41,9 +41,12 @@ class ShareASale_WC_Tracker_Datafeed {
 
 		foreach ( $product_posts as $product_post ) {
 			//WC_Product constructor actually accepts WP post objects!
-			$product = 'product_variation' === $product_post->post_type ? new WC_Product_Variation( $product_post ) : new WC_Product( $product_post );
-			//don't bother with a variant product if it has the same non-unique SKU as its parent
-			if ( $product instanceof WC_Product_Variation && $product->get_sku() === $product->get_parent_data()['sku'] ) {
+			$product = 'product_variation' == $product_post->post_type ? new WC_Product_Variation( $product_post ) : new WC_Product( $product_post );
+			/*
+			* don't bother with a variant product if it has the same non-unique SKU as its parent
+			* can't use $product->get_parent_data()['sku'] unless WC v3.0+
+			*/
+			if ( $product instanceof WC_Product_Variation && $product->get_sku() == get_post_meta( $product_post->post_parent, '_sku', true ) ) {
 				unset( $product );
 				continue;
 			}
