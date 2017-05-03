@@ -2,7 +2,7 @@
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 3.0.1
 Tested up to: 4.7
-Stable tag: 1.1
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,6 +45,9 @@ For example, Affiliates can have their credit determined by when items are added
 http://blog.shareasale.com/2015/02/04/conversion-lines-where-the-tracking-gap-ends/
 
 == Changelog ==
+
+= 1.1.1 =
+* Updated admin menu bar icon to use WordPress standard dashicons-star-filled instead of yellow ShareASale star logo
 
 = 1.1 =
 * Second release. Compatible with WooCommerce 3.0!

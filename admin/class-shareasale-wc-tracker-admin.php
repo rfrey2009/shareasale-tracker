@@ -240,7 +240,7 @@ class ShareASale_WC_Tracker_Admin {
 		$capability = 'manage_options';
 		$menu_slug  = 'shareasale_wc_tracker';
 		$callback   = array( $this, 'render_settings_page' );
-		$icon_url   = esc_url( plugin_dir_url( __FILE__ ) . 'images/star_logo.png' );
+		$icon_url   = 'dashicons-star-filled';
 		add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $callback, $icon_url );
 
 		$sub_menu_title = 'Tracking Settings';
