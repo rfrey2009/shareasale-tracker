@@ -40,8 +40,15 @@ class ShareASale_WC_Tracker_Datafeed {
 		$rows = array();
 
 		foreach ( $product_posts as $product_post ) {
-			//WC_Product constructor actually accepts WP post objects!
-			$product = 'product_variation' == $product_post->post_type ? new WC_Product_Variation( $product_post ) : new WC_Product( $product_post );
+			//protect against instantiating somehow orphaned variations (causing an exception) by checking its parent for a post_type value too
+			if ( 'product_variation' == $product_post->post_type && 'product' == get_post_type( $product_post->post_parent ) ) {
+				$product = new WC_Product_Variation( $product_post );
+			} elseif ( 'product' == $product_post->post_type ) {
+				$product = new WC_Product( $product_post );
+			} else {
+				continue;
+			}
+
 			/*
 			* don't bother with a variant product if it has the same non-unique SKU as its parent
 			* can't use $product->get_parent_data()['sku'] unless WC v3.0+
@@ -102,7 +109,7 @@ class ShareASale_WC_Tracker_Datafeed {
 					just get first merchant_id error code message since rest will be identical, store in an array for uniformity
 					*/
 					'merchant_id' => array(
-						'messages' => ! empty( $this->errors->get_error_message( 'merchant_id' ) ) ? array( $this->errors->get_error_message( 'merchant_id' ) ) : array(),
+						'messages' => $this->errors->get_error_message( 'merchant_id' ) ? array( $this->errors->get_error_message( 'merchant_id' ) ) : array(),
 					),
 				);
 
