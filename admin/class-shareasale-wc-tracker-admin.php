@@ -58,17 +58,20 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function woocommerce_coupon_options( $post_id ) {
+		//only support this feature in new WooCommerce
+		if ( version_compare( WC()->version, '3.0' ) < 0 ) return;
+
 		$options          = get_option( 'shareasale_wc_tracker_options' );
 		$has_api_settings = ! empty( $options['merchant-id'] ) && ! empty( $options['api-token'] ) && ! empty( $options['api-secret'] );
 		$status           = $has_api_settings ? null : array( 'disabled' => 'disabled' );
 
 		woocommerce_wp_hidden_input( array(
-			'id'    => 'shareasale_wc_tracker_coupon_upload',
+			'id'    => 'shareasale_wc_tracker_coupon_upload_enabled',
 			'value' => 'no',
 		) );
 
 		woocommerce_wp_checkbox( array(
-			'id'          => 'shareasale_wc_tracker_coupon_upload',
+			'id'          => 'shareasale_wc_tracker_coupon_upload_enabled',
 			'label'       => 'Upload to ShareASale?',
 			'description' => '<br>If checked and you have API settings entered in the <a target="_blank" href="' . 
 				esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker_automatic_reconciliation' ) ) . 
@@ -80,9 +83,12 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function woocommerce_process_shop_coupon_meta( $post_id, $post ) {
-		$options        = get_option( 'shareasale_wc_tracker_options' );
-		$old_setting    = get_post_meta( $post_id, 'shareasale_wc_tracker_coupon_upload', true );
-		$new_setting    = sanitize_text_field( $_POST['shareasale_wc_tracker_coupon_upload'] );
+		//only support this feature in new WooCommerce
+		if ( version_compare( WC()->version, '3.0' ) < 0 ) return;
+
+		$options       = get_option( 'shareasale_wc_tracker_options' );
+		$prev_uploaded = get_post_meta( $post_id, 'shareasale_wc_tracker_coupon_uploaded', true );
+		$new_setting   = sanitize_text_field( $_POST['shareasale_wc_tracker_coupon_upload_enabled'] );
 		/*
 		* instantiating this ShareASale_WC_Tracker_API without a possible merchant-id, api-token, or api-secret is okay 
 		* it won't be used to make actual API calls unless at least $new_setting is 'yes,' which can only be true if there are already proper API credentials set...
@@ -90,7 +96,9 @@ class ShareASale_WC_Tracker_Admin {
 		$shareasale_api = new ShareASale_WC_Tracker_API( $options['merchant-id'], $options['api-token'], $options['api-secret'] );
 		$coupon         = new WC_Coupon( $post_id );
 
-		if( 'yes' == $new_setting && $old_setting == $new_setting ){
+		if( $options['store-id'] ) $coupon->shareasale_wc_tracker_store_id = $options['store-id'];
+
+		if( 'yes' == $new_setting && true == $prev_uploaded ){
 			//this is an update, so deal edit
 			$req = $shareasale_api->deal_edit( $coupon )->exec();
 			if ( ! $req ) {
@@ -117,9 +125,14 @@ class ShareASale_WC_Tracker_Admin {
 					'</span>'
 				);
 				$new_setting = 'no';
+			}else{
+				$coupon->update_meta_data( 'shareasale_wc_tracker_coupon_uploaded', true );
 			}
 		}
-		update_post_meta( $post_id, 'shareasale_wc_tracker_coupon_upload', $new_setting );
+		//using new WooCommerce CRUD methods here
+		$coupon->update_meta_data( 'shareasale_wc_tracker_coupon_upload_enabled', $new_setting );
+		$coupon->save_meta_data();
+		settings_errors();
 	}
 
 	public function woocommerce_product_options_general_product_data() {

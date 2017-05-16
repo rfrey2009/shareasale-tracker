@@ -93,23 +93,18 @@ class ShareASale_WC_Tracker_API {
 	}
 
 	public function deal_upload( $WC_Coupon ) {
+		$restrictions = array();
 		$this->action = 'dealUpload';
 		$params       = array(
-							'title'                => '',
-							'startDate'            => '',
-							'endDate'              => '',
-							'category'             => '',
-							'landingURL'           => '',
-							'fullImageURL'         => '',
-							'thumbnailImageURL'    => '',
-							'htmlDescription'      => '',
-							'textDescription'      => '',
+							'title'                => $WC_Coupon->get_description(),
+							'endDate'              => $WC_Coupon->get_date_expires(),
+							'category'             => $WC_Coupon->get_discount_type(),
+							// 'landingURL'           => '',
+							// 'fullImageURL'         => '',
+							'textDescription'      => $WC_Coupon->get_description(),
 							'restrictions'         => '',
-							'keywords'             => '',
-							'privateForAffiliate'  => '', 
-							'couponcode'           => '',
-							'commissionpercentage' => '',
-							'storeId'              => '',
+							'couponcode'           => $WC_Coupon->get_code(),
+							'storeId'              => $WC_Coupon->shareasale_wc_tracker_store_id,
 
 		);
 		$this->query  = $this->build_url( $params );
@@ -120,21 +115,15 @@ class ShareASale_WC_Tracker_API {
 		$this->action = 'dealEdit';
 		$params       = array(
 							'dealID'               => '',
-							'title'                => '',
-							'startDate'            => '',
-							'endDate'              => '',
-							'category'             => '',
-							'landingURL'           => '',
-							'fullImageURL'         => '',
-							'thumbnailImageURL'    => '',
-							'htmlDescription'      => '',
-							'textDescription'      => '',
+							'title'                => $WC_Coupon->get_description(),
+							'endDate'              => $WC_Coupon->get_date_expires(),
+							'category'             => $WC_Coupon->get_discount_type(),
+							// 'landingURL'           => '',
+							// 'fullImageURL'         => '',
+							'textDescription'      => $WC_Coupon->get_description(),
 							'restrictions'         => '',
-							'keywords'             => '',
-							'privateForAffiliate'  => '', 
-							'couponcode'           => '',
-							'commissionpercentage' => '',
-							'storeId'              => '',
+							'couponcode'           => $WC_Coupon->get_code(),
+							'storeId'              => $WC_Coupon->shareasale_wc_tracker_store_id,
 
 		);
 		$this->query  = $this->build_url( $params );
