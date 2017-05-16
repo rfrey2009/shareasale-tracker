@@ -114,7 +114,7 @@ class ShareASale_WC_Tracker_API {
 	public function deal_edit( $WC_Coupon ) {
 		$this->action = 'dealEdit';
 		$params       = array(
-							'dealID'               => '',
+							'dealID'               => $WC_Coupon->shareasale_wc_tracker_deal_id,
 							'title'                => $WC_Coupon->get_description(),
 							'endDate'              => $WC_Coupon->get_date_expires(),
 							'category'             => $WC_Coupon->get_discount_type(),

@@ -98,8 +98,9 @@ class ShareASale_WC_Tracker_Admin {
 
 		if( $options['store-id'] ) $coupon->shareasale_wc_tracker_store_id = $options['store-id'];
 
-		if( 'yes' == $new_setting && true == $prev_uploaded ){
+		if( 'yes' == $new_setting && $prev_uploaded ){
 			//this is an update, so deal edit
+			$coupon->shareasale_wc_tracker_deal_id = $prev_uploaded;
 			$req = $shareasale_api->deal_edit( $coupon )->exec();
 			if ( ! $req ) {
 				add_settings_error(
@@ -126,7 +127,9 @@ class ShareASale_WC_Tracker_Admin {
 				);
 				$new_setting = 'no';
 			}else{
-				$coupon->update_meta_data( 'shareasale_wc_tracker_coupon_uploaded', true );
+				$pieces  = array_map( 'trim', explode( '-', $shareasale_api->get_response() ) );
+				$deal_id = $pieces[1];
+				$coupon->update_meta_data( 'shareasale_wc_tracker_coupon_uploaded', $deal_id );
 			}
 		}
 		//using new WooCommerce CRUD methods here
