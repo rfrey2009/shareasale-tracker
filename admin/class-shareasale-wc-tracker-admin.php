@@ -57,6 +57,71 @@ class ShareASale_WC_Tracker_Admin {
 		}
 	}
 
+	public function woocommerce_coupon_options( $post_id ) {
+		$options          = get_option( 'shareasale_wc_tracker_options' );
+		$has_api_settings = ! empty( $options['merchant-id'] ) && ! empty( $options['api-token'] ) && ! empty( $options['api-secret'] );
+		$status           = $has_api_settings ? null : array( 'disabled' => 'disabled' );
+
+		woocommerce_wp_hidden_input( array(
+			'id'    => 'shareasale_wc_tracker_coupon_upload',
+			'value' => 'no',
+		) );
+
+		woocommerce_wp_checkbox( array(
+			'id'          => 'shareasale_wc_tracker_coupon_upload',
+			'label'       => 'Upload to ShareASale?',
+			'description' => '<br>If checked and you have API settings entered in the <a target="_blank" href="' . 
+				esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker_automatic_reconciliation' ) ) . 
+				'">ShareASale WC Tracker plugin settings</a>, this will send the coupon and any updates to ShareASale for your Affiliates to promote.<br>Unchecking the box does not remove the coupon from ShareASale once uploaded. It stops future updates to this coupon in ShareASale.',
+			//if $has_api_settings is true, then null will have woocommerce_wp_checkbox() set shareasale_wc_tracker_coupon_upload post_meta key to previously saved value
+			'value'             => $has_api_settings ? null : 'no',
+			'custom_attributes' => $status,
+		) );
+	}
+
+	public function woocommerce_process_shop_coupon_meta( $post_id, $post ) {
+		$options        = get_option( 'shareasale_wc_tracker_options' );
+		$old_setting    = get_post_meta( $post_id, 'shareasale_wc_tracker_coupon_upload', true );
+		$new_setting    = sanitize_text_field( $_POST['shareasale_wc_tracker_coupon_upload'] );
+		/*
+		* instantiating this ShareASale_WC_Tracker_API without a possible merchant-id, api-token, or api-secret is okay 
+		* it won't be used to make actual API calls unless at least $new_setting is 'yes,' which can only be true if there are already proper API credentials set...
+		*/
+		$shareasale_api = new ShareASale_WC_Tracker_API( $options['merchant-id'], $options['api-token'], $options['api-secret'] );
+		$coupon         = new WC_Coupon( $post_id );
+
+		if( 'yes' == $new_setting && $old_setting == $new_setting ){
+			//this is an update, so deal edit
+			$req = $shareasale_api->deal_edit( $coupon )->exec();
+			if ( ! $req ) {
+				add_settings_error(
+					'shareasale_wc_tracker_api',
+					esc_attr( 'api' ),
+					'The coupon couldn\'t be updated in ShareASale.
+					<span style = "font-size: 10px">'
+					. $shareasale_api->errors->get_error_code() . ' &middot; ' . $shareasale_api->errors->get_error_message() .
+					'</span>'
+				);
+				$new_setting = 'no';
+			}
+		} elseif ( 'yes' == $new_setting ) {
+			//this is new, so deal upload
+			$req = $shareasale_api->deal_upload( $coupon )->exec();
+			if ( ! $req ) {
+				add_settings_error(
+					'shareasale_wc_tracker_api',
+					esc_attr( 'api' ),
+					'The coupon couldn\'t be uploaded to ShareASale.
+					<span style = "font-size: 10px">'
+					. $shareasale_api->errors->get_error_code() . ' &middot; ' . $shareasale_api->errors->get_error_message() .
+					'</span>'
+				);
+				$new_setting = 'no';
+			}
+		}
+		update_post_meta( $post_id, 'shareasale_wc_tracker_coupon_upload', $new_setting );
+	}
+
 	public function woocommerce_product_options_general_product_data() {
 		woocommerce_wp_text_input( array(
 			'id'          => 'shareasale_wc_tracker_datafeed_product_category',

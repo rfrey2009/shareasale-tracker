@@ -15,7 +15,7 @@ class ShareASale_WC_Tracker_API {
 	private $query;
 	private $last_query;
 	private $response;
-	public $errors;
+	public  $errors;
 
 	public function __construct( $merchant_id, $api_token, $api_secret ) {
 		$this->merchant_id = $merchant_id;
@@ -89,6 +89,55 @@ class ShareASale_WC_Tracker_API {
 	public function token_count() {
 		$this->action = 'apitokencount';
 		$this->query  = $this->build_url();
+		return $this;
+	}
+
+	public function deal_upload( $WC_Coupon ) {
+		$this->action = 'dealUpload';
+		$params       = array(
+							'title'                => '',
+							'startDate'            => '',
+							'endDate'              => '',
+							'category'             => '',
+							'landingURL'           => '',
+							'fullImageURL'         => '',
+							'thumbnailImageURL'    => '',
+							'htmlDescription'      => '',
+							'textDescription'      => '',
+							'restrictions'         => '',
+							'keywords'             => '',
+							'privateForAffiliate'  => '', 
+							'couponcode'           => '',
+							'commissionpercentage' => '',
+							'storeId'              => '',
+
+		);
+		$this->query  = $this->build_url( $params );
+		return $this;
+	}
+
+	public function deal_edit( $WC_Coupon ) {
+		$this->action = 'dealEdit';
+		$params       = array(
+							'dealID'               => '',
+							'title'                => '',
+							'startDate'            => '',
+							'endDate'              => '',
+							'category'             => '',
+							'landingURL'           => '',
+							'fullImageURL'         => '',
+							'thumbnailImageURL'    => '',
+							'htmlDescription'      => '',
+							'textDescription'      => '',
+							'restrictions'         => '',
+							'keywords'             => '',
+							'privateForAffiliate'  => '', 
+							'couponcode'           => '',
+							'commissionpercentage' => '',
+							'storeId'              => '',
+
+		);
+		$this->query  = $this->build_url( $params );
 		return $this;
 	}
 

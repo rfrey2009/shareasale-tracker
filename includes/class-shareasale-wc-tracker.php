@@ -60,6 +60,11 @@ class ShareASale_WC_Tracker {
 		//for adding and saving custom post meta (ShareASale category/subactegory number values) to the WC products page general section
 		$this->loader->add_action( 'woocommerce_product_options_general_product_data', $admin, 'woocommerce_product_options_general_product_data' );
 		$this->loader->add_action( 'woocommerce_process_product_meta',                 $admin, 'woocommerce_process_product_meta' );
+		//for adding and saving custom post meta ("upload to ShareASale?" checkbox) to the WC coupons page general section
+		$this->loader->add_action( 'woocommerce_coupon_options', 		   $admin, 'woocommerce_coupon_options'	);
+		$this->loader->add_action( 'woocommerce_process_shop_coupon_meta', $admin, 'woocommerce_process_shop_coupon_meta',
+			array( 'priority' => 10, 'args' => 2 )
+		);
 		//admin filters
 		$this->loader->add_filter( 'plugin_action_links_' . SHAREASALE_WC_TRACKER_PLUGIN_FILENAME, $admin, 'render_settings_shortcut' );
 	}
