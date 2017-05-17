@@ -79,7 +79,8 @@ class ShareASale_WC_Tracker_Datafeed {
 					add_settings_error(
 						'',
 						esc_attr( 'datafeed-zip' ),
-						$this->errors->get_error_message( 'compress' ) . ' You will need to manually compress the generated csv file into a gz or zip archive before uploading to ShareASale.'
+						$this->errors->get_error_message( 'compress' ) . ' You will need to manually compress the generated csv file into a gz or zip archive before uploading to ShareASale.',
+						'notice-warning'
 					);
 				}
 
