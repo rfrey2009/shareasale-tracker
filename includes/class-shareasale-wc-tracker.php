@@ -65,6 +65,7 @@ class ShareASale_WC_Tracker {
 		$this->loader->add_action( 'woocommerce_process_shop_coupon_meta', $admin, 'woocommerce_process_shop_coupon_meta',
 			array( 'priority' => 10, 'args' => 2 )
 		);
+		$this->loader->add_action( 'admin_notices', $admin, 'admin_notices' );
 
 		//admin filters
 		$this->loader->add_filter( 'plugin_action_links_' . SHAREASALE_WC_TRACKER_PLUGIN_FILENAME, $admin, 'render_settings_shortcut' );

@@ -103,53 +103,61 @@ class ShareASale_WC_Tracker_Admin {
 			$coupon->shareasale_wc_tracker_deal_id = $prev_uploaded;
 			$req = $shareasale_api->deal_edit( $coupon )->exec();
 			if ( ! $req ) {
-					?>
-					<div class="notice notice-error is-dismissible">
-						<p>
-							Coupon couldn't be edited in ShareASale.
-							<?php
-								$shareasale_api->errors->get_error_code() . ' &middot; ' . $shareasale_api->errors->get_error_message();
-							?>
-						</p>
-					</div>
-					<?php
-					$new_setting = 'no';
+				add_settings_error(
+					'shareasale_wc_tracker_coupon_edited',
+					esc_attr( 'coupon-edited' ),
+					'Coupon could not be edited in ShareASale' .
+					$shareasale_api->errors->get_error_code() . ' &middot; ' . $shareasale_api->errors->get_error_message()
+				);
+				set_transient( 'settings_errors', get_settings_errors(), 30 );
+				$new_setting = 'no';
 			} else {
-					?>
-					<div class="notice notice-success is-dismissible">
-						<p>Coupon edited in ShareASale.</p>
-					</div>
-					<?php
+				add_settings_error(
+					'shareasale_wc_tracker_coupon_edited',
+					esc_attr( 'coupon-edited' ),
+					'Coupon edited in ShareASale.',
+					'notice-success'
+				);
+				set_transient( 'settings_errors', get_settings_errors(), 30 );
 			}
 		} elseif ( 'yes' == $new_setting ) {
 			//this is new, so deal upload
 			$req = $shareasale_api->deal_upload( $coupon )->exec();
 			if ( ! $req ) {
-					?>
-					<div class="notice notice-error is-dismissible">
-						<p>
-							Coupon couldn't be uploaded to ShareASale.
-							<?php
-								$shareasale_api->errors->get_error_code() . ' &middot; ' . $shareasale_api->errors->get_error_message();
-							?>
-						</p>
-					</div>
-					<?php
-					$new_setting = 'no';
+				add_settings_error(
+					'shareasale_wc_tracker_coupon_uploaded',
+					esc_attr( 'coupon-uploaded' ),
+					'Coupon could not be uploaded to ShareASale' .
+					$shareasale_api->errors->get_error_code() . ' &middot; ' . $shareasale_api->errors->get_error_message()
+				);
+				set_transient( 'settings_errors', get_settings_errors(), 30 );
+				$new_setting = 'no';
 			} else {
 				$pieces  = array_map( 'trim', explode( '-', $shareasale_api->get_response() ) );
 				$deal_id = $pieces[1];
 				$coupon->update_meta_data( 'shareasale_wc_tracker_coupon_uploaded', $deal_id );
-					?>
-					<div class="notice notice-success is-dismissible">
-						<p>Coupon uploaded to ShareASale.</p>
-					</div>
-					<?php
+				add_settings_error(
+					'shareasale_wc_tracker_coupon_uploaded',
+					esc_attr( 'coupon-uploaded' ),
+					'Coupon uploaded to ShareASale.',
+					'notice-success'
+				);
+				set_transient( 'settings_errors', get_settings_errors(), 30 );
 			}
 		}
 		//using new WooCommerce CRUD methods here
 		$coupon->update_meta_data( 'shareasale_wc_tracker_coupon_upload_enabled', $new_setting );
 		$coupon->save_meta_data();
+	}
+
+	public function admin_notices() {
+		//https://wordpress.stackexchange.com/questions/23701/how-should-one-implement-add-settings-error-on-custom-menu-pages
+		global $wp_settings_errors;
+		//simulate &settings-updated=1 behavior with wp-admin/includes/template.php
+		$wp_settings_errors = array_merge( (array) $wp_settings_errors, array_filter( (array) get_transient( 'settings_errors' ) ) );
+		delete_transient( 'settings_errors' );
+		settings_errors( 'shareasale_wc_tracker_coupon_uploaded' );
+		settings_errors( 'shareasale_wc_tracker_coupon_edited' );
 	}
 
 	public function woocommerce_product_options_general_product_data() {
@@ -361,14 +369,15 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page() {
+		//must be included so regular setting saves show general 'Settings saved' message
 		include_once 'options-head.php';
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			add_settings_error(
-				'',
+				'shareasale_wc_tracker_woocommerce_warning',
 				esc_attr( 'woocommerce-warning' ),
 				'WooCommerce plugin must be installed and activated to use this plugin.'
 			);
-			settings_errors();
+			settings_errors( 'shareasale_wc_tracker_woocommerce_warning', false, true );
 			return;
 		}
 
@@ -376,24 +385,25 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page_submenu() {
+		//must be included so regular setting saves show general 'Settings saved' message
 		include_once 'options-head.php';
 		if ( ! function_exists( 'curl_version' ) ) {
 			add_settings_error(
-				'',
+				'shareasale_wc_tracker_curl_warning',
 				esc_attr( 'cURL-warning' ),
 				'cURL is not enabled on your server. Please contact your webhost to have cURL enabled to use automatic reconciliation.'
 			);
-			settings_errors();
+			settings_errors( 'shareasale_wc_tracker_curl_warning', false, true );
 			return;
 		}
 
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			add_settings_error(
-				'',
+				'shareasale_wc_tracker_woocommerce_warning',
 				esc_attr( 'woocommerce-warning' ),
 				'WooCommerce plugin must be installed and activated to use this plugin.'
 			);
-			settings_errors();
+			settings_errors( 'shareasale_wc_tracker_woocommerce_warning', false, true );
 			return;
 		}
 
@@ -403,14 +413,15 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page_subsubmenu() {
+		//must be included so regular setting saves show general 'Settings saved' message
 		include_once 'options-head.php';
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			add_settings_error(
-				'',
+				'shareasale_wc_tracker_woocommerce_warning',
 				esc_attr( 'woocommerce-warning' ),
 				'WooCommerce plugin must be installed and activated to use this plugin.'
 			);
-			settings_errors();
+			settings_errors( 'shareasale_wc_tracker_woocommerce_warning', false, true );
 			return;
 		}
 
@@ -418,14 +429,15 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page_subsubsubmenu() {
+		//must be included so regular setting saves show general 'Settings saved' message
 		include_once 'options-head.php';
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			add_settings_error(
-				'',
+				'shareasale_wc_tracker_woocommerce_warning',
 				esc_attr( 'woocommerce-warning' ),
 				'WooCommerce plugin must be installed and activated to use this plugin.'
 			);
-			settings_errors();
+			settings_errors( 'shareasale_wc_tracker_woocommerce_warning', false, true );
 			return;
 		}
 
@@ -435,11 +447,11 @@ class ShareASale_WC_Tracker_Admin {
 	public function wp_ajax_generate_datafeed() {
 		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'generate-datafeed' ) ) {
 			add_settings_error(
-				'',
+				'shareasale_wc_tracker_datafeed_warning',
 				esc_attr( 'datafeed-security' ),
 				'There was a security error generating this datafeed. Try refreshing the page and generating again.'
 			);
-			settings_errors();
+			settings_errors( 'shareasale_wc_tracker_datafeed_warning' );
 			wp_die();
 		}
 
@@ -583,7 +595,7 @@ class ShareASale_WC_Tracker_Admin {
 			add_settings_error(
 				'shareasale_wc_tracker',
 				esc_attr( 'merchant-id' ),
-				'You must enter a ShareASale Merchant ID in the <a href = "?page=shareasale_wc_tracker">Tracking Settings</a> tab.'
+				'You must enter a ShareASale Merchant ID in the <a href="' . esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker' ) ) . '">Tracking Settings</a> tab.'
 			);
 		}
 
