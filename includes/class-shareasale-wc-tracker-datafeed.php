@@ -77,7 +77,7 @@ class ShareASale_WC_Tracker_Datafeed {
 				if ( ! $compressed = $csv->compress( $file ) ) {
 					//couldn't compress, so notify user just a csv is available.
 					add_settings_error(
-						'',
+						'shareasale_wc_tracker_zip',
 						esc_attr( 'datafeed-zip' ),
 						$this->errors->get_error_message( 'compress' ) . ' You will need to manually compress the generated csv file into a gz or zip archive before uploading to ShareASale.',
 						'notice-warning'
@@ -118,21 +118,22 @@ class ShareASale_WC_Tracker_Datafeed {
 			} else {
 				//couldn't even create csv...
 				add_settings_error(
-					'',
+					'shareasale_wc_tracker_csv',
 					esc_attr( 'datafeed-csv' ),
 					$this->errors->get_error_message( 'write' ) . ' Please contact your webhost for more information.'
 				);
-				settings_errors();
+				settings_errors( 'shareasale_wc_tracker_csv' );
 				return false;
 			}
 
 			add_settings_error(
-				'',
+				'shareasale_wc_tracker_success',
 				esc_attr( 'datafeed-success' ),
 				'Generating complete! Download from the link in the table below.',
 				'updated'
 			);
-			settings_errors();
+			settings_errors( 'shareasale_wc_tracker_success' );
+			settings_errors( 'shareasale_wc_tracker_zip' );
 		}
 
 		return $this;

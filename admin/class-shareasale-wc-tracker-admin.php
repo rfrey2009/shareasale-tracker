@@ -82,8 +82,9 @@ class ShareASale_WC_Tracker_Admin {
 		) );
 	}
 
-	public function woocommerce_process_shop_coupon_meta( $post_id, $post ) {
+	public function woocommerce_coupon_options_save( $post_id, $post ) {
 		//only support this feature in new WooCommerce
+		//woocommerce_save_data nonce already safely checked by now
 		if ( version_compare( WC()->version, '3.0' ) < 0 ) return;
 
 		$options       = get_option( 'shareasale_wc_tracker_options' );
@@ -151,9 +152,13 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function admin_notices() {
-		//https://wordpress.stackexchange.com/questions/23701/how-should-one-implement-add-settings-error-on-custom-menu-pages
+		//see https://wordpress.stackexchange.com/questions/23701/how-should-one-implement-add-settings-error-on-custom-menu-pages
+		global $post_id;
 		global $wp_settings_errors;
-		//simulate &settings-updated=1 behavior with wp-admin/includes/template.php
+
+		if ( 'shop_coupon' !== get_post_type( $post_id ) ) return;
+		//make sure to use the settings_errors transient that lasts between pages and not just $wp_settings_errors global from memory gone between page loads
+		//do this by simulating the same &settings-updated=1 WordPress behavior found in wp-admin/includes/template.php without having that GET parameter actually set...
 		$wp_settings_errors = array_merge( (array) $wp_settings_errors, array_filter( (array) get_transient( 'settings_errors' ) ) );
 		delete_transient( 'settings_errors' );
 		settings_errors( 'shareasale_wc_tracker_coupon_uploaded' );
@@ -369,7 +374,8 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page() {
-		//must be included so regular setting saves show general 'Settings saved' message
+		//must be included so regular setting saves show general 'Settings saved' notice
+		//and also any setting errors on the stack without a slug (first arg in add_settings_error() function) are displayed using settings_errors()
 		include_once 'options-head.php';
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			add_settings_error(
@@ -385,7 +391,8 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page_submenu() {
-		//must be included so regular setting saves show general 'Settings saved' message
+		//must be included so regular setting saves show general 'Settings saved' notice
+		//and also any setting errors on the stack without a slug (first arg in add_settings_error() function) are displayed using settings_errors()
 		include_once 'options-head.php';
 		if ( ! function_exists( 'curl_version' ) ) {
 			add_settings_error(
@@ -413,7 +420,8 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page_subsubmenu() {
-		//must be included so regular setting saves show general 'Settings saved' message
+		//must be included so regular setting saves show general 'Settings saved' notice
+		//and also any setting errors on the stack without a slug (first arg in add_settings_error() function) are displayed using settings_errors()
 		include_once 'options-head.php';
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			add_settings_error(
@@ -429,7 +437,8 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function render_settings_page_subsubsubmenu() {
-		//must be included so regular setting saves show general 'Settings saved' message
+		//must be included so regular setting saves show general 'Settings saved' notice
+		//and also any setting errors on the stack without a slug (first arg in add_settings_error() function) are displayed using settings_errors()
 		include_once 'options-head.php';
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			add_settings_error(
@@ -593,7 +602,7 @@ class ShareASale_WC_Tracker_Admin {
 
 		if ( empty( $final_settings['merchant-id'] ) ) {
 			add_settings_error(
-				'shareasale_wc_tracker',
+				'shareasale_wc_tracker_merchant_id',
 				esc_attr( 'merchant-id' ),
 				'You must enter a ShareASale Merchant ID in the <a href="' . esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker' ) ) . '">Tracking Settings</a> tab.'
 			);
@@ -608,7 +617,7 @@ class ShareASale_WC_Tracker_Admin {
 
 				if ( ! $req ) {
 					add_settings_error(
-						'shareasale_wc_tracker_automatic_reconciliation',
+						'shareasale_wc_tracker_api_settings',
 						esc_attr( 'api' ),
 						'Your API credentials did not work. Check your merchant ID, API token, and API key.
 						<span style = "font-size: 10px">'
@@ -634,7 +643,7 @@ class ShareASale_WC_Tracker_Admin {
 			$checksum = hash( 'crc32', $final_settings['merchant-id'] );
 			if ( trim( $final_settings['analytics-passkey'] ) !== $checksum ) {
 				add_settings_error(
-					'shareasale_wc_tracker_advanced_analytics',
+					'shareasale_wc_tracker_analytics_passkey',
 					esc_attr( 'analytics' ),
 					'Enter a valid passkey from the ShareASale Tech Team.'
 				);

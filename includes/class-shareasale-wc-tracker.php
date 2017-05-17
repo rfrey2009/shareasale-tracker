@@ -62,7 +62,7 @@ class ShareASale_WC_Tracker {
 		$this->loader->add_action( 'woocommerce_process_product_meta',                 $admin, 'woocommerce_process_product_meta' );
 		//for adding and saving custom post meta ("upload to ShareASale?" checkbox) to the WC coupons page general section
 		$this->loader->add_action( 'woocommerce_coupon_options', 		   $admin, 'woocommerce_coupon_options'	);
-		$this->loader->add_action( 'woocommerce_process_shop_coupon_meta', $admin, 'woocommerce_process_shop_coupon_meta',
+		$this->loader->add_action( 'woocommerce_coupon_options_save', $admin, 'woocommerce_coupon_options_save',
 			array( 'priority' => 10, 'args' => 2 )
 		);
 		$this->loader->add_action( 'admin_notices', $admin, 'admin_notices' );
