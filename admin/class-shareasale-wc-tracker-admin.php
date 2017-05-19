@@ -88,7 +88,7 @@ class ShareASale_WC_Tracker_Admin {
 		if ( version_compare( WC()->version, '3.0' ) < 0 ) return;
 
 		$options       = get_option( 'shareasale_wc_tracker_options' );
-		$prev_uploaded = get_post_meta( $post_id, 'shareasale_wc_tracker_coupon_uploaded', true );
+		$prev_deal_id  = get_post_meta( $post_id, 'shareasale_wc_tracker_coupon_uploaded', true );
 		$new_setting   = sanitize_text_field( $_POST['shareasale_wc_tracker_coupon_upload_enabled'] );
 		/*
 		* instantiating this ShareASale_WC_Tracker_API without a possible merchant-id, api-token, or api-secret is okay
@@ -99,9 +99,9 @@ class ShareASale_WC_Tracker_Admin {
 
 		if ( $options['store-id'] ) $coupon->shareasale_wc_tracker_store_id = $options['store-id'];
 
-		if ( 'yes' == $new_setting && $prev_uploaded ) {
+		if ( 'yes' == $new_setting && $prev_deal_id ) {
 			//this is an update, so deal edit
-			$coupon->shareasale_wc_tracker_deal_id = $prev_uploaded;
+			$coupon->shareasale_wc_tracker_deal_id = $prev_deal_id;
 			$req = $shareasale_api->deal_edit( $coupon )->exec();
 			if ( ! $req ) {
 				add_settings_error(
