@@ -137,7 +137,7 @@ class ShareASale_WC_Tracker_API {
 			$params['dealID'] = $wc_coupon->shareasale_wc_tracker_deal_id;
 		}
 
-		$this->query  = $this->build_url( $params );
+		$this->query = $this->build_url( $params );
 		return $this;
 	}
 

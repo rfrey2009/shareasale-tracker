@@ -221,6 +221,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'store-id',
 				'name'        => 'store-id',
 				'value'       => ! empty( $options['store-id'] ) ? $options['store-id'] : '',
+				'status'      => '',
 				'size'        => '',
 				'type'        => 'number',
 				'placeholder' => 'ID',
@@ -233,6 +234,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'xtype',
 				'name'        => 'xtype',
 				'value'       => ! empty( $options['xtype'] ) ? $options['xtype'] : '',
+				'status'      => '',
 				'size'        => '',
 				'type'        => 'select',
 				'placeholder' => '',
@@ -288,6 +290,32 @@ class ShareASale_WC_Tracker_Admin {
 				'type'        => 'text',
 				'placeholder' => 'Enter your API Secret',
 				'class'       => 'shareasale-wc-tracker-option',
+		));
+
+		add_settings_section( 'shareasale_wc_tracker_datafeed_generation', 'Optional Product Default Category/Subcategory', array( $this, 'render_settings_datafeed_generation_section_text' ), 'shareasale_wc_tracker_datafeed_generation' );
+		add_settings_field( 'default-category', 'Default Category', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation',
+			array(
+				'label_for'   => 'default-category',
+				'id'          => 'default-category',
+				'name'        => 'default-category',
+				'value'       => ! empty( $options['default-category'] ) ? $options['default-category'] : '',
+				'status'      => '',
+				'size'        => '',
+				'type'        => 'number',
+				'placeholder' => 'Cat',
+				'class'       => 'shareasale-wc-tracker-option shareasale-wc-tracker-option-number',
+		));
+		add_settings_field( 'default-subcategory', 'Default Subcategory', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation',
+			array(
+				'label_for'   => 'default-subcategory',
+				'id'          => 'default-subcategory',
+				'name'        => 'default-subcategory',
+				'value'       => ! empty( $options['default-subcategory'] ) ? $options['default-subcategory'] : '',
+				'status'      => '',
+				'size'        => '',
+				'type'        => 'number',
+				'placeholder' => 'Sub',
+				'class'       => 'shareasale-wc-tracker-option shareasale-wc-tracker-option-number',
 		));
 
 		$callback = @$options['analytics-setting'] ? 'render_settings_analytics_enabled_section_text' : 'render_settings_analytics_disabled_section_text';
@@ -509,6 +537,10 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function render_settings_api_section_text() {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-api-section-text.php';
+	}
+
+	public function render_settings_datafeed_generation_section_text() {
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation-section-text.php';
 	}
 
 	public function render_settings_analytics_enabled_section_text() {

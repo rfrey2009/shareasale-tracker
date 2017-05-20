@@ -24,10 +24,20 @@ if ( ! defined( 'WPINC' ) ) {
 	    		Advanced Analytics
 	    	</a>
 		</h2>
+		<form action="options.php" method="post">
+			<h2>Product Datafeed</h2>
+			<p>Use this tool to automatically export your products into ShareASale's product datafeed .csv format.</p>
+			<div id="shareasale-wc-tracker-options">
+			<?php
+			  settings_fields( 'shareasale_wc_tracker_options' );
+			  do_settings_sections( 'shareasale_wc_tracker_datafeed_generation' );
+			?>     
+			</div>
+			<button id="tracker-options-save" class="button" name="Submit">Save Settings</button>
+		</form>
+		<hr>
 		<form id="generate-datafeed" action="" method="post">
 			<div id="shareasale-wc-tracker-options">
-			  <h2>Product Datafeed</h2>
-			  <p>Use this tool to automatically export your products into ShareASale's product datafeed .csv format.</p>
 			  <input class="shareasale-wc-tracker-option-hidden" type="hidden" name="action" value="generate_datafeed">
 			<?php wp_nonce_field( 'generate-datafeed', '_wpnonce', false ) ?>
 			</div>
