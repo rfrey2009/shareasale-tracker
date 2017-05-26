@@ -22,7 +22,6 @@ jQuery(document).ready(function() {
     });
   });
 
-  //disable customization controls if toolbar not enabled
   jQuery('#reconciliation-setting').click(function(){
     if(!this.checked){
       jQuery('#api-token').prop('disabled', true);
@@ -33,7 +32,6 @@ jQuery(document).ready(function() {
     }
   });
 
-    //disable customization controls if toolbar not enabled
   jQuery('#analytics-setting').click(function(){
     if(!this.checked){
       jQuery('#analytics-passkey').prop('disabled', true);

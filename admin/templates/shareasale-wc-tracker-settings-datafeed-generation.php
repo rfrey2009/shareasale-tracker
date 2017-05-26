@@ -27,13 +27,13 @@ if ( ! defined( 'WPINC' ) ) {
 		<form action="options.php" method="post">
 			<h2>Product Datafeed</h2>
 			<p>Use this tool to automatically export your products into ShareASale's product datafeed .csv format.</p>
-			<div id="shareasale-wc-tracker-options">
+			<div>
 			<?php
 			  settings_fields( 'shareasale_wc_tracker_options' );
 			  do_settings_sections( 'shareasale_wc_tracker_datafeed_generation' );
 			?>     
 			</div>
-			<button id="tracker-options-save" class="button" name="Submit">Save Settings</button>
+			<button class="button" name="Submit">Save Settings</button>
 		</form>
 		<hr>
 		<form id="generate-datafeed" action="" method="post">
