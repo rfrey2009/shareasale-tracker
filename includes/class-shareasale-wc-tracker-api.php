@@ -123,7 +123,7 @@ class ShareASale_WC_Tracker_API {
 
 		$params       = array(
 							'title'                => $wc_coupon->get_description(),
-							'endDate'              => $wc_coupon->get_date_expires()->date( 'm/d/Y' ),
+							'endDate'              => ! is_null( $wc_coupon->get_date_expires() ) ? $wc_coupon->get_date_expires()->date( 'm/d/Y' ) : '',
 							'category'             => $wc_coupon->get_discount_type(),
 							'textDescription'      => $wc_coupon->get_description(),
 							'restrictions'         => implode( ' ', array_filter( $restrictions ) ),

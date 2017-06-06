@@ -64,6 +64,9 @@ class ShareASale_WC_Tracker_Admin {
 		$options          = get_option( 'shareasale_wc_tracker_options' );
 		$has_api_settings = ! empty( $options['merchant-id'] ) && ! empty( $options['api-token'] ) && ! empty( $options['api-secret'] );
 		$status           = $has_api_settings ? null : array( 'disabled' => 'disabled' );
+		$description      = $has_api_settings ? 'If checked this will send the coupon and/or any updates to ShareASale for your Affiliates to promote.' : 'You must have API settings entered in the <a target="_blank" href="' .
+				esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker_automatic_reconciliation' ) ) .
+				'">ShareASale WC Tracker plugin settings</a> to use this feature.';
 
 		woocommerce_wp_hidden_input( array(
 			'id'    => 'shareasale_wc_tracker_coupon_upload_enabled',
@@ -73,9 +76,7 @@ class ShareASale_WC_Tracker_Admin {
 		woocommerce_wp_checkbox( array(
 			'id'          => 'shareasale_wc_tracker_coupon_upload_enabled',
 			'label'       => 'Send to ShareASale?',
-			'description' => '<br>If checked and you have API settings entered in the <a target="_blank" href="' .
-				esc_url( admin_url( 'admin.php?page=shareasale_wc_tracker_automatic_reconciliation' ) ) .
-				'">ShareASale WC Tracker plugin settings</a>, this will send the coupon and any updates to ShareASale for your Affiliates to promote.',
+			'description' => $description,
 			//if $has_api_settings is true, then null will have woocommerce_wp_checkbox() set shareasale_wc_tracker_coupon_upload post_meta key to previously saved value
 			'value'             => $has_api_settings ? null : 'no',
 			'custom_attributes' => $status,
@@ -97,7 +98,9 @@ class ShareASale_WC_Tracker_Admin {
 		$shareasale_api = new ShareASale_WC_Tracker_API( $options['merchant-id'], $options['api-token'], $options['api-secret'] );
 		$coupon         = new WC_Coupon( $post_id );
 
-		if ( $options['store-id'] ) $coupon->shareasale_wc_tracker_store_id = $options['store-id'];
+		if ( $options['store-id'] ) {
+			$coupon->shareasale_wc_tracker_store_id = $options['store-id'];
+		}
 
 		if ( 'yes' == $new_setting && $prev_deal_id ) {
 			//this is an update, so deal edit
