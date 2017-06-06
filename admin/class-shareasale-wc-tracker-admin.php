@@ -209,7 +209,8 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'merchant-id',
 				'name'        => 'merchant-id',
 				'value'       => ! empty( $options['merchant-id'] ) ? $options['merchant-id'] : '',
-				'status'      => 'required',
+				//mimicking WordPress's own " $type='$type'" output format for disabled(), checked(), and selected() functions...
+				'status'      => "required='required'",
 				'size'        => 22,
 				'type'        => 'text',
 				'placeholder' => 'ShareASale Merchant ID',
@@ -276,7 +277,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'api-token',
 				'name'        => 'api-token',
 				'value'       => ! empty( $options['api-token'] ) ? $options['api-token'] : '',
-				'status'      => disabled( @$options['reconciliation-setting'], 0, false ),
+				'status'      => disabled( @$options['reconciliation-setting'], 0, false ) . " required='required'",
 				'size'        => 20,
 				'type'        => 'text',
 				'placeholder' => 'Enter your API Token',
@@ -288,7 +289,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'api-secret',
 				'name'        => 'api-secret',
 				'value'       => ! empty( $options['api-secret'] ) ? $options['api-secret'] : '',
-				'status'      => disabled( @$options['reconciliation-setting'], 0, false ),
+				'status'      => disabled( @$options['reconciliation-setting'], 0, false ) . " required='required'",
 				'size'        => 34,
 				'type'        => 'text',
 				'placeholder' => 'Enter your API Secret',
@@ -302,7 +303,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'default-category',
 				'name'        => 'default-category',
 				'value'       => ! empty( $options['default-category'] ) ? $options['default-category'] : '',
-				'status'      => '',
+				'status'      => 'min=1 max=17',
 				'size'        => '',
 				'type'        => 'number',
 				'placeholder' => 'Cat',
@@ -314,7 +315,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'default-subcategory',
 				'name'        => 'default-subcategory',
 				'value'       => ! empty( $options['default-subcategory'] ) ? $options['default-subcategory'] : '',
-				'status'      => '',
+				'status'      => 'min=1 max=187',
 				'size'        => '',
 				'type'        => 'number',
 				'placeholder' => 'Sub',
@@ -353,7 +354,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'analytics-passkey',
 				'name'        => 'analytics-passkey',
 				'value'       => ! empty( $options['analytics-passkey'] ) ? $options['analytics-passkey'] : '',
-				'status'      => disabled( @$options['analytics-setting'], 0, false ),
+				'status'      => disabled( @$options['analytics-setting'], 0, false ) . " required='required'",
 				'size'        => 28,
 				'type'        => 'text',
 				'placeholder' => 'Enter your Required Passkey',
@@ -569,6 +570,8 @@ class ShareASale_WC_Tracker_Admin {
 										'disabled'    => true,
 										'height'      => true,
 										'id'          => true,
+										'max'         => true,
+										'min'         => true,
 										'name'        => true,
 										'placeholder' => true,
 										'required'    => true,
@@ -589,7 +592,7 @@ class ShareASale_WC_Tracker_Admin {
 			$template = str_replace( "!!$macro!!", $value, $template );
 		}
 		//find the current saved option and replace its value to add the selected attribute
-		$template = str_replace( '"' . $template_data['value'] . '"', '"' . $template_data['value'] . '" selected', $template );
+		$template = str_replace( '"' . $template_data['value'] . '"', '"' . $template_data['value'] . '" selected="selected"', $template );
 
 		echo wp_kses( $template, array(
 									'select' => array(
