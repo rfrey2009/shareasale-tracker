@@ -2,7 +2,7 @@
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 3.0.1
 Tested up to: 4.7
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,11 +46,16 @@ http://blog.shareasale.com/2015/02/04/conversion-lines-where-the-tracking-gap-en
 
 == Changelog ==
 
+= 1.1.3 =
+
+* Added new default category and subcategory number options for products in the datafeed generation tab.
+* Added an option to automatically send ShareASale your WooCommerce coupons so your Affiliates can promote them. Check the "send to ShareASale" box while editing a WooCommerce coupon.
+
 = 1.1.2 =
-* Minor tweaks for users with older versions of PHP (pre-v5.5) or mistakenly orphaned product variations
+* Minor tweaks for users with older versions of PHP (v5.3 - 5.5) or mistakenly orphaned product variations.
 
 = 1.1.1 =
-* Updated admin menu bar icon to use WordPress standard dashicons-star-filled instead of yellow ShareASale star logo
+* Updated admin menu bar icon to use WordPress standard dashicons-star-filled instead of yellow ShareASale star logo.
 
 = 1.1 =
 * Second release. Compatible with WooCommerce 3.0!
