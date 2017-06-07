@@ -175,6 +175,7 @@ class ShareASale_WC_Tracker_Admin {
 			'desc_tip'    => 'true',
 			'placeholder' => 'Enter a valid ShareASale category',
 			'type'        => 'number',
+			'custom_attributes' => array( 'min' => 1, 'max' => 17 ),
 			)
 		);
 		woocommerce_wp_text_input( array(
@@ -183,6 +184,7 @@ class ShareASale_WC_Tracker_Admin {
 			'desc_tip'    => 'true',
 			'placeholder' => 'Enter a valid ShareASale subcategory',
 			'type'        => 'number',
+			'custom_attributes' => array( 'min' => 1, 'max' => 187 ),
 			)
 		);
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-woocommerce-product-category-subcategory-out-link.php';
@@ -555,6 +557,7 @@ class ShareASale_WC_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-analytics-disabled-section-text.php';
 	}
 
+	//to do: remove this in favor of using woocommerce_wp_checkbox(), woocommerce_wp_text_input(), and/or woocommerce_wp_hidden_input ?
 	public function render_settings_input( $attributes ) {
 		$template      = file_get_contents( plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-input.php' );
 		$template_data = array_map( 'esc_attr', $attributes );
@@ -583,7 +586,7 @@ class ShareASale_WC_Tracker_Admin {
 								)
 		);
 	}
-
+	//to do: remove this in favor of using woocommerce_wp_select() ?
 	public function render_settings_select( $attributes ) {
 		$template      = file_get_contents( plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-select.php' );
 		$template_data = array_map( 'esc_attr', $attributes );
