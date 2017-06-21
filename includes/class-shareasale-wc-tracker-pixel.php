@@ -29,7 +29,7 @@ class ShareASale_WC_Tracker_Pixel {
 			return;
 		}
 
-		if ( $prev_triggered && ! isset( $_GET['troubleshooting'] ) ) {
+		if ( $prev_triggered && ! isset( $_GET['troubleshooting'] ) && ! is_multisite() ) {
 			return;
 		}
 
