@@ -102,14 +102,15 @@ class ShareASale_WC_Tracker_Pixel {
 
 		$query_string = '?' . http_build_query( $params );
 
-		$pixel = '<img id = "_SHRSL_img_1" src = "https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype . '" width="1" height="1">';
+		$pixel = '<img id = "_SHRSL_img_1" src = "https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype . '" width="1" height="1" data-no-lazy="1">';
 
 		echo wp_kses( $pixel, array(
 									'img' => array(
-										'id'     => true,
-										'src'    => true,
-										'width'  => true,
-										'height' => true,
+										'id'           => true,
+										'src'          => true,
+										'width'        => true,
+										'height'       => true,
+										'data-no-lazy' => true,
 									),
 								)
 		);
