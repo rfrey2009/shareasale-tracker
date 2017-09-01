@@ -64,16 +64,24 @@ class ShareASale_WC_Tracker_Analytics {
 			return;
 		}
 
-		$product  = new WC_Product( $product_id );
-		$sku      = $product->get_sku();
-		$price    = $product->get_price();
+		global $woocommerce;
+		$items = $woocommerce->cart->get_cart();
+		$lists = $this->calculate_lists( $items );
+
+		$skulist      = $lists['skulist'];
+		$pricelist    = $lists['pricelist'];
+		$quantitylist = $lists['quantitylist'];
+
+		// $product  = new WC_Product( $product_id );
+		// $sku      = $product->get_sku();
+		// $price    = $product->get_price();
 		//quantity should be one on non-single product page where AJAX happens
-		$quantity = 1;
+		//$quantity = 1;
 
 		$this->ajax_product_data = array(
-			'skulist'      => $sku,
-			'pricelist'    => $price,
-			'quantitylist' => $quantity,
+			'skulist'      => $skulist,
+			'pricelist'    => $pricelist,
+			'quantitylist' => $quantitylist,
 		);
 		//inject the custom <script/> HTML fragments into the JSON response by using this WC filter
 		add_filter( 'woocommerce_add_to_cart_fragments',
@@ -120,9 +128,17 @@ class ShareASale_WC_Tracker_Analytics {
 			return;
 		}
 
-		$product = new WC_Product( $product_id );
-		$sku     = $product->get_sku();
-		$price   = $product->get_price();
+		global $woocommerce;
+		$items = $woocommerce->cart->get_cart();
+		$lists = $this->calculate_lists( $items );
+
+		$skulist      = $lists['skulist'];
+		$pricelist    = $lists['pricelist'];
+		$quantitylist = $lists['quantitylist'];
+
+		// $product = new WC_Product( $product_id );
+		// $sku     = $product->get_sku();
+		// $price   = $product->get_price();
 
 		$src = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js' );
 		wp_enqueue_script(
@@ -136,9 +152,9 @@ class ShareASale_WC_Tracker_Analytics {
 			'shareasale-wc-tracker-analytics-add-to-cart',
 			'shareasaleWcTrackerAnalyticsAddToCart',
 			array(
-				'skulist'      => $sku,
-				'pricelist'    => $price,
-				'quantitylist' => $quantity,
+				'skulist'      => $skulist,
+				'pricelist'    => $pricelist,
+				'quantitylist' => $quantitylist,
 			)
 		);
 	}
@@ -153,19 +169,11 @@ class ShareASale_WC_Tracker_Analytics {
 		$src   = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-begin-checkout.js' );
 
 		$items = $woocommerce->cart->get_cart();
-		$last_index = array_search( end( $items ), $items, true );
+		$lists = $this->calculate_lists( $items );
 
-		foreach ( $items as $index => $item ) {
-			$delimiter = $index === $last_index ? '' : ',';
-			$product   = new WC_Product( $item['product_id'] );
-			$sku       = $product->get_sku();
-
-			isset( $skulist ) ? $skulist .= $sku . $delimiter : $skulist = $sku . $delimiter;
-
-			isset( $pricelist ) ? $pricelist .= round( ( $item['line_total'] / $item['quantity'] ), 2 ) . $delimiter : $pricelist = round( ( $item['line_total'] / $item['quantity'] ), 2 ) . $delimiter;
-
-			isset( $quantitylist ) ? $quantitylist .= $item['quantity'] . $delimiter : $quantitylist = $item['quantity'] . $delimiter;
-		}
+		$skulist      = $lists['skulist'];
+		$pricelist    = $lists['pricelist'];
+		$quantitylist = $lists['quantitylist'];
 
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
 			ob_start();
@@ -282,5 +290,23 @@ class ShareASale_WC_Tracker_Analytics {
 			$this->version,
 			true
 		);
+	}
+
+	private function calculate_lists( $items ) {
+		$last_index = array_search( end( $items ), $items, true );
+
+		foreach ( $items as $index => $item ) {
+			$delimiter = $index === $last_index ? '' : ',';
+			$product   = new WC_Product( $item['product_id'] );
+			$sku       = $product->get_sku();
+
+			isset( $skulist ) ? $skulist .= $sku . $delimiter : $skulist = $sku . $delimiter;
+
+			isset( $pricelist ) ? $pricelist .= round( ( $item['line_total'] / $item['quantity'] ), 2 ) . $delimiter : $pricelist = round( ( $item['line_total'] / $item['quantity'] ), 2 ) . $delimiter;
+
+			isset( $quantitylist ) ? $quantitylist .= $item['quantity'] . $delimiter : $quantitylist = $item['quantity'] . $delimiter;
+		}
+
+		return array( 'skulist' => $skulist, 'pricelist' => $pricelist, 'quantitylist' => $quantitylist );
 	}
 }
