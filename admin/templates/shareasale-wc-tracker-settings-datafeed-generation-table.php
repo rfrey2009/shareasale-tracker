@@ -21,17 +21,18 @@ $datafeeds = $wpdb->get_results(
 		FROM (
 			SELECT *
 			FROM $datafeeds_table
+			WHERE generation_date BETWEEN NOW() - INTERVAL %d DAY AND NOW()
 			ORDER BY generation_date DESC
 		) x
 		GROUP BY file
 		ORDER BY generation_date DESC
 		LIMIT %d, %d
 		",
-		$offset, $limit
+		SHAREASALE_WC_TRACKER_MAX_DATAFEED_AGE_DAYS, $offset, $limit
 	)
 );
 ?>
-<h2>Past 30 Days Generated Datafeeds by Day</h2>
+<h2>Past <?php echo esc_html( SHAREASALE_WC_TRACKER_MAX_DATAFEED_AGE_DAYS ) ?> Days Generated Datafeeds by Day</h2>
 <table class="shareasale-wc-tracker-datafeeds-table">
 	<thead class="shareasale-wc-tracker-datafeeds-head">
 		<tr class="shareasale-wc-tracker-datafeeds-row">

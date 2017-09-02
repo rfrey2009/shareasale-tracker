@@ -329,11 +329,7 @@ class ShareASale_WC_Tracker_Datafeed {
 		return $this;
 	}
 
-	public function clean_up( $dir, $days_age = 30 ) {
-		if ( ! is_numeric( $days_age ) ) {
-			$days_age = 30;
-		}
-
+	public function clean_up( $dir, $days_age ) {
 		$files = $this->filesystem->dirlist( $dir );
 
 		foreach ( $files as $file_details ) {

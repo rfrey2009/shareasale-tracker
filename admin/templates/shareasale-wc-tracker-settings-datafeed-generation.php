@@ -38,7 +38,7 @@ if ( ! defined( 'WPINC' ) ) {
 		<hr>
 		<form id="generate-datafeed" action="" method="post">
 			<div id="shareasale-wc-tracker-options">
-			  <input class="shareasale-wc-tracker-option-hidden" type="hidden" name="action" value="generate_datafeed">
+			  <input class="shareasale-wc-tracker-option-hidden" type="hidden" name="action" value="shareasale_wc_tracker_generate_datafeed">
 			<?php wp_nonce_field( 'generate-datafeed', '_wpnonce', false ) ?>
 			</div>
 			<button id="tracker-options-save" class="button" name="Submit">Generate Datafeed</button>

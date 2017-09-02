@@ -15,6 +15,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 define( 'SHAREASALE_WC_TRACKER_PLUGIN_FILENAME', plugin_basename( __FILE__ ) );
+define( 'SHAREASALE_WC_TRACKER_MAX_DATAFEED_AGE_DAYS', 60 );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-shareasale-wc-tracker.php';
 

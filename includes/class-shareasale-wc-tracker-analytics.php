@@ -41,12 +41,13 @@ class ShareASale_WC_Tracker_Analytics {
 
 		//required base analytics on every page
 		$src         = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics.js' );
+		$src2        = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-cart-observer.js' );
 		$merchant_id = $this->options['merchant-id'];
 
 		wp_enqueue_script(
 			'shareasale-wc-tracker-analytics',
 			$src,
-			'',
+			array(),
 			$this->version
 		);
 
@@ -57,9 +58,38 @@ class ShareASale_WC_Tracker_Analytics {
 				'merchantId' => $merchant_id,
 			)
 		);
+
+		if ( is_cart() ) {
+			wp_enqueue_script(
+				'shareasale-wc-tracker-analytics-cart-observer',
+				$src2,
+				array(),
+				$this->version
+			);
+		}
 	}
 
-	public function woocommerce_ajax_added_to_cart( $product_id ) {
+	//class-wc-cart hook, not class-wc-form-handler
+	public function wp_ajax_shareasale_wc_tracker_cart_item_removed() {
+		//$this->woocommerce_ajax_added_to_cart();
+	}
+
+	//class-wc-cart hook, not class-wc-form-handler
+	public function wp_ajax_shareasale_wc_tracker_cart_item_restored() {
+		//$this->woocommerce_ajax_added_to_cart();
+	}
+
+	//actually a filter on class-wc-form-handler and not class-wc-cart
+	public function wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated() {
+		//$this->woocommerce_ajax_added_to_cart();
+	}
+
+	//class-wc-cart hook, not class-wc-form-handler
+	public function wp_ajax_shareasale_wc_tracker_cart_emptied() {
+		//$this->woocommerce_ajax_added_to_cart();
+	}
+
+	public function woocommerce_ajax_added_to_cart(/* $product_id */) {
 		if ( empty( $this->options['analytics-setting'] ) ) {
 			return;
 		}
@@ -72,9 +102,9 @@ class ShareASale_WC_Tracker_Analytics {
 		$pricelist    = $lists['pricelist'];
 		$quantitylist = $lists['quantitylist'];
 
-		// $product  = new WC_Product( $product_id );
-		// $sku      = $product->get_sku();
-		// $price    = $product->get_price();
+		//$product  = new WC_Product( $product_id );
+		//$sku      = $product->get_sku();
+		//$price    = $product->get_price();
 		//quantity should be one on non-single product page where AJAX happens
 		//$quantity = 1;
 
@@ -95,22 +125,20 @@ class ShareASale_WC_Tracker_Analytics {
 	public function woocommerce_add_to_cart_fragments( $fragments ) {
 		$src  = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js?v=' . $this->version );
 		$src2 = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-cache-buster.js?v=' . $this->version );
-
+		//$fragments is an array with so far at least one key named after its HTML value's class, 'div.widget_shopping_cart_content'
+		//add new keys named after their HTML value's id. These will replace existing same id <noscript> HTML elements
 		ob_start();
 		?>
-			<!-- first localize product data -->
 			<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax-model" type="text/javascript">
 				var shareasaleWcTrackerAnalyticsAddToCart = <?php echo wp_json_encode( $this->ajax_product_data ) ?>;
 			</script>
 
 		<?php $fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-model'] = ob_get_clean(); ?>
 			
-			<!-- run atc call for ShareASale analytics -->
 			<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax" type="text/javascript" src="<?php echo esc_attr( $src ); ?>"></script>
 
 		<?php $fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax'] = ob_get_clean(); ?>
 			
-			<!-- make sure the script tag isn't cached in HTML5 session storage as another WC cart fragment... -->
 			<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax-cb" type="text/javascript" src="<?php echo esc_attr( $src2 ); ?>"></script>
 
 		<?php $fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-cb'] = ob_get_clean();
@@ -118,7 +146,7 @@ class ShareASale_WC_Tracker_Analytics {
 		ob_end_clean();
 	}
 
-	public function woocommerce_add_to_cart( $cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data ) {
+	public function woocommerce_add_to_cart(/* $cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data */) {
 		if ( empty( $this->options['analytics-setting'] ) ) {
 			return;
 		}
@@ -147,7 +175,6 @@ class ShareASale_WC_Tracker_Analytics {
 			array( 'shareasale-wc-tracker-analytics' ),
 			$this->version
 		);
-		//single item add to cart
 		wp_localize_script(
 			'shareasale-wc-tracker-analytics-add-to-cart',
 			'shareasaleWcTrackerAnalyticsAddToCart',
@@ -174,7 +201,7 @@ class ShareASale_WC_Tracker_Analytics {
 		$skulist      = $lists['skulist'];
 		$pricelist    = $lists['pricelist'];
 		$quantitylist = $lists['quantitylist'];
-
+		//not even sure if you can do an AJAX checkout... onepage plugins maybe?
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
 			ob_start();
 			?>
@@ -202,7 +229,7 @@ class ShareASale_WC_Tracker_Analytics {
 				array( 'shareasale-wc-tracker-analytics' ),
 				$this->version
 			);
-			//multi-item checkout possible...
+
 			wp_localize_script(
 				'shareasale-wc-tracker-analytics-begin-checkout',
 				'shareasaleWcTrackerAnalyticsBeginCheckout',
@@ -223,6 +250,7 @@ class ShareASale_WC_Tracker_Analytics {
 		$src = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-applied-coupon.js' );
 
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
+			//this only works because of show_notice() in cart.js apply_coupon method, otherwise the <script> analytics below included in the ajax response wouldn't be added to the page at all!!
 			ob_start();
 			?>
 				<!-- first localize coupon data -->
@@ -294,6 +322,7 @@ class ShareASale_WC_Tracker_Analytics {
 
 	private function calculate_lists( $items ) {
 		$last_index = array_search( end( $items ), $items, true );
+		$skulist = $pricelist = $quantitylist = '';
 
 		foreach ( $items as $index => $item ) {
 			$delimiter = $index === $last_index ? '' : ',';

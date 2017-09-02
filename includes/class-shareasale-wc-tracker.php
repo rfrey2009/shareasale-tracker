@@ -43,7 +43,13 @@ class ShareASale_WC_Tracker {
 	private function define_frontend_hooks() {
 		$this->loader->add_action( 'wp_head',            $this->analytics, 'wp_head' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->analytics, 'enqueue_scripts' );
-		//analytics filter
+		//advanced analytics ajax cart page based changes, not using WooCommerce hooks
+		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_item_removed',    $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_item_removed' );
+		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_item_restored',   $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_item_restored' );
+		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated', $this->analytics, 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated' );
+		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_emptied',         $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_emptied' );
+
+		//analytics filters
 		$this->loader->add_filter( 'script_loader_tag',  $this->analytics, 'script_loader_tag',
 			array( 'priority' => 10, 'args' => 3 )
 		);
@@ -56,12 +62,12 @@ class ShareASale_WC_Tracker {
 		$this->loader->add_action( 'admin_init',                $admin, 'admin_init' );
 		$this->loader->add_action( 'admin_init',                $admin, 'plugin_upgrade' );
 		$this->loader->add_action( 'admin_menu',                $admin, 'admin_menu' );
-		$this->loader->add_action( 'wp_ajax_generate_datafeed', $admin, 'wp_ajax_generate_datafeed' );
+		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_generate_datafeed', $admin, 'wp_ajax_shareasale_wc_tracker_generate_datafeed' );
 		//for adding and saving custom post meta (ShareASale category/subactegory number values) to the WC products page general section
 		$this->loader->add_action( 'woocommerce_product_options_general_product_data', $admin, 'woocommerce_product_options_general_product_data' );
 		$this->loader->add_action( 'woocommerce_process_product_meta',                 $admin, 'woocommerce_process_product_meta' );
 		//for adding and saving custom post meta ("upload to ShareASale?" checkbox) to the WC coupons page general section
-		$this->loader->add_action( 'woocommerce_coupon_options', 		   $admin, 'woocommerce_coupon_options'	);
+		$this->loader->add_action( 'woocommerce_coupon_options', 	  $admin, 'woocommerce_coupon_options' );
 		$this->loader->add_action( 'woocommerce_coupon_options_save', $admin, 'woocommerce_coupon_options_save',
 			array( 'priority' => 10, 'args' => 2 )
 		);

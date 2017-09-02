@@ -487,7 +487,7 @@ class ShareASale_WC_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-advanced-analytics.php';
 	}
 
-	public function wp_ajax_generate_datafeed() {
+	public function wp_ajax_shareasale_wc_tracker_generate_datafeed() {
 		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'generate-datafeed' ) ) {
 			add_settings_error(
 				'shareasale_wc_tracker_datafeed_warning',
@@ -520,7 +520,7 @@ class ShareASale_WC_Tracker_Admin {
 		$datafeed = new ShareASale_WC_Tracker_Datafeed( $this->version, $wp_filesystem );
 		if ( $datafeed ) {
 			$datafeed->export( $file );
-			$datafeed->clean_up( $dir, 60 );
+			$datafeed->clean_up( $dir, SHAREASALE_WC_TRACKER_MAX_DATAFEED_AGE_DAYS );
 		}
 
 		//then show the csv files and their info in the table template
