@@ -89,7 +89,6 @@ class ShareASale_WC_Tracker_Analytics {
 	}
 	*/
 	public function wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated() {
-		error_log( 'we made it this far...' );
 		$this->woocommerce_ajax_added_to_cart();
 		$fragments = $this->woocommerce_add_to_cart_fragments( array() );
 		wp_send_json( $fragments );
@@ -100,7 +99,7 @@ class ShareASale_WC_Tracker_Analytics {
 		if ( empty( $this->options['analytics-setting'] ) ) {
 			return;
 		}
-		error_log( 'we made it here' );
+
 		global $woocommerce;
 		$items = $woocommerce->cart->get_cart();
 		$lists = $this->calculate_lists( $items );
@@ -130,7 +129,6 @@ class ShareASale_WC_Tracker_Analytics {
 	}
 
 	public function woocommerce_add_to_cart_fragments( $fragments ) {
-		error_log( 'and we made it here' );
 		$src  = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js?v=' . $this->version );
 		$src2 = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-cache-buster.js?v=' . $this->version );
 		//$fragments is an array with maybe an existing key named after its HTML value's class, 'div.widget_shopping_cart_content'
