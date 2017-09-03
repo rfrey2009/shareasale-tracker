@@ -3,20 +3,7 @@
 console.log('observing!');
 
 jQuery(document).ready(function() {
-	//remove
-	jQuery( document ).on(
-		'click',
-		'.woocommerce-cart-form .product-remove > a',
-		function(e){
-			console.log('observer saw that removal!');
-			jQuery.get( ajaxurl, { action: 'shareasale_wc_tracker_cart_item_removed' }, function(data) {
-    			jQuery.each( data, function(key, value ) {
-					jQuery(key).replaceWith(value);
-				});
-   			});
-		} );
-
-	//restore, somewhat fragile since there's no good WooCommerce selector for the undo item link...
+	//item restored, somewhat fragile since there's no good WooCommerce selector for the undo item link...
 	/*
 	jQuery( document ).on(
 		'click',
@@ -24,20 +11,20 @@ jQuery(document).ready(function() {
 		function(e){
 			e.preventDefault();
 			console.log('observer saw that restore!');
-			jQuery.get( ajaxurl, { action: 'shareasale_wc_tracker_update_cart_action_cart_updated' }, function(data) {
+			jQuery.get( shareasaleWcTrackerAnalyticsCartObserver.ajaxurl, { action: 'shareasale_wc_tracker_cart_item_restored' }, function(data) {
       			console.log(data);
    			});
 		} );
 	*/
 
-	//update
+	//any cart update
 	jQuery( document ).on(
-		'click',
-		'input[name="update_cart"]',
+		'updated_wc_div',
 		function(e){
-			console.log('observer saw that update!');
-			jQuery.get( ajaxurl, { action: 'shareasale_wc_tracker_update_cart_action_cart_updated' }, function(data) {
-    			jQuery.each( data, function(key, value ) {
+			console.log('observer saw that cart update!');
+			if( jQuery('div.woocommerce-info').text() == 'Shipping costs updated.' ){ return; }
+			jQuery.get( shareasaleWcTrackerAnalyticsCartObserver.ajaxurl, { action: 'shareasale_wc_tracker_update_cart_action_cart_updated' }, function(data) {
+    			jQuery.each( data, function( key, value ) {
 					jQuery(key).replaceWith(value);
 				});
    			});

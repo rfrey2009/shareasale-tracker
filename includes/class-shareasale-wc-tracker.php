@@ -44,9 +44,11 @@ class ShareASale_WC_Tracker {
 		$this->loader->add_action( 'wp_head',            $this->analytics, 'wp_head' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->analytics, 'enqueue_scripts' );
 		//advanced analytics ajax cart page based changes, not using WooCommerce hooks
-		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_item_removed',    $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_item_removed' );
-		//restored cart items both kicks off a WC_Form_Handler ajax request AND redirects the page...
+
+		//restored cart items both kicks off a WC_Form_Handler ajax request AND then redirects the page...
 		// $this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_item_restored',   $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_item_restored' );
+		$this->loader->add_action( 'wp_ajax_nopriv_shareasale_wc_tracker_update_cart_action_cart_updated', $this->analytics, 'wp_ajax_nopriv_shareasale_wc_tracker_update_cart_action_cart_updated' );
+		//only included the non-nopriv version in case a Merchant is testing analytics themselves while logged in...
 		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated', $this->analytics, 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated' );
 
 		//analytics filters
