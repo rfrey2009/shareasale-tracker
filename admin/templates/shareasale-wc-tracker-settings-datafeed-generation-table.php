@@ -21,7 +21,7 @@ $datafeeds = $wpdb->get_results(
 		FROM (
 			SELECT *
 			FROM $datafeeds_table
-			WHERE generation_date BETWEEN NOW() - INTERVAL %d DAY AND NOW()
+			WHERE generation_date > NOW() - INTERVAL %d DAY
 			ORDER BY generation_date DESC
 		) x
 		GROUP BY file

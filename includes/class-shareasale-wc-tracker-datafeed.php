@@ -336,6 +336,7 @@ class ShareASale_WC_Tracker_Datafeed {
 			$file = trailingslashit( $dir ) . $file_details['name'];
 			if ( time() - $file_details['lastmodunix'] > ( 60 * 60 * 24 * $days_age ) ) {
 				$this->filesystem->delete( $file );
+				$this->logger->unlog( $file );
 			}
 		}
 	}

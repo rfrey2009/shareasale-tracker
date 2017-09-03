@@ -68,25 +68,29 @@ class ShareASale_WC_Tracker_Analytics {
 			);
 		}
 	}
-
-	//class-wc-cart hook, not class-wc-form-handler
+	//hooked action given it's own function, but it just defers to another method for now
 	public function wp_ajax_shareasale_wc_tracker_cart_item_removed() {
-		//$this->woocommerce_ajax_added_to_cart();
+		echo 'test1!';
+		$this->wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated();
 	}
-
-	//class-wc-cart hook, not class-wc-form-handler
+	/*
+	*to be used with AJAX, but unfortunately the page redirects for item remove undos within WC_Form_Handler
 	public function wp_ajax_shareasale_wc_tracker_cart_item_restored() {
 		//$this->woocommerce_ajax_added_to_cart();
+		echo 'test2!';
+		wp_die();
 	}
-
-	//actually a filter on class-wc-form-handler and not class-wc-cart
+	*also impossible server-side as this hook fires too early on WC_Cart::restore_cart_item() and not after WC_Form_Handler redirects
+	public function woocommerce_cart_item_restored() {
+		error_log( 'it fired!' );
+	}
+	*/
 	public function wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated() {
-		//$this->woocommerce_ajax_added_to_cart();
-	}
+		$this->woocommerce_ajax_added_to_cart();
 
-	//class-wc-cart hook, not class-wc-form-handler
-	public function wp_ajax_shareasale_wc_tracker_cart_emptied() {
-		//$this->woocommerce_ajax_added_to_cart();
+		$fragments = $this->woocommerce_add_to_cart_fragments( array() );
+		wp_send_json( $fragments );
+		wp_die();
 	}
 
 	public function woocommerce_ajax_added_to_cart(/* $product_id */) {
@@ -125,7 +129,7 @@ class ShareASale_WC_Tracker_Analytics {
 	public function woocommerce_add_to_cart_fragments( $fragments ) {
 		$src  = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js?v=' . $this->version );
 		$src2 = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-cache-buster.js?v=' . $this->version );
-		//$fragments is an array with so far at least one key named after its HTML value's class, 'div.widget_shopping_cart_content'
+		//$fragments is an array with maybe an existing key named after its HTML value's class, 'div.widget_shopping_cart_content'
 		//add new keys named after their HTML value's id. These will replace existing same id <noscript> HTML elements
 		ob_start();
 		?>
@@ -143,7 +147,6 @@ class ShareASale_WC_Tracker_Analytics {
 
 		<?php $fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-cb'] = ob_get_clean();
 		return $fragments;
-		ob_end_clean();
 	}
 
 	public function woocommerce_add_to_cart(/* $cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data */) {

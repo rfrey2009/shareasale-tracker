@@ -45,9 +45,9 @@ class ShareASale_WC_Tracker {
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->analytics, 'enqueue_scripts' );
 		//advanced analytics ajax cart page based changes, not using WooCommerce hooks
 		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_item_removed',    $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_item_removed' );
-		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_item_restored',   $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_item_restored' );
+		//restored cart items both kicks off a WC_Form_Handler ajax request AND redirects the page...
+		// $this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_item_restored',   $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_item_restored' );
 		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated', $this->analytics, 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated' );
-		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_emptied',         $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_emptied' );
 
 		//analytics filters
 		$this->loader->add_filter( 'script_loader_tag',  $this->analytics, 'script_loader_tag',
@@ -94,6 +94,8 @@ class ShareASale_WC_Tracker {
 			array( 'priority' => 10, 'args' => 6 )
 		);
 		$this->loader->add_action( 'woocommerce_ajax_added_to_cart',   $this->analytics, 'woocommerce_ajax_added_to_cart' );
+		//restored cart items both kicks off a WC_Form_Handler ajax request AND redirects the page...
+		//$this->loader->add_action( 'woocommerce_cart_item_restored',   $this->analytics, 'woocommerce_cart_item_restored' );
 		$this->loader->add_action( 'woocommerce_before_checkout_form', $this->analytics, 'woocommerce_before_checkout_form' );
 		$this->loader->add_action( 'woocommerce_applied_coupon',       $this->analytics, 'woocommerce_applied_coupon' );
 		//this action MUST stay priority number lower than the woocommerce_thankyou $pixel action above, so it executes BEFORE post meta is added to the order

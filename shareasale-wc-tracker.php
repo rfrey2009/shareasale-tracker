@@ -15,7 +15,8 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 define( 'SHAREASALE_WC_TRACKER_PLUGIN_FILENAME', plugin_basename( __FILE__ ) );
-define( 'SHAREASALE_WC_TRACKER_MAX_DATAFEED_AGE_DAYS', 60 );
+/* increasing this only works going forward. old datafeed logs and files were already removed */
+define( 'SHAREASALE_WC_TRACKER_MAX_DATAFEED_AGE_DAYS', 1 );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-shareasale-wc-tracker.php';
 

@@ -3,7 +3,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-$page_links = paginate_links( 
+$page_links = paginate_links(
 	array(
 		'base' => add_query_arg(
 			array(

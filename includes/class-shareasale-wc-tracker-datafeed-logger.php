@@ -34,4 +34,9 @@ class ShareASale_WC_Tracker_Datafeed_Logger {
 				);
 		$this->wpdb->insert( $this->table, $log );
 	}
+
+	public function unlog( $path ) {
+		//clean up database whenever files are cleaned from disk so pagination matches
+		$this->wpdb->delete( $this->table, array( 'file' => $path ) );
+	}
 }
