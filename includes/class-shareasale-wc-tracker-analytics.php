@@ -256,6 +256,7 @@ class ShareASale_WC_Tracker_Analytics {
 
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
 			//this only works because of show_notice() in cart.js apply_coupon method, otherwise the <script> analytics below included in the ajax response wouldn't be added to the page at all!!
+			//move to client-side cart-observer listener that kicks off ajax call instaed of server-side hook?
 			ob_start();
 			?>
 				<!-- first localize coupon data -->
