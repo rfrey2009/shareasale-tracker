@@ -76,18 +76,11 @@ class ShareASale_WC_Tracker_Analytics {
 			);
 		}
 	}
-	/*
-	*to be used with AJAX, but unfortunately the page redirects for item remove undos within WC_Form_Handler
-	public function wp_ajax_shareasale_wc_tracker_cart_item_restored() {
-		//$this->woocommerce_ajax_added_to_cart();
-		echo 'test2!';
-		wp_die();
+
+	public function wp_ajax_nopriv_shareasale_wc_tracker_update_cart_action_cart_updated() {
+		$this->wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated();
 	}
-	*also impossible server-side as this hook fires too early on WC_Cart::restore_cart_item() and not after WC_Form_Handler redirects
-	public function woocommerce_cart_item_restored() {
-		error_log( 'it fired!' );
-	}
-	*/
+
 	public function wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated() {
 		$this->woocommerce_ajax_added_to_cart();
 		$fragments = $this->woocommerce_add_to_cart_fragments( array() );
@@ -95,13 +88,12 @@ class ShareASale_WC_Tracker_Analytics {
 		wp_die();
 	}
 
-	public function woocommerce_ajax_added_to_cart(/* $product_id */) {
+	public function woocommerce_ajax_added_to_cart() {
 		if ( empty( $this->options['analytics-setting'] ) ) {
 			return;
 		}
 
-		global $woocommerce;
-		$items = $woocommerce->cart->get_cart();
+		$items = WC()->cart->get_cart();
 		$lists = $this->calculate_lists( $items );
 
 		$skulist      = $lists['skulist'];
@@ -151,7 +143,7 @@ class ShareASale_WC_Tracker_Analytics {
 		return $fragments;
 	}
 
-	public function woocommerce_add_to_cart(/* $cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data */) {
+	public function woocommerce_add_to_cart() {
 		if ( empty( $this->options['analytics-setting'] ) ) {
 			return;
 		}
@@ -161,8 +153,7 @@ class ShareASale_WC_Tracker_Analytics {
 			return;
 		}
 
-		global $woocommerce;
-		$items = $woocommerce->cart->get_cart();
+		$items = WC()->cart->get_cart();
 		$lists = $this->calculate_lists( $items );
 
 		$skulist      = $lists['skulist'];
@@ -196,16 +187,14 @@ class ShareASale_WC_Tracker_Analytics {
 			return;
 		}
 
-		global $woocommerce;
-
-		$src   = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-begin-checkout.js' );
-
-		$items = $woocommerce->cart->get_cart();
+		$items = WC()->cart->get_cart();
 		$lists = $this->calculate_lists( $items );
 
 		$skulist      = $lists['skulist'];
 		$pricelist    = $lists['pricelist'];
 		$quantitylist = $lists['quantitylist'];
+
+		$src   = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-begin-checkout.js' );
 		//not even sure if you can do an AJAX checkout... onepage plugins maybe?
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
 			ob_start();
@@ -327,6 +316,13 @@ class ShareASale_WC_Tracker_Analytics {
 	}
 
 	private function calculate_lists( $items ) {
+		if ( ! did_action( 'woocommerce_cart_loaded_from_session' ) ) {
+            error_log( 'we didn\'t get the cart from session yet...' );
+        }else{
+            error_log( 'we did get the cart from session!' );
+        }
+        error_log( print_r( json_encode( $items ), true ) );
+
 		$last_index = array_search( end( $items ), $items, true );
 		$skulist = $pricelist = $quantitylist = '';
 

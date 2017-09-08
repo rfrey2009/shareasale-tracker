@@ -41,19 +41,36 @@ class ShareASale_WC_Tracker {
 	}
 
 	private function define_frontend_hooks() {
-		$this->loader->add_action( 'wp_head',            $this->analytics, 'wp_head' );
+		$this->loader->add_action( 'wp_head',            $this->analytics, 'wp_head',
+			array(
+				'priority' => 10,
+				'args' => 0,
+			)
+		);
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->analytics, 'enqueue_scripts' );
 		//advanced analytics ajax cart page based changes, not using WooCommerce hooks
 
 		//restored cart items both kicks off a WC_Form_Handler ajax request AND then redirects the page...
-		// $this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_item_restored',   $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_item_restored' );
-		$this->loader->add_action( 'wp_ajax_nopriv_shareasale_wc_tracker_update_cart_action_cart_updated', $this->analytics, 'wp_ajax_nopriv_shareasale_wc_tracker_update_cart_action_cart_updated' );
+		//$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_item_restored',   $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_item_restored' );
+		$this->loader->add_action( 'wp_ajax_nopriv_shareasale_wc_tracker_update_cart_action_cart_updated', $this->analytics, 'wp_ajax_nopriv_shareasale_wc_tracker_update_cart_action_cart_updated',
+			array(
+				'priority' => 10,
+				'args' => 0,
+			)
+		);
 		//only included the non-nopriv version in case a Merchant is testing analytics themselves while logged in...
-		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated', $this->analytics, 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated' );
+		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated', $this->analytics, 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated',array(
+				'priority' => 10,
+				'args' => 0,
+			)
+		);
 
 		//analytics filters
 		$this->loader->add_filter( 'script_loader_tag',  $this->analytics, 'script_loader_tag',
-			array( 'priority' => 10, 'args' => 3 )
+			array(
+				'priority' => 10,
+				'args' => 3,
+			)
 		);
 	}
 
@@ -71,7 +88,10 @@ class ShareASale_WC_Tracker {
 		//for adding and saving custom post meta ("upload to ShareASale?" checkbox) to the WC coupons page general section
 		$this->loader->add_action( 'woocommerce_coupon_options', 	  $admin, 'woocommerce_coupon_options' );
 		$this->loader->add_action( 'woocommerce_coupon_options_save', $admin, 'woocommerce_coupon_options_save',
-			array( 'priority' => 10, 'args' => 2 )
+			array(
+				'priority' => 10,
+				'args' => 2,
+			)
 		);
 		$this->loader->add_action( 'admin_notices', $admin, 'admin_notices' );
 
@@ -82,27 +102,50 @@ class ShareASale_WC_Tracker {
 	private function define_woocommerce_hooks() {
 		//conversion tracking pixel
 		$pixel = new ShareASale_WC_Tracker_Pixel( $this->version );
-		$this->loader->add_action( 'woocommerce_thankyou', $pixel, 'woocommerce_thankyou' );
+		$this->loader->add_action( 'woocommerce_thankyou', $pixel, 'woocommerce_thankyou',
+			array(
+					'priority' => PHP_INT_MAX,
+					'args' => 1,
+			)
+		);
 		//automatic reconciliation
 		$reconciler = new ShareASale_WC_Tracker_Reconciler( $this->version );
 		$this->loader->add_action( 'woocommerce_order_partially_refunded', $reconciler, 'woocommerce_order_partially_refunded',
-			array( 'priority' => 10, 'args' => 2 )
+			array(
+				'priority' => 10,
+				'args' => 2,
+			)
 		);
 		$this->loader->add_action( 'woocommerce_order_fully_refunded', $reconciler, 'woocommerce_order_fully_refunded',
-			array( 'priority' => 10, 'args' => 2 )
+			array(
+				'priority' => 10,
+				'args' => 2,
+			)
 		);
 		//advanced analytics
+		//the ShareASale_WC_Tracker_Analytics methods hooked to add_to_cart/ajax_added_to_cart must stay priority number lower than WC_Cart::calculate_totals, since it's also hooked to those events with priority 20. Using PHP_INT_MAX to ensure last place execution
 		$this->loader->add_action( 'woocommerce_add_to_cart',          $this->analytics, 'woocommerce_add_to_cart',
-			array( 'priority' => 10, 'args' => 6 )
+			array(
+				'priority' => PHP_INT_MAX,
+				'args' => 0,
+			)
 		);
-		$this->loader->add_action( 'woocommerce_ajax_added_to_cart',   $this->analytics, 'woocommerce_ajax_added_to_cart' );
+		$this->loader->add_action( 'woocommerce_ajax_added_to_cart',   $this->analytics, 'woocommerce_ajax_added_to_cart',
+			array(
+				'priority' => PHP_INT_MAX,
+				'args' => 0,
+			)
+		);
 		//restored cart items both kicks off a WC_Form_Handler ajax request AND redirects the page...
 		//$this->loader->add_action( 'woocommerce_cart_item_restored',   $this->analytics, 'woocommerce_cart_item_restored' );
 		$this->loader->add_action( 'woocommerce_before_checkout_form', $this->analytics, 'woocommerce_before_checkout_form' );
 		$this->loader->add_action( 'woocommerce_applied_coupon',       $this->analytics, 'woocommerce_applied_coupon' );
 		//this action MUST stay priority number lower than the woocommerce_thankyou $pixel action above, so it executes BEFORE post meta is added to the order
 		$this->loader->add_action( 'woocommerce_thankyou',             $this->analytics, 'woocommerce_thankyou',
-			array( 'priority' => 9, 'args' => 1 )
+			array(
+				'priority' => 9,
+				'args' => 1,
+			)
 		);
 	}
 
