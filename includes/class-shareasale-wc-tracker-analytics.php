@@ -100,12 +100,6 @@ class ShareASale_WC_Tracker_Analytics {
 		$pricelist    = $lists['pricelist'];
 		$quantitylist = $lists['quantitylist'];
 
-		//$product  = new WC_Product( $product_id );
-		//$sku      = $product->get_sku();
-		//$price    = $product->get_price();
-		//quantity should be one on non-single product page where AJAX happens
-		//$quantity = 1;
-
 		$this->ajax_product_data = array(
 			'skulist'      => $skulist,
 			'pricelist'    => $pricelist,
@@ -160,10 +154,6 @@ class ShareASale_WC_Tracker_Analytics {
 		$pricelist    = $lists['pricelist'];
 		$quantitylist = $lists['quantitylist'];
 
-		// $product = new WC_Product( $product_id );
-		// $sku     = $product->get_sku();
-		// $price   = $product->get_price();
-
 		$src = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-add-to-cart.js' );
 		wp_enqueue_script(
 			'shareasale-wc-tracker-analytics-add-to-cart',
@@ -182,7 +172,7 @@ class ShareASale_WC_Tracker_Analytics {
 		);
 	}
 
-	public function woocommerce_before_checkout_form( $checkout ) {
+	public function woocommerce_before_checkout_form() {
 		if ( empty( $this->options['analytics-setting'] ) ) {
 			return;
 		}
@@ -316,13 +306,6 @@ class ShareASale_WC_Tracker_Analytics {
 	}
 
 	private function calculate_lists( $items ) {
-		if ( ! did_action( 'woocommerce_cart_loaded_from_session' ) ) {
-            error_log( 'we didn\'t get the cart from session yet...' );
-        }else{
-            error_log( 'we did get the cart from session!' );
-        }
-        error_log( print_r( json_encode( $items ), true ) );
-
 		$last_index = array_search( end( $items ), $items, true );
 		$skulist = $pricelist = $quantitylist = '';
 

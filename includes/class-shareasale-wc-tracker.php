@@ -101,6 +101,7 @@ class ShareASale_WC_Tracker {
 
 	private function define_woocommerce_hooks() {
 		//conversion tracking pixel
+		//this action's priority MUST stay a number > than woocommerce_thankyou $analytics action below...
 		$pixel = new ShareASale_WC_Tracker_Pixel( $this->version );
 		$this->loader->add_action( 'woocommerce_thankyou', $pixel, 'woocommerce_thankyou',
 			array(
@@ -123,7 +124,7 @@ class ShareASale_WC_Tracker {
 			)
 		);
 		//advanced analytics
-		//the ShareASale_WC_Tracker_Analytics methods hooked to add_to_cart/ajax_added_to_cart must stay priority number lower than WC_Cart::calculate_totals, since it's also hooked to those events with priority 20. Using PHP_INT_MAX to ensure last place execution
+		//the ShareASale_WC_Tracker_Analytics methods hooked to add_to_cart/ajax_added_to_cart must stay priority number lower than WC_Cart::calculate_totals 20, since it's also hooked to those events. Using PHP_INT_MAX to ensure last place execution
 		$this->loader->add_action( 'woocommerce_add_to_cart',          $this->analytics, 'woocommerce_add_to_cart',
 			array(
 				'priority' => PHP_INT_MAX,
@@ -136,11 +137,14 @@ class ShareASale_WC_Tracker {
 				'args' => 0,
 			)
 		);
-		//restored cart items both kicks off a WC_Form_Handler ajax request AND redirects the page...
-		//$this->loader->add_action( 'woocommerce_cart_item_restored',   $this->analytics, 'woocommerce_cart_item_restored' );
-		$this->loader->add_action( 'woocommerce_before_checkout_form', $this->analytics, 'woocommerce_before_checkout_form' );
+		$this->loader->add_action( 'woocommerce_before_checkout_form', $this->analytics, 'woocommerce_before_checkout_form',
+			array(
+				'priority' => 10,
+				'args' => 0,
+			)
+		);
 		$this->loader->add_action( 'woocommerce_applied_coupon',       $this->analytics, 'woocommerce_applied_coupon' );
-		//this action MUST stay priority number lower than the woocommerce_thankyou $pixel action above, so it executes BEFORE post meta is added to the order
+		//this action MUST stay priority number < than the woocommerce_thankyou $pixel action above, so it executes BEFORE post meta is added to the order. Use priority 9 since 10 is default.
 		$this->loader->add_action( 'woocommerce_thankyou',             $this->analytics, 'woocommerce_thankyou',
 			array(
 				'priority' => 9,
