@@ -26,10 +26,12 @@ class ShareASale_WC_Tracker_Pixel {
 		$prev_triggered = get_post_meta( $order_id, 'shareasale-wc-tracker-triggered', true );
 
 		if ( ! $order_id || ! $merchant_id ) {
+			echo esc_html( '<!-- no ShareASale merchant ID entered -->');
 			return;
 		}
-
+		//allow &troubleshooting=1 so tech/launch team can view past referrer URLs and check for pixel presence. Still doesn't fire second-chance or advanced analytics though
 		if ( $prev_triggered && ! isset( $_GET['troubleshooting'] ) && ! is_multisite() ) {
+			echo esc_html( '<!-- ShareASale pixel was previously triggered -->');
 			return;
 		}
 
