@@ -85,7 +85,6 @@ class ShareASale_WC_Tracker_Analytics {
 		$this->woocommerce_ajax_added_to_cart();
 		$fragments = $this->woocommerce_add_to_cart_fragments( array() );
 		wp_send_json( $fragments );
-		wp_die();
 	}
 
 	public function woocommerce_ajax_added_to_cart() {

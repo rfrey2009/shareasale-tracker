@@ -30,5 +30,5 @@ jQuery(document).ready(function() {
 					jQuery(key).replaceWith(value);
 				});
    			});
-		} );
+		});
 });

@@ -36,7 +36,8 @@ class ShareASale_WC_Tracker {
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-uninstaller.php';
 
 		$this->loader    = new ShareASale_WC_Tracker_Loader();
-		//both define_frontend_hooks() and define_woocommerce_hooks() rely on $analytics object so instantiate it here instead
+		//both define_frontend_hooks() and define_woocommerce_hooks() rely on $pixel and $analytics objects so instantiate them here instead
+		$this->pixel     = new ShareASale_WC_Tracker_Pixel( $this->version );
 		$this->analytics = new ShareASale_WC_Tracker_Analytics( $this->version );
 	}
 
@@ -52,14 +53,41 @@ class ShareASale_WC_Tracker {
 
 		//restored cart items both kicks off a WC_Form_Handler ajax request AND then redirects the page...
 		//$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_item_restored',   $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_item_restored' );
-		$this->loader->add_action( 'wp_ajax_nopriv_shareasale_wc_tracker_update_cart_action_cart_updated', $this->analytics, 'wp_ajax_nopriv_shareasale_wc_tracker_update_cart_action_cart_updated',
+		$this->loader->add_action(
+			'wp_ajax_nopriv_shareasale_wc_tracker_update_cart_action_cart_updated',
+			$this->analytics,
+			'wp_ajax_nopriv_shareasale_wc_tracker_update_cart_action_cart_updated',
 			array(
 				'priority' => 10,
 				'args' => 0,
 			)
 		);
 		//only included the non-nopriv version in case a Merchant is testing analytics themselves while logged in...
-		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated', $this->analytics, 'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated',array(
+		$this->loader->add_action(
+			'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated',
+			$this->analytics,
+			'wp_ajax_shareasale_wc_tracker_update_cart_action_cart_updated',
+			array(
+				'priority' => 10,
+				'args' => 0,
+			)
+		);
+
+		$this->loader->add_action(
+			'wp_ajax_nopriv_shareasale_wc_tracker_triggered',
+			$this->pixel,
+			'wp_ajax_nopriv_shareasale_wc_tracker_triggered',
+			array(
+				'priority' => 10,
+				'args' => 0,
+			)
+		);
+		//only included the non-nopriv version in case a Merchant is revisiting the receipt page themselves while logged in...
+		$this->loader->add_action(
+			'wp_ajax_shareasale_wc_tracker_triggered',
+			$this->pixel,
+			'wp_ajax_shareasale_wc_tracker_triggered',
+			array(
 				'priority' => 10,
 				'args' => 0,
 			)
@@ -76,11 +104,11 @@ class ShareASale_WC_Tracker {
 
 	private function define_admin_hooks() {
 		$admin = new ShareASale_WC_Tracker_Admin( $this->version );
-		$this->loader->add_action( 'admin_enqueue_scripts',     $admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts',     $admin, 'enqueue_scripts' );
-		$this->loader->add_action( 'admin_init',                $admin, 'admin_init' );
-		$this->loader->add_action( 'admin_init',                $admin, 'plugin_upgrade' );
-		$this->loader->add_action( 'admin_menu',                $admin, 'admin_menu' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_init',            $admin, 'admin_init' );
+		$this->loader->add_action( 'admin_init',            $admin, 'plugin_upgrade' );
+		$this->loader->add_action( 'admin_menu',            $admin, 'admin_menu' );
 		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_generate_datafeed', $admin, 'wp_ajax_shareasale_wc_tracker_generate_datafeed' );
 		//for adding and saving custom post meta (ShareASale category/subactegory number values) to the WC products page general section
 		$this->loader->add_action( 'woocommerce_product_options_general_product_data', $admin, 'woocommerce_product_options_general_product_data' );
@@ -101,14 +129,7 @@ class ShareASale_WC_Tracker {
 
 	private function define_woocommerce_hooks() {
 		//conversion tracking pixel
-		//this action's priority MUST stay a number > than woocommerce_thankyou $analytics action below...
-		$pixel = new ShareASale_WC_Tracker_Pixel( $this->version );
-		$this->loader->add_action( 'woocommerce_thankyou', $pixel, 'woocommerce_thankyou',
-			array(
-					'priority' => PHP_INT_MAX,
-					'args' => 1,
-			)
-		);
+		$this->loader->add_action( 'woocommerce_thankyou', $this->pixel, 'woocommerce_thankyou' );
 		//automatic reconciliation
 		$reconciler = new ShareASale_WC_Tracker_Reconciler( $this->version );
 		$this->loader->add_action( 'woocommerce_order_partially_refunded', $reconciler, 'woocommerce_order_partially_refunded',
@@ -143,14 +164,8 @@ class ShareASale_WC_Tracker {
 				'args' => 0,
 			)
 		);
-		$this->loader->add_action( 'woocommerce_applied_coupon',       $this->analytics, 'woocommerce_applied_coupon' );
-		//this action MUST stay priority number < than the woocommerce_thankyou $pixel action above, so it executes BEFORE post meta is added to the order. Use priority 9 since 10 is default.
-		$this->loader->add_action( 'woocommerce_thankyou',             $this->analytics, 'woocommerce_thankyou',
-			array(
-				'priority' => 9,
-				'args' => 1,
-			)
-		);
+		$this->loader->add_action( 'woocommerce_applied_coupon', $this->analytics, 'woocommerce_applied_coupon' );
+		$this->loader->add_action( 'woocommerce_thankyou',       $this->analytics, 'woocommerce_thankyou'	);
 	}
 
 	private function define_installer_hooks() {

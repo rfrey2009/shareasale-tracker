@@ -26,12 +26,12 @@ class ShareASale_WC_Tracker_Pixel {
 		$prev_triggered = get_post_meta( $order_id, 'shareasale-wc-tracker-triggered', true );
 
 		if ( ! $order_id || ! $merchant_id ) {
-			echo esc_html( '<!-- no ShareASale merchant ID entered -->');
+			echo '<!-- no ShareASale merchant ID entered or order ID doesn\'t exist-->';
 			return;
 		}
 		//allow &troubleshooting=1 so tech/launch team can view past referrer URLs and check for pixel presence. Still doesn't fire second-chance or advanced analytics though
-		if ( $prev_triggered && ! isset( $_GET['troubleshooting'] ) && ! is_multisite() ) {
-			echo esc_html( '<!-- ShareASale pixel was previously triggered -->');
+		if ( $prev_triggered && ! isset( $_GET['troubleshooting'] ) ) {
+			echo '<!-- ShareASale pixel was previously triggered -->';
 			return;
 		}
 
@@ -104,7 +104,7 @@ class ShareASale_WC_Tracker_Pixel {
 
 		$query_string = '?' . http_build_query( $params );
 
-		$pixel = '<img id = "_SHRSL_img_1" src = "https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype . '" width="1" height="1" data-no-lazy="1">';
+		$pixel = '<img onload = "shareasale_wc_tracker_triggered()" id = "_SHRSL_img_1" src = "https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype . '" width = "1" height = "1" data-no-lazy = "1">';
 
 		echo wp_kses( $pixel, array(
 									'img' => array(
@@ -112,11 +112,41 @@ class ShareASale_WC_Tracker_Pixel {
 										'src'          => true,
 										'width'        => true,
 										'height'       => true,
+										'onload'       => true,
 										'data-no-lazy' => true,
 									),
 								)
 		);
-		add_post_meta( $order_id, 'shareasale-wc-tracker-triggered', date( 'Y-m-d H:i:s' ), true );
+		$src = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-triggered.js' );
+		wp_enqueue_script(
+			'shareasale-wc-tracker-triggered',
+			$src,
+			array( 'jquery' ),
+			$this->version
+		);
+		//called post_id here because that's really the WPDB entry that's meta is being updated
+		wp_localize_script(
+			'shareasale-wc-tracker-triggered',
+			'shareasaleWcTrackerTriggered',
+			array(
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'post_id' => $order_id,
+			)
+		);
+	}
+
+	public function wp_ajax_nopriv_shareasale_wc_tracker_triggered() {
+		$this->wp_ajax_shareasale_wc_tracker_triggered();
+	}
+
+	public function wp_ajax_shareasale_wc_tracker_triggered() {
+		$order_id = intval( $_POST['post_id'] );
+		if ( $order_id ) {
+			add_post_meta( $order_id, 'shareasale-wc-tracker-triggered', date( 'Y-m-d H:i:s' ), true );
+			wp_send_json( array( 'order_id' => $order_id ) );
+		}else{
+			wp_send_json( array( 'order_id' => false ) );
+		}
 	}
 
 	private function get_order_amount() {

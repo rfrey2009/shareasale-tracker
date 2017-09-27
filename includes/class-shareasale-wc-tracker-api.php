@@ -111,14 +111,14 @@ class ShareASale_WC_Tracker_API {
 		}
 
 		$restrictions = array(
-			'individual_use'              => $wc_coupon->get_individual_use()              ? 'No stacking allowed.' : '',
-			'exclude_sale_items'          => $wc_coupon->get_exclude_sale_items()          ? 'Sale items excluded.' : '',
-			'max_spend'                   => $wc_coupon->get_maximum_amount()              ? 'Maximum amount: $' . $wc_coupon->get_maximum_amount() . '.' : '',
-			'min_spend'                   => $wc_coupon->get_minimum_amount()              ? 'Minimum amount: $' . $wc_coupon->get_minimum_amount() . '.' : '',
-			'excluded_skus'               => ! empty( $excluded_skus )                     ? 'Excluding SKU(s): ' . implode( ', ', $excluded_skus ) . '.' : '',
-			'excluded_product_categories' => ! empty( $excluded_categories )               ? 'Excluding category(ies): ' . implode( ', ', $excluded_categories ) . '.' : '',
-			'item_limit'                  => $wc_coupon->get_limit_usage_to_x_items()      ? 'Limited to ' . $wc_coupon->get_limit_usage_to_x_items() . ' cart item(s).' : '',
-			'user_limit'                  => $wc_coupon->get_usage_limit_per_user()        ? 'Limited to ' . $wc_coupon->get_usage_limit_per_user() . ' time(s) per user.' : '',
+			'individual_use'              => $wc_coupon->get_individual_use()         ? 'No stacking allowed.' : '',
+			'exclude_sale_items'          => $wc_coupon->get_exclude_sale_items()     ? 'Sale items excluded.' : '',
+			'max_spend'                   => $wc_coupon->get_maximum_amount()         ? 'Maximum amount: $' . $wc_coupon->get_maximum_amount() . '.' : '',
+			'min_spend'                   => $wc_coupon->get_minimum_amount()         ? 'Minimum amount: $' . $wc_coupon->get_minimum_amount() . '.' : '',
+			'excluded_skus'               => ! empty( $excluded_skus )                ? 'Excluding SKU(s): ' . implode( ', ', $excluded_skus ) . '.' : '',
+			'excluded_product_categories' => ! empty( $excluded_categories )          ? 'Excluding category(ies): ' . implode( ', ', $excluded_categories ) . '.' : '',
+			'item_limit'                  => $wc_coupon->get_limit_usage_to_x_items() ? 'Limited to ' . $wc_coupon->get_limit_usage_to_x_items() . ' cart item(s).' : '',
+			'user_limit'                  => $wc_coupon->get_usage_limit_per_user()   ? 'Limited to ' . $wc_coupon->get_usage_limit_per_user() . ' time(s) per user.' : '',
 		);
 
 		$params       = array(
@@ -128,7 +128,7 @@ class ShareASale_WC_Tracker_API {
 							'textDescription'      => $wc_coupon->get_description(),
 							'restrictions'         => implode( ' ', array_filter( $restrictions ) ),
 							'couponcode'           => $wc_coupon->get_code(),
-							'storeId'              => $wc_coupon->shareasale_wc_tracker_store_id,
+							'storeId'              => @$wc_coupon->shareasale_wc_tracker_store_id,
 
 		);
 
