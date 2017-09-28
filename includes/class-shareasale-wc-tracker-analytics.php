@@ -17,21 +17,12 @@ class ShareASale_WC_Tracker_Analytics {
 		$this->options = get_option( 'shareasale_wc_tracker_options' );
 	}
 
+	//for cart fragment updates
 	public function wp_head() {
 		if ( empty( $this->options['analytics-setting'] ) ) {
 			return;
 		}
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-analytics-noscript.php';
-	}
-
-	public function script_loader_tag( $tag, $handle, $src ) {
-		$async_scripts = array( 'shareasale-wc-tracker-analytics-second-chance' );
-
-		if ( in_array( $handle, $async_scripts, true ) ) {
-			return '<script type="text/javascript" src="' . $src . '" defer async></script>' . "\n";
-		} else {
-			return $tag;
-		}
 	}
 
 	public function enqueue_scripts( $hook ) {
@@ -269,16 +260,6 @@ class ShareASale_WC_Tracker_Analytics {
 		if ( $prev_triggered ) {
 			return;
 		}
-		//do the second-chance (anti-adblock) pixel even if advanced analytics passkey not input and enabled yet
-		$src = esc_url( 'https://shareasale-analytics.com/j.js' );
-		//last arg set to true is required as ensures it goes in the footer, beneath the normal ShareASale_WC_Tracker_Pixel() instance
-		wp_enqueue_script(
-			'shareasale-wc-tracker-analytics-second-chance',
-			$src,
-			array(),
-			$this->version,
-			true
-		);
 
 		if ( empty( $this->options['analytics-setting'] ) ) {
 			return;
@@ -287,11 +268,11 @@ class ShareASale_WC_Tracker_Analytics {
 		$order       = new WC_Order( $order_id );
 		$ordernumber = $order->get_order_number();
 
-		$src2  = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-conversion.js' );
+		$src  = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-analytics-conversion.js' );
 
 		wp_enqueue_script(
 			'shareasale-wc-tracker-analytics-conversion',
-			$src2,
+			$src,
 			array( 'shareasale-wc-tracker-analytics' ),
 			$this->version
 		);

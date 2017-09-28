@@ -18,9 +18,19 @@ class ShareASale_WC_Tracker_Pixel {
 		return $this;
 	}
 
+	public function script_loader_tag( $tag, $handle, $src ) {
+		$async_scripts = array( 'shareasale-wc-tracker-analytics-second-chance' );
+
+		if ( in_array( $handle, $async_scripts, true ) ) {
+			return '<script type="text/javascript" src="' . $src . '" defer async></script>' . "\n";
+		} else {
+			return $tag;
+		}
+	}
+
 	public function woocommerce_thankyou( $order_id ) {
 		$options        = get_option( 'shareasale_wc_tracker_options' );
-		$merchant_id    = $options['merchant-id'];
+		$merchant_id    = @$options['merchant-id'];
 		$store_id       = @$options['store-id'];
 		$xtype          = @$options['xtype'];
 		$prev_triggered = get_post_meta( $order_id, 'shareasale-wc-tracker-triggered', true );
@@ -103,20 +113,21 @@ class ShareASale_WC_Tracker_Pixel {
 			);
 
 		$query_string = '?' . http_build_query( $params );
+		$url          = 'https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype;   
 
-		$pixel = '<img onload = "shareasale_wc_tracker_triggered()" id = "_SHRSL_img_1" src = "https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype . '" width = "1" height = "1" data-no-lazy = "1">';
+		$noscript_pixel = '<noscript><img id = "_SHRSL_img_1" src = "' . $url . '" width = "1" height = "1"></noscript>';
 
-		echo wp_kses( $pixel, array(
+		echo wp_kses( $noscript_pixel, array(
+									'noscript' => array(),
 									'img' => array(
 										'id'           => true,
 										'src'          => true,
 										'width'        => true,
 										'height'       => true,
-										'onload'       => true,
-										'data-no-lazy' => true,
 									),
 								)
 		);
+		//updates post meta client-side for this order to mark it as pixel displayed
 		$src = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-triggered.js' );
 		wp_enqueue_script(
 			'shareasale-wc-tracker-triggered',
@@ -127,11 +138,37 @@ class ShareASale_WC_Tracker_Pixel {
 		//called post_id here because that's really the WPDB entry that's meta is being updated
 		wp_localize_script(
 			'shareasale-wc-tracker-triggered',
-			'shareasaleWcTrackerTriggered',
+			'shareasaleWcTrackerTriggeredData',
 			array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 				'post_id' => $order_id,
 			)
+		);
+		//add the actual tracking pixel to the page via JS
+		$src2 = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-pixel.js' );
+		wp_enqueue_script(
+			'shareasale-wc-tracker-pixel',
+			$src2,
+			array( 'shareasale-wc-tracker-triggered' ),
+			$this->version
+		);
+
+		wp_localize_script(
+			'shareasale-wc-tracker-pixel',
+			'shareasaleWcTrackerPixel',
+			array(
+				'src'    => $url,
+				'onload' => 'shareasaleWcTrackerTriggered()',
+				'id'     => '_SHRSL_img_1',
+			)
+		);
+		//second-chance pixel domain swap in case of adblockers
+		$src3 = esc_url( 'https://shareasale-analytics.com/j.js' );
+		wp_enqueue_script(
+			'shareasale-wc-tracker-analytics-second-chance',
+			$src3,
+			array( 'shareasale-wc-tracker-pixel' ),
+			$this->version
 		);
 	}
 
@@ -144,7 +181,7 @@ class ShareASale_WC_Tracker_Pixel {
 		if ( $order_id ) {
 			add_post_meta( $order_id, 'shareasale-wc-tracker-triggered', date( 'Y-m-d H:i:s' ), true );
 			wp_send_json( array( 'order_id' => $order_id ) );
-		}else{
+		} else {
 			wp_send_json( array( 'order_id' => false ) );
 		}
 	}

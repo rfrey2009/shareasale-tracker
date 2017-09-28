@@ -42,7 +42,7 @@ class ShareASale_WC_Tracker {
 	}
 
 	private function define_frontend_hooks() {
-		$this->loader->add_action( 'wp_head',            $this->analytics, 'wp_head',
+		$this->loader->add_action( 'wp_head', $this->analytics, 'wp_head',
 			array(
 				'priority' => 10,
 				'args' => 0,
@@ -50,7 +50,6 @@ class ShareASale_WC_Tracker {
 		);
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->analytics, 'enqueue_scripts' );
 		//advanced analytics ajax cart page based changes, not using WooCommerce hooks
-
 		//restored cart items both kicks off a WC_Form_Handler ajax request AND then redirects the page...
 		//$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_cart_item_restored',   $this->analytics, 'wp_ajax_shareasale_wc_tracker_cart_item_restored' );
 		$this->loader->add_action(
@@ -93,8 +92,8 @@ class ShareASale_WC_Tracker {
 			)
 		);
 
-		//analytics filters
-		$this->loader->add_filter( 'script_loader_tag',  $this->analytics, 'script_loader_tag',
+		//filters
+		$this->loader->add_filter( 'script_loader_tag',  $this->pixel, 'script_loader_tag',
 			array(
 				'priority' => 10,
 				'args' => 3,
