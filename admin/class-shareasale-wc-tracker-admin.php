@@ -110,7 +110,7 @@ class ShareASale_WC_Tracker_Admin {
 				add_settings_error(
 					'shareasale_wc_tracker_coupon_edited',
 					esc_attr( 'coupon-edited' ),
-					'Coupon could not be edited in ShareASale' .
+					'Coupon could not be edited in ShareASale &middot; Error code ' .
 					$shareasale_api->errors->get_error_code() . ' &middot; ' . $shareasale_api->errors->get_error_message()
 				);
 				set_transient( 'settings_errors', get_settings_errors(), 30 );
@@ -131,7 +131,7 @@ class ShareASale_WC_Tracker_Admin {
 				add_settings_error(
 					'shareasale_wc_tracker_coupon_uploaded',
 					esc_attr( 'coupon-uploaded' ),
-					'Coupon could not be uploaded to ShareASale' .
+					'Coupon could not be uploaded to ShareASale &middot; Error code ' .
 					$shareasale_api->errors->get_error_code() . ' &middot; ' . $shareasale_api->errors->get_error_message()
 				);
 				set_transient( 'settings_errors', get_settings_errors(), 30 );
@@ -663,10 +663,8 @@ class ShareASale_WC_Tracker_Admin {
 					add_settings_error(
 						'shareasale_wc_tracker_api_settings',
 						esc_attr( 'api' ),
-						'Your API credentials did not work. Check your merchant ID, API token, and API key.
-						<span style = "font-size: 10px">'
-						. $shareasale_api->errors->get_error_code() . ' &middot; ' . $shareasale_api->errors->get_error_message() .
-						'</span>'
+						'Your API credentials did not work. Check your merchant ID, API token, and API key. Error code ' .
+						$shareasale_api->errors->get_error_code() . ' &middot; ' . $shareasale_api->errors->get_error_message()
 					);
 					//if API credentials failed, sanitize those options prior to saving and turn off automatic reconcilation
 					$final_settings['api-token'] = $final_settings['api-secret'] = '';

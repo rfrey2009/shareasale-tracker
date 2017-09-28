@@ -121,14 +121,14 @@ class ShareASale_WC_Tracker_API {
 			'user_limit'                  => $wc_coupon->get_usage_limit_per_user()   ? 'Limited to ' . $wc_coupon->get_usage_limit_per_user() . ' time(s) per user.' : '',
 		);
 
-		$params       = array(
-							'title'                => $wc_coupon->get_description(),
-							'endDate'              => ! is_null( $wc_coupon->get_date_expires() ) ? $wc_coupon->get_date_expires()->date( 'm/d/Y' ) : '',
-							'category'             => $wc_coupon->get_discount_type(),
-							'textDescription'      => $wc_coupon->get_description(),
-							'restrictions'         => implode( ' ', array_filter( $restrictions ) ),
-							'couponcode'           => $wc_coupon->get_code(),
-							'storeId'              => @$wc_coupon->shareasale_wc_tracker_store_id,
+		$params = array(
+			'title'           => $wc_coupon->get_description(),
+			'endDate'         => ! is_null( $wc_coupon->get_date_expires() ) ? $wc_coupon->get_date_expires()->date( 'm/d/Y' ) : '',
+			'category'        => $wc_coupon->get_discount_type(),
+			'textDescription' => $wc_coupon->get_description(),
+			'restrictions'    => implode( ' ', array_filter( $restrictions ) ),
+			'couponcode'      => $wc_coupon->get_code(),
+			'storeId'         => @$wc_coupon->shareasale_wc_tracker_store_id,
 
 		);
 
@@ -164,11 +164,11 @@ class ShareASale_WC_Tracker_API {
 		if ( strpos( $response, 'Error Code' ) ) {
 			$pieces  = array_map( 'trim', explode( '-', $response ) );
 			$code    = str_replace( 'Error Code', '', $pieces[1] );
-			$message = $pieces[0];
+			$message = str_replace( ':', '', $pieces[0] );
 			if ( 4002 == $code ) {
 				$message .= ' &middot; Input your webhost\'s IP address (' . $pieces[2] . ') or turn off IP address matching <a target="_blank" href ="' . esc_url( 'https://account.shareasale.com/m-apiips.cfm' ) . '">in ShareASale</a>';
 			}
-			$data    = $this->last_query;
+			$data = $this->last_query;
 			// error occurred... store it and return false
 			$this->errors->add( $code, $message, $data );
 			return false;
