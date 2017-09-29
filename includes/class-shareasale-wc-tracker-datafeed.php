@@ -169,10 +169,14 @@ class ShareASale_WC_Tracker_Datafeed {
 		return $cross_sell_skus;
 	}
 
-	private function make_row( $product ) {
+	private function make_row( $product_row ) {
+		//this is just here because of WooCommerce's own "WooCommerce Product Add-ons" optional plugin uses a global $product instead of $this for the woocommerce_product_add_to_cart_url filter that WC_Product::add_to_cart_url() runs... otherwise $product is null and causes a fatal error...
+		global $product;
+		$product = $product_row;
+
 		$options           = get_option( 'shareasale_wc_tracker_options' );
 		$merchant_id       = @$options['merchant-id'];
-		$product_id        = $product->get_id();
+		$product_id        = $product_row->get_id();
 		$category          = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_category', true ) ?: @$options['default-category'];
 		$subcategory       = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_subcategory', true ) ?: $options['default-subcategory'];
 		$merchant_taxonomy = wc_get_product_terms( $product_id, 'product_cat',
@@ -184,25 +188,25 @@ class ShareASale_WC_Tracker_Datafeed {
 
 		$row = array(
 				//required
-				'SKU'                                   => $product->get_sku() ? $product->get_sku() : $this->errors->add(
+				'SKU'                                   => $product_row->get_sku() ? $product_row->get_sku() : $this->errors->add(
 					'sku',
 					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a SKU.',
 					$this->push_error_data( 'sku', $product_id )
 				),
-				'Name'                                  => $product->get_title(),
+				'Name'                                  => $product_row->get_title(),
 				//required
-				'URL'                                   => $product->get_permalink() ? $product->get_permalink() : $this->errors->add(
+				'URL'                                   => $product_row->get_permalink() ? $product_row->get_permalink() : $this->errors->add(
 					'url',
 					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a URL.',
 					$this->push_error_data( 'url', $product_id )
 				),
 				//required
-				'Price'                                 => $product->get_price() ? $product->get_price() : $this->errors->add(
+				'Price'                                 => $product_row->get_price() ? $product_row->get_price() : $this->errors->add(
 					'price',
 					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a price.',
 					$this->push_error_data( 'price', $product_id )
 				),
-				'Retailprice'                           => $product->get_regular_price(),
+				'Retailprice'                           => $product_row->get_regular_price(),
 				'FullImage'                             => get_the_post_thumbnail_url( $product_id, 'shop_single' ),
 				'ThumbnailImage'                        => get_the_post_thumbnail_url( $product_id, 'shop_thumbnail' ),
 				'Commission'                            => '',
@@ -218,9 +222,9 @@ class ShareASale_WC_Tracker_Datafeed {
 					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a ShareASale subcategory number.',
 					$this->push_error_data( 'subcategory', $product_id )
 				),
-				'Description'                           => version_compare( $this->wc_version, '3.0' ) >= 0 ? get_post( $product_id )->post_content : $product->get_post_data()->post_content,
-				'SearchTerms'                           => version_compare( $this->wc_version, '3.0' ) >= 0 ? strip_tags( wc_get_product_tag_list( $product_id, ',' ) ) : strip_tags( $product->get_tags( ',' ) ),
-				'Status'                                => $product->is_in_stock() ? 'instock' : 'soldout',
+				'Description'                           => version_compare( $this->wc_version, '3.0' ) >= 0 ? get_post( $product_id )->post_content : $product_row->get_post_data()->post_content,
+				'SearchTerms'                           => version_compare( $this->wc_version, '3.0' ) >= 0 ? strip_tags( wc_get_product_tag_list( $product_id, ',' ) ) : strip_tags( $product_row->get_tags( ',' ) ),
+				'Status'                                => $product_row->is_in_stock() ? 'instock' : 'soldout',
 				//required
 				'MerchantID'                            => ! empty( $merchant_id ) ? $merchant_id : $this->errors->add(
 					'merchant_id',
@@ -231,22 +235,22 @@ class ShareASale_WC_Tracker_Datafeed {
 				'Custom3'                               => '',
 				'Custom4'                               => '',
 				'Custom5'                               => '',
-				'Manufacturer'                          => $product->get_attribute( 'manufacturer' ),
-				'PartNumber'                            => $product->get_attribute( 'partnumber' ),
+				'Manufacturer'                          => $product_row->get_attribute( 'manufacturer' ),
+				'PartNumber'                            => $product_row->get_attribute( 'partnumber' ),
 				'MerchantCategory'                      => end( $merchant_taxonomy ),
 				'MerchantSubcategory'                   => prev( $merchant_taxonomy ),
 				'ShortDescription'                      => '',
-				'ISBN'                                  => $product->get_attribute( 'ISBN' ),
-				'UPC'                                   => $product->get_attribute( 'UPC' ),
+				'ISBN'                                  => $product_row->get_attribute( 'ISBN' ),
+				'UPC'                                   => $product_row->get_attribute( 'UPC' ),
 				//array_filter used without callback argument to remove false values from array
-				'CrossSell'                             => implode( ',', array_filter( $product->cross_sell_skus ) ),
+				'CrossSell'                             => implode( ',', array_filter( $product_row->cross_sell_skus ) ),
 				'MerchantGroup'                         => prev( $merchant_taxonomy ),
 				'MerchantSubgroup'                      => prev( $merchant_taxonomy ),
 				'CompatibleWith'                        => '',
 				'CompareTo'                             => '',
 				'QuantityDiscount'                      => '',
-				'Bestseller'                            => $product->is_featured() ? 1 : 0,
-				'AddToCartURL'                          => version_compare( $this->wc_version, '3.0' ) >= 0 ? $product->add_to_cart_url() : $product->add_to_cart_url,
+				'Bestseller'                            => $product_row->is_featured() ? 1 : 0,
+				'AddToCartURL'                          => version_compare( $this->wc_version, '3.0' ) >= 0 ? $product_row->add_to_cart_url() : $product_row->add_to_cart_url,
 				'ReviewsRSSURL'                         => '',
 				'Option1'                               => '',
 				'Option2'                               => '',

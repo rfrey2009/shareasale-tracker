@@ -1,5 +1,5 @@
 <?php
-require_once( plugin_dir_path(__FILE__) . '../../woocommerce/woocommerce.php' );
+require_once( plugin_dir_path( __FILE__ ) . '../../woocommerce/woocommerce.php' );
 
 if ( ! defined( 'WPINC' ) ) {
 	die;
