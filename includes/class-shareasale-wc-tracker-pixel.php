@@ -113,10 +113,9 @@ class ShareASale_WC_Tracker_Pixel {
 			);
 
 		$query_string = '?' . http_build_query( $params );
-		$url          = 'https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype;   
-
+		$url          = 'https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype;
+		//backup pixel if JS is disabled (rare)
 		$noscript_pixel = '<noscript><img id = "_SHRSL_img_1" src = "' . $url . '" width = "1" height = "1"></noscript>';
-
 		echo wp_kses( $noscript_pixel, array(
 									'noscript' => array(),
 									'img' => array(
@@ -127,6 +126,7 @@ class ShareASale_WC_Tracker_Pixel {
 									),
 								)
 		);
+
 		//updates post meta client-side for this order to mark it as pixel displayed
 		$src = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-triggered.js' );
 		wp_enqueue_script(

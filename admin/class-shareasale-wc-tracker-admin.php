@@ -18,6 +18,7 @@ class ShareASale_WC_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-api.php';
 		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-datafeed.php';
 		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-installer.php';
+		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-coupon.php';
 	}
 
 	public function enqueue_styles( $hook ) {
@@ -96,15 +97,15 @@ class ShareASale_WC_Tracker_Admin {
 		* it won't be used to make actual API calls unless at least $new_setting is 'yes,' which can only be true if there are already proper API credentials set...
 		*/
 		$shareasale_api = new ShareASale_WC_Tracker_API( $options['merchant-id'], $options['api-token'], $options['api-secret'] );
-		$coupon         = new WC_Coupon( $post_id );
+		$coupon         = new ShareASale_WC_Tracker_Coupon( $post_id );
 
 		if ( $options['store-id'] ) {
-			$coupon->shareasale_wc_tracker_store_id = $options['store-id'];
+			$coupon->set_store_id( $options['store-id'] );
 		}
 
 		if ( 'yes' == $new_setting && $prev_deal_id ) {
 			//this is an update, so deal edit
-			$coupon->shareasale_wc_tracker_deal_id = $prev_deal_id;
+			$coupon->set_deal_id( $prev_deal_id );
 			$req = $shareasale_api->deal_edit( $coupon )->exec();
 			if ( ! $req ) {
 				add_settings_error(

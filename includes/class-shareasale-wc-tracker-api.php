@@ -92,49 +92,49 @@ class ShareASale_WC_Tracker_API {
 		return $this;
 	}
 
-	public function deal_upload( $wc_coupon ) {
+	public function deal_upload( $sas_coupon ) {
 		$this->action = 'dealUpload';
-		return $this->deal_edit( $wc_coupon );
+		return $this->deal_edit( $sas_coupon );
 	}
 
-	public function deal_edit( $wc_coupon ) {
+	public function deal_edit( $sas_coupon ) {
 		//could move the restrictions-building logic out of this API method, but the ShareASale_WC_Tracker_Admin::woocommerce_coupon_options_save() method is already pretty dense...
 		$excluded_skus       = array();
 		$excluded_categories = array();
 
-		foreach ( $wc_coupon->get_excluded_product_ids() as $product_id ) {
+		foreach ( $sas_coupon->get_excluded_product_ids() as $product_id ) {
 		 	$excluded_skus[] = get_post_meta( $product_id, '_sku', true );
 		}
-		foreach ( $wc_coupon->get_excluded_product_categories() as $product_category_id ) {
+		foreach ( $sas_coupon->get_excluded_product_categories() as $product_category_id ) {
 			$category = get_term( $product_category_id );
 	 		$excluded_categories[] = $category->name;
 		}
 
 		$restrictions = array(
-			'individual_use'              => $wc_coupon->get_individual_use()         ? 'No stacking allowed.' : '',
-			'exclude_sale_items'          => $wc_coupon->get_exclude_sale_items()     ? 'Sale items excluded.' : '',
-			'max_spend'                   => $wc_coupon->get_maximum_amount()         ? 'Maximum amount: $' . $wc_coupon->get_maximum_amount() . '.' : '',
-			'min_spend'                   => $wc_coupon->get_minimum_amount()         ? 'Minimum amount: $' . $wc_coupon->get_minimum_amount() . '.' : '',
+			'individual_use'              => $sas_coupon->get_individual_use()         ? 'No stacking allowed.' : '',
+			'exclude_sale_items'          => $sas_coupon->get_exclude_sale_items()     ? 'Sale items excluded.' : '',
+			'max_spend'                   => $sas_coupon->get_maximum_amount()         ? 'Maximum amount: $' . $sas_coupon->get_maximum_amount() . '.' : '',
+			'min_spend'                   => $sas_coupon->get_minimum_amount()         ? 'Minimum amount: $' . $sas_coupon->get_minimum_amount() . '.' : '',
 			'excluded_skus'               => ! empty( $excluded_skus )                ? 'Excluding SKU(s): ' . implode( ', ', $excluded_skus ) . '.' : '',
 			'excluded_product_categories' => ! empty( $excluded_categories )          ? 'Excluding category(ies): ' . implode( ', ', $excluded_categories ) . '.' : '',
-			'item_limit'                  => $wc_coupon->get_limit_usage_to_x_items() ? 'Limited to ' . $wc_coupon->get_limit_usage_to_x_items() . ' cart item(s).' : '',
-			'user_limit'                  => $wc_coupon->get_usage_limit_per_user()   ? 'Limited to ' . $wc_coupon->get_usage_limit_per_user() . ' time(s) per user.' : '',
+			'item_limit'                  => $sas_coupon->get_limit_usage_to_x_items() ? 'Limited to ' . $sas_coupon->get_limit_usage_to_x_items() . ' cart item(s).' : '',
+			'user_limit'                  => $sas_coupon->get_usage_limit_per_user()   ? 'Limited to ' . $sas_coupon->get_usage_limit_per_user() . ' time(s) per user.' : '',
 		);
 
 		$params = array(
-			'title'           => $wc_coupon->get_description(),
-			'endDate'         => ! is_null( $wc_coupon->get_date_expires() ) ? $wc_coupon->get_date_expires()->date( 'm/d/Y' ) : '',
-			'category'        => $wc_coupon->get_discount_type(),
-			'textDescription' => $wc_coupon->get_description(),
+			'title'           => $sas_coupon->get_description(),
+			'endDate'         => ! is_null( $sas_coupon->get_date_expires() ) ? $sas_coupon->get_date_expires()->date( 'm/d/Y' ) : '',
+			'category'        => $sas_coupon->get_discount_type(),
+			'textDescription' => $sas_coupon->get_description(),
 			'restrictions'    => implode( ' ', array_filter( $restrictions ) ),
-			'couponcode'      => $wc_coupon->get_code(),
-			'storeId'         => @$wc_coupon->shareasale_wc_tracker_store_id,
+			'couponcode'      => $sas_coupon->get_code(),
+			'storeId'         => $sas_coupon->get_store_id( 'shareasale_wc_tracker_store_id' ),
 
 		);
 
-		if ( $wc_coupon->shareasale_wc_tracker_deal_id ) {
+		if ( $sas_coupon->get_deal_id( 'shareasale_wc_tracker_deal_id' ) ) {
 			$this->action     = 'dealEdit';
-			$params['dealID'] = $wc_coupon->shareasale_wc_tracker_deal_id;
+			$params['dealID'] = $sas_coupon->get_deal_id( 'shareasale_wc_tracker_deal_id ');
 		}
 
 		$this->query = $this->build_url( $params );
