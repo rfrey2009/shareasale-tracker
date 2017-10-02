@@ -144,7 +144,7 @@ class ShareASale_WC_Tracker {
 			)
 		);
 		//advanced analytics
-		//the ShareASale_WC_Tracker_Analytics methods hooked to add_to_cart/ajax_added_to_cart must stay priority number lower than WC_Cart::calculate_totals 20, since it's also hooked to those events. Using PHP_INT_MAX to ensure last place execution
+		//the ShareASale_WC_Tracker_Analytics methods hooked to add_to_cart/ajax_added_to_cart must stay priority number lower than WC_Cart::calculate_totals' priority 20, since it's also hooked to those events. Using PHP_INT_MAX to ensure last place execution
 		$this->loader->add_action( 'woocommerce_add_to_cart',          $this->analytics, 'woocommerce_add_to_cart',
 			array(
 				'priority' => PHP_INT_MAX,

@@ -256,12 +256,8 @@ class ShareASale_WC_Tracker_Analytics {
 
 	public function woocommerce_thankyou( $order_id ) {
 		//don't bother if we've already fired a standard ShareASale_WC_Tracker_Pixel() for this
-		$prev_triggered = get_post_meta( $order_id, 'shareasale-wc-tracker-triggered', true );
-		if ( $prev_triggered ) {
-			return;
-		}
-
-		if ( empty( $this->options['analytics-setting'] ) ) {
+		$prev_triggered = get_post_meta( $order_id, 'shareasale-wc-tracker-triggered', true );		
+		if ( empty( $this->options['analytics-setting'] ) || $prev_triggered ) {
 			return;
 		}
 
