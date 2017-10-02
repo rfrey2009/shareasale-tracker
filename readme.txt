@@ -2,11 +2,11 @@
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 3.0.1
 Tested up to: 4.8
-Stable tag: 1.1.3
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The ShareASale WooCommerce Tracker sets up the tracking pixel on a Merchant's cart and allows commission auto-edits if customers are refunded.
+The ShareASale WooCommerce Tracker sets up the tracking pixel on a Merchant's cart, allows commission auto-edits if customers are refunded, automatic coupon uploads to ShareASale, product datafeed generation, and advanced analytics useful for sophisticated Affiliate attribution strategies.
 
 == Installation ==
 
@@ -44,12 +44,19 @@ For example, Affiliates can have their credit determined by when items are added
 
 http://blog.shareasale.com/2015/02/04/conversion-lines-where-the-tracking-gap-ends/
 
+f. If you'd like to automatically send ShareASale your WooCommerce coupons as a coupon/deal type creative, check the "send to ShareASale?" box while adding/editing a WooCommerce coupon. Make sure to choose a coupon description.
+
 == Changelog ==
 
-= 1.1.3 =
+= 1.2 =
+* Advanced analytics improvements to better capture full cart contents on all updates and removals of items.
+* Fix for Merchants using the WooCommerce Product Add-ons plugin and generating ShareASale product datafeed files.
+* Improved handling of tracking pixel suppression if/when a customer revisits the receipt page after placing an order.
+* Updated version from 1.'1' to 1.'2' series despite no new features, due to high amount of under-the-hood code changes.
 
+= 1.1.3 =
 * Added new default category and subcategory number options for products in the datafeed generation tab.
-* Added an option to automatically send ShareASale your WooCommerce coupons so your Affiliates can promote them. Check the "send to ShareASale" box while editing a WooCommerce coupon.
+* Added an option to automatically send ShareASale your WooCommerce coupons so your Affiliates can promote them. Check the "send to ShareASale?" box while adding/editing a WooCommerce coupon.
 
 = 1.1.2 =
 * Minor tweaks for users with older versions of PHP (v5.3 - 5.5) or mistakenly orphaned product variations.
