@@ -178,7 +178,7 @@ class ShareASale_WC_Tracker_Datafeed {
 		$merchant_id       = @$options['merchant-id'];
 		$product_id        = $product_row->get_id();
 		$category          = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_category', true ) ?: @$options['default-category'];
-		$subcategory       = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_subcategory', true ) ?: $options['default-subcategory'];
+		$subcategory       = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_subcategory', true ) ?: @$options['default-subcategory'];
 		$merchant_taxonomy = wc_get_product_terms( $product_id, 'product_cat',
 			array(
 				'orderby' => 'parent',
