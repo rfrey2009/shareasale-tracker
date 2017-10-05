@@ -115,8 +115,8 @@ class ShareASale_WC_Tracker_API {
 			'exclude_sale_items'          => $sas_coupon->get_exclude_sale_items()     ? 'Sale items excluded.' : '',
 			'max_spend'                   => $sas_coupon->get_maximum_amount()         ? 'Maximum amount: $' . $sas_coupon->get_maximum_amount() . '.' : '',
 			'min_spend'                   => $sas_coupon->get_minimum_amount()         ? 'Minimum amount: $' . $sas_coupon->get_minimum_amount() . '.' : '',
-			'excluded_skus'               => ! empty( $excluded_skus )                ? 'Excluding SKU(s): ' . implode( ', ', $excluded_skus ) . '.' : '',
-			'excluded_product_categories' => ! empty( $excluded_categories )          ? 'Excluding category(ies): ' . implode( ', ', $excluded_categories ) . '.' : '',
+			'excluded_skus'               => ! empty( $excluded_skus )                 ? 'Excluding SKU(s): ' . implode( ', ', $excluded_skus ) . '.' : '',
+			'excluded_product_categories' => ! empty( $excluded_categories )           ? 'Excluding category(ies): ' . implode( ', ', $excluded_categories ) . '.' : '',
 			'item_limit'                  => $sas_coupon->get_limit_usage_to_x_items() ? 'Limited to ' . $sas_coupon->get_limit_usage_to_x_items() . ' cart item(s).' : '',
 			'user_limit'                  => $sas_coupon->get_usage_limit_per_user()   ? 'Limited to ' . $sas_coupon->get_usage_limit_per_user() . ' time(s) per user.' : '',
 		);
