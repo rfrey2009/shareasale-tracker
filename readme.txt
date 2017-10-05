@@ -2,7 +2,7 @@
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 3.0.1
 Tested up to: 4.8
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,9 @@ http://blog.shareasale.com/2015/02/04/conversion-lines-where-the-tracking-gap-en
 f. If you'd like to automatically send ShareASale your WooCommerce coupons as a coupon/deal type creative, check the "send to ShareASale?" box while adding/editing a WooCommerce coupon. Make sure to choose a coupon description.
 
 == Changelog ==
+
+= 1.2.2 =
+* Small fix to restore compatibility with other WooCommerce first-party plugins like WooCommerce Smart Coupons.
 
 = 1.2.1 =
 * Small change to clean HTML tags from generated product datafeed's descriptions and added short description (if WooCommerce version 3.0+) column.

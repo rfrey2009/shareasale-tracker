@@ -3,7 +3,7 @@
  Plugin Name:       ShareASale WooCommerce Tracker
  Author:			ShareASale.com, Inc.
  Description:       Setup ShareASale's Affiliate network's tracking in WooCommerce, automate reconciliation, and generate datafeeds
- Version:           1.2.1
+ Version:           1.2.2
  Depends:  			WooCommerce
  License:           GPL-2.0+
  License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
@@ -25,5 +25,5 @@ function run_shareasale_wc_tracker( $version ) {
 	$shareasale_wc_tracker->run();
 }
 
-$version = '1.2.1';
+$version = '1.2.2';
 run_shareasale_wc_tracker( $version );
