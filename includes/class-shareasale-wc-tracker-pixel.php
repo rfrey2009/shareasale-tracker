@@ -141,6 +141,7 @@ class ShareASale_WC_Tracker_Pixel {
 			'shareasaleWcTrackerTriggeredData',
 			array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'wp_ajax_shareasale_wc_tracker_triggered' ),
 				'post_id' => $order_id,
 			)
 		);
@@ -177,8 +178,9 @@ class ShareASale_WC_Tracker_Pixel {
 	}
 
 	public function wp_ajax_shareasale_wc_tracker_triggered() {
+		$nonce    = wp_verify_nonce( $_POST['nonce'], 'wp_ajax_shareasale_wc_tracker_triggered' );
 		$order_id = intval( $_POST['post_id'] );
-		if ( $order_id ) {
+		if ( $nonce && $order_id ) {
 			add_post_meta( $order_id, 'shareasale-wc-tracker-triggered', date( 'Y-m-d H:i:s' ), true );
 			wp_send_json( array( 'order_id' => $order_id ) );
 		} else {

@@ -1,6 +1,6 @@
 function shareasaleWcTrackerTriggered(){
 	jQuery.post( shareasaleWcTrackerTriggeredData.ajaxurl,
-		{ action: 'shareasale_wc_tracker_triggered', post_id: shareasaleWcTrackerTriggeredData.post_id },
+		{ action: 'shareasale_wc_tracker_triggered', post_id: shareasaleWcTrackerTriggeredData.post_id, nonce: shareasaleWcTrackerTriggeredData.nonce },
 		function(data) {
 			if(data.order_id){
 				console.log('Marked ' + data.order_id + ' as ShareASale pixel triggered!');
