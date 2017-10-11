@@ -33,6 +33,7 @@ class ShareASale_WC_Tracker_Datafeed_Logger {
 					'generation_version' => $this->version,
 				);
 		$this->wpdb->insert( $this->table, $log );
+		return $this->wpdb->insert_id;
 	}
 
 	public function unlog( $path ) {

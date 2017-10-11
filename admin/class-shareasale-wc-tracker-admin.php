@@ -585,10 +585,11 @@ class ShareASale_WC_Tracker_Admin {
 		}
 
 		//access granted! instantiate a ShareASale_WC_Tracker_Datafeed() object here and start exporting products to csv
+		global $wpdb;
 		global $wp_filesystem;
 		$datafeed = new ShareASale_WC_Tracker_Datafeed( $this->version, $wp_filesystem );
 		if ( $datafeed ) {
-			//should be the file path returned if successful, false otherwise (so see set settings_errors())
+			//should be an array returned with the file path as a key if successful, false otherwise i.e. see set settings_errors()
 			$exported = $datafeed->export( $file );
 			//if they've chosen to upload to ShareASale and the file was successfully generated, send to FTP
 			if ( 1 == $options['ftp-upload'] && $exported ) {
@@ -598,13 +599,19 @@ class ShareASale_WC_Tracker_Admin {
 				$password = $options['ftp-password'];
 				try {
 					$ftp->login( $username, $password );
-					$uploaded = $ftp->put( basename( $exported ), $exported, FTP_BINARY );
+					$uploaded = $ftp->putFromPath( $exported['path'] );
 					if ( $uploaded ) {
 						add_settings_error(
 							'shareasale_wc_tracker_ftp_upload_success',
 							esc_attr( 'ftp' ),
 							'FTP upload successful! Watch for an email from ShareASale detailing the results.',
 							'updated'
+						);
+						//mark this log's entry as true for ftp_uploaded status, but maybe eventually move this logic out of this class?
+						$wpdb->update(
+							$wpdb->prefix . 'shareasale_wc_tracker_datafeeds',
+							array( 'ftp_uploaded' => 1 ),
+							array( 'id' => $exported['id'] )
 						);
 						settings_errors( 'shareasale_wc_tracker_ftp_upload_success' );
 					}

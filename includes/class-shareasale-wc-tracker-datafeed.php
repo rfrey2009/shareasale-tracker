@@ -114,7 +114,16 @@ class ShareASale_WC_Tracker_Datafeed {
 					),
 				);
 
-				$this->logger->log( $path, maybe_serialize( $product_warnings ), $product_count, date( 'Y-m-d H:i:s' ) );
+				$logged = $this->logger->log( $path, maybe_serialize( $product_warnings ), $product_count, date( 'Y-m-d H:i:s' ) );
+
+				add_settings_error(
+					'shareasale_wc_tracker_success',
+					esc_attr( 'datafeed-success' ),
+					'Generating complete! Download from the link in the table below.',
+					'updated'
+				);
+				settings_errors( 'shareasale_wc_tracker_success' );
+				settings_errors( 'shareasale_wc_tracker_zip' );
 			} else {
 				//couldn't even create csv...
 				add_settings_error(
@@ -125,15 +134,6 @@ class ShareASale_WC_Tracker_Datafeed {
 				settings_errors( 'shareasale_wc_tracker_csv' );
 				return false;
 			}
-
-			add_settings_error(
-				'shareasale_wc_tracker_success',
-				esc_attr( 'datafeed-success' ),
-				'Generating complete! Download from the link in the table below.',
-				'updated'
-			);
-			settings_errors( 'shareasale_wc_tracker_success' );
-			settings_errors( 'shareasale_wc_tracker_zip' );
 		} else {
 			add_settings_error(
 				'shareasale_wc_tracker_products',
@@ -144,8 +144,8 @@ class ShareASale_WC_Tracker_Datafeed {
 			settings_errors( 'shareasale_wc_tracker_products' );
 			return false;
 		}
-
-		return $path;
+		//needs to return final local path for later possible FTP upload purposes
+		return array( 'path' => $path, 'id' => $logged );
 	}
 
 	private function get_all_product_posts() {
