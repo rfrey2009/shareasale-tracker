@@ -17,7 +17,8 @@ $datafeeds = $wpdb->get_results(
 		DATE_FORMAT( MAX(generation_date), '%%m/%%d/%%Y %%h:%%i %%p' ) as generation_date,
 		file,
 		product_count,
-		warnings
+		warnings,
+		ftp_uploaded
 		FROM (
 			SELECT *
 			FROM $datafeeds_table
@@ -40,6 +41,7 @@ $datafeeds = $wpdb->get_results(
 			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left">File</th>
 			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-right">Product Count</th>
 			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left shareasale-wc-tracker-datafeeds-header-warning">Column | # Warnings</th>
+			<th class="shareasale-wc-tracker-datafeeds-header shareasale-wc-tracker-datafeeds-header-align-left">FTP Uploaded?</th>			
 		</tr>
 	</thead>
 <?php foreach ( $datafeeds as $datafeed ) : ?>
@@ -79,6 +81,11 @@ $datafeeds = $wpdb->get_results(
 							}
 							echo '</div>';
 						}
+					}
+					break;
+				case 'ftp_uploaded':
+					if ( 1 == $value ) {
+						echo '<span class="dashicons dashicons-yes"></span>';
 					}
 					break;
 				default :

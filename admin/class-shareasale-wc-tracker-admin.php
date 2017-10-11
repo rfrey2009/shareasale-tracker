@@ -27,7 +27,9 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function coupon_init() {
-		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-coupon.php';
+		if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+			require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-coupon.php';
+		}
 	}
 
 	public function enqueue_styles( $hook ) {
@@ -553,7 +555,7 @@ class ShareASale_WC_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-advanced-analytics.php';
 	}
 
-	public function wp_ajax_shareasale_wc_tracker_generate_datafeed( $was_scheduled = false ) {
+	public function wp_ajax_shareasale_wc_tracker_generate_datafeed() {
 		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'generate-datafeed' ) ) {
 			add_settings_error(
 				'shareasale_wc_tracker_datafeed_warning',

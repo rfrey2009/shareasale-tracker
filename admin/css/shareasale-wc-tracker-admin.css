@@ -69,6 +69,7 @@
     text-align: right;
 	padding: 0.5em 0.25em 0.5em 1.5em;
  }
+ /* for product count number */
 .shareasale-wc-tracker-datafeeds-cell:nth-child(3){
 	text-align: center;
 	font-style: italic;
