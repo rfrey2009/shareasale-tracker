@@ -14,9 +14,9 @@ jQuery(document).ready(function() {
 
     jQuery.post( ajaxurl, datastring, function(data) {
       jQuery('#generate-datafeed-results').html(data);
-      window.scrollTo(0,0);
+      window.scrollTo(0,200);
       jQuery('#tracker-options-save').prop('disabled', false);
-      if(!jQuery('#setting-error-datafeed-csv').length){        
+      if(jQuery('#setting-error-datafeed-success').length){        
         jQuery('.shareasale-wc-tracker-datafeeds-table').find('tbody > tr').first().fadeOut().fadeIn();
       }
     });
@@ -37,6 +37,16 @@ jQuery(document).ready(function() {
       jQuery('#analytics-passkey').prop('disabled', true);
     }else if(this.checked){
       jQuery('#analytics-passkey').prop('disabled', false);
+    }
+  });
+
+  jQuery('#ftp-upload').click(function(){
+    if(!this.checked){
+      jQuery('#ftp-username').prop('disabled', true);
+      jQuery('#ftp-password').prop('disabled', true);
+    }else if(this.checked){
+      jQuery('#ftp-username').prop('disabled', false);
+      jQuery('#ftp-password').prop('disabled', false);
     }
   });
 

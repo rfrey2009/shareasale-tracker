@@ -134,9 +134,18 @@ class ShareASale_WC_Tracker_Datafeed {
 			);
 			settings_errors( 'shareasale_wc_tracker_success' );
 			settings_errors( 'shareasale_wc_tracker_zip' );
+		} else {
+			add_settings_error(
+				'shareasale_wc_tracker_products',
+				esc_attr( 'datafeed-products' ),
+				'We found zero products to export! Start by adding one <a href="' . admin_url('post-new.php?post_type=product') . '">here</a>.',
+				'notice-warning'
+			);
+			settings_errors( 'shareasale_wc_tracker_products' );
+			return false;
 		}
 
-		return $this;
+		return $path;
 	}
 
 	private function get_all_product_posts() {

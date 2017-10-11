@@ -17,6 +17,10 @@ class ShareASale_WC_Tracker_Admin {
 	private function load_dependencies() {
 		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-api.php';
 		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-datafeed.php';
+		//three classes from https://github.com/Nicolab/php-ftp-client
+		require_once plugin_dir_path( __FILE__ ) . '../includes/FtpClient/FtpClient.php';
+		require_once plugin_dir_path( __FILE__ ) . '../includes/FtpClient/FtpException.php';
+		require_once plugin_dir_path( __FILE__ ) . '../includes/FtpClient/FtpWrapper.php';
 		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-installer.php';
 		//WooCommerce has to be loaded first for the ShareASale_WC_Tracker_Coupon class that extends WC_Coupon and is instantiated in $this->woocommerce_coupon_options_save()
 		add_action( 'plugins_loaded', array( $this, 'coupon_init' ) );
@@ -373,7 +377,7 @@ class ShareASale_WC_Tracker_Admin {
 				'value'       => ! empty( $options['ftp-password'] ) ? $options['ftp-password'] : '',
 				'status'      => disabled( @$options['ftp-upload'], 0, false ) . " required='required'",
 				'size'        => 33,
-				'type'        => 'text',
+				'type'        => 'password',
 				'placeholder' => 'Enter your Required FTP Password',
 				'class'       => 'shareasale-wc-tracker-option',
 		));
@@ -549,7 +553,7 @@ class ShareASale_WC_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-advanced-analytics.php';
 	}
 
-	public function wp_ajax_shareasale_wc_tracker_generate_datafeed() {
+	public function wp_ajax_shareasale_wc_tracker_generate_datafeed( $was_scheduled = false ) {
 		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'generate-datafeed' ) ) {
 			add_settings_error(
 				'shareasale_wc_tracker_datafeed_warning',
@@ -560,11 +564,12 @@ class ShareASale_WC_Tracker_Admin {
 			wp_die();
 		}
 
-		$url    = add_query_arg( 'page', 'shareasale_wc_tracker_datafeed_generation', esc_url( admin_url( 'admin.php' ) ) );
-		$dir    = plugin_dir_path( __FILE__ ) . 'datafeeds';
-		$file   = trailingslashit( $dir ) . date( 'mdY' ) . '.csv';
-		$inputs = array( '_wpnonce', 'action' );
-		$creds  = request_filesystem_credentials( $url, '', false, $dir, $inputs );
+		$url     = add_query_arg( 'page', 'shareasale_wc_tracker_datafeed_generation', esc_url( admin_url( 'admin.php' ) ) );
+		$dir     = plugin_dir_path( __FILE__ ) . 'datafeeds';
+		$file    = trailingslashit( $dir ) . date( 'mdY' ) . '.csv';
+		$inputs  = array( '_wpnonce', 'action' );
+		$creds   = request_filesystem_credentials( $url, '', false, $dir, $inputs );
+		$options = get_option( 'shareasale_wc_tracker_options' );
 
 		if ( ! $creds ) {
 			//stop here, we can't even write to /datafeeds yet and need credentials form...
@@ -581,7 +586,36 @@ class ShareASale_WC_Tracker_Admin {
 		global $wp_filesystem;
 		$datafeed = new ShareASale_WC_Tracker_Datafeed( $this->version, $wp_filesystem );
 		if ( $datafeed ) {
-			$datafeed->export( $file );
+			//should be the file path returned if successful, false otherwise (so see set settings_errors())
+			$exported = $datafeed->export( $file );
+			//if they've chosen to upload to ShareASale and the file was successfully generated, send to FTP
+			if ( 1 == $options['ftp-upload'] && $exported ) {
+				$ftp = new \FtpClient\FtpClient();
+				$ftp->connect( SHAREASALE_WC_TRACKER_FTP_HOSTNAME );
+				$username = $options['ftp-username'];
+				$password = $options['ftp-password'];
+				try {
+					$ftp->login( $username, $password );
+					$uploaded = $ftp->put( basename( $exported ), $exported, FTP_BINARY );
+					if ( $uploaded ) {
+						add_settings_error(
+							'shareasale_wc_tracker_ftp_upload_success',
+							esc_attr( 'ftp' ),
+							'FTP upload successful! Watch for an email from ShareASale detailing the results.',
+							'updated'
+						);
+						settings_errors( 'shareasale_wc_tracker_ftp_upload_success' );
+					}
+				} catch ( FtpClient\FtpException $e ) {
+					add_settings_error(
+						'shareasale_wc_tracker_ftp_upload_failed',
+						esc_attr( 'ftp' ),
+						$e->getMessage() . '. Couldn\'t FTP upload generated product datafeed file. Did you enter the right credentials above?'
+					);
+					settings_errors( 'shareasale_wc_tracker_ftp_upload_failed' );
+				}
+			}
+
 			$datafeed->clean_up( $dir, SHAREASALE_WC_TRACKER_MAX_DATAFEED_AGE_DAYS );
 		}
 
@@ -703,7 +737,7 @@ class ShareASale_WC_Tracker_Admin {
 		array_unshift( $links, $settings_link );
 		return $links;
 	}
-
+	//to do: maybe break this into its own class? The method is getting a bit dense...
 	public function sanitize_settings( $new_settings = array() ) {
 		$old_settings      = get_option( 'shareasale_wc_tracker_options' ) ? get_option( 'shareasale_wc_tracker_options' ) : array();
 		//$diff_new_settings is necessary to check whether API credentials have actually changed or not
@@ -760,6 +794,25 @@ class ShareASale_WC_Tracker_Admin {
 			}
 		} elseif ( empty( $final_settings['merchant-id'] ) ) {
 				$final_settings['analytics-setting'] = 0;
+		}
+
+		if ( 1 == $final_settings['ftp-upload'] ) {
+			$ftp = new \FtpClient\FtpClient();
+			$ftp->connect( SHAREASALE_WC_TRACKER_FTP_HOSTNAME );
+			$username = @$final_settings['ftp-username'];
+			$password = @$final_settings['ftp-password'];
+			//validate login
+			try {
+				$ftp->login( $username, $password );
+			} catch ( FtpClient\FtpException $e ) {
+				add_settings_error(
+					'shareasale_wc_tracker_ftp_login',
+					esc_attr( 'ftp' ),
+					$e->getMessage() . '. Couldn\'t turn on FTP Upload feature. Did you enter the right credentials above?'
+				);
+				$final_settings['ftp-username'] = $final_settings['ftp-password'] = '';
+				$final_settings['ftp-upload'] = 0;
+			}
 		}
 		return $final_settings;
 	}
