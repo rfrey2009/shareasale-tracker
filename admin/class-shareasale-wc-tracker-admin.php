@@ -304,8 +304,8 @@ class ShareASale_WC_Tracker_Admin {
 				'class'       => 'shareasale-wc-tracker-option',
 		));
 
-		add_settings_section( 'shareasale_wc_tracker_datafeed_generation', 'Optional Product Default Category/Subcategory', array( $this, 'render_settings_datafeed_generation_section_text' ), 'shareasale_wc_tracker_datafeed_generation' );
-		add_settings_field( 'default-category', 'Default Category', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation',
+		add_settings_section( 'shareasale_wc_tracker_datafeed_generation_defaults', 'Optional Product Default Category/Subcategory', array( $this, 'render_settings_datafeed_generation_defaults_section_text' ), 'shareasale_wc_tracker_datafeed_generation' );
+		add_settings_field( 'default-category', 'Default Category', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation_defaults',
 			array(
 				'label_for'   => 'default-category',
 				'id'          => 'default-category',
@@ -317,7 +317,7 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => 'Cat',
 				'class'       => 'shareasale-wc-tracker-option shareasale-wc-tracker-option-number',
 		));
-		add_settings_field( 'default-subcategory', 'Default Subcategory', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation',
+		add_settings_field( 'default-subcategory', 'Default Subcategory', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation_defaults',
 			array(
 				'label_for'   => 'default-subcategory',
 				'id'          => 'default-subcategory',
@@ -329,6 +329,62 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => 'Sub',
 				'class'       => 'shareasale-wc-tracker-option shareasale-wc-tracker-option-number',
 		));
+		add_settings_section( 'shareasale_wc_tracker_datafeed_generation_ftp', 'Automate Submission', array( $this, 'render_settings_datafeed_generation_ftp_section_text' ), 'shareasale_wc_tracker_datafeed_generation' );
+		add_settings_field( 'ftp-upload-hidden', '', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation_ftp',
+			array(
+				'id'          => 'ftp-upload-hidden',
+				'name'        => 'ftp-upload',
+				'value'       => 0,
+				'status'      => '',
+				'size'        => 1,
+				'type'        => 'hidden',
+				'placeholder' => '',
+				'class'       => 'shareasale-wc-tracker-option-hidden',
+		));
+		add_settings_field( 'ftp-upload', 'FTP Upload', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation_ftp',
+			array(
+				'label_for'   => 'ftp-upload',
+				'id'          => 'ftp-upload',
+				'name'        => 'ftp-upload',
+				'value'       => 1,
+				'status'      => checked( @$options['ftp-upload'], 1, false ),
+				'size'        => 18,
+				'type'        => 'checkbox',
+				'placeholder' => '',
+				'class'       => 'shareasale-wc-tracker-option',
+		));
+		add_settings_field( 'ftp-username', 'FTP Username', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation_ftp',
+			array(
+				'label_for'   => 'ftp-username',
+				'id'          => 'ftp-username',
+				'name'        => 'ftp-username',
+				'value'       => ! empty( $options['ftp-username'] ) ? $options['ftp-username'] : '',
+				'status'      => disabled( @$options['ftp-upload'], 0, false ) . " required='required'",
+				'size'        => 33,
+				'type'        => 'text',
+				'placeholder' => 'Enter your Required FTP Username',
+				'class'       => 'shareasale-wc-tracker-option',
+		));
+		add_settings_field( 'ftp-password', 'FTP Password', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation_ftp',
+			array(
+				'label_for'   => 'ftp-password',
+				'id'          => 'ftp-password',
+				'name'        => 'ftp-password',
+				'value'       => ! empty( $options['ftp-password'] ) ? $options['ftp-password'] : '',
+				'status'      => disabled( @$options['ftp-upload'], 0, false ) . " required='required'",
+				'size'        => 33,
+				'type'        => 'text',
+				'placeholder' => 'Enter your Required FTP Password',
+				'class'       => 'shareasale-wc-tracker-option',
+		));
+
+		/*
+		1. Pick and implement an FTP wrapper class.
+		2. Include as a dependency and use it to validate the credentials input by testing login.
+		3. Upload the generated file. Include plenty of error checking and use WP_Error well.
+		4. Schedule and unschedule uploads for daily using wp_(un)schedule_event().
+		5. Optional: show a log of uploads?
+		*/
 
 		$callback = @$options['analytics-setting'] ? 'render_settings_analytics_enabled_section_text' : 'render_settings_analytics_disabled_section_text';
 
@@ -551,8 +607,12 @@ class ShareASale_WC_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-api-section-text.php';
 	}
 
-	public function render_settings_datafeed_generation_section_text() {
-		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation-section-text.php';
+	public function render_settings_datafeed_generation_defaults_section_text() {
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation-defaults-section-text.php';
+	}
+
+	public function render_settings_datafeed_generation_ftp_section_text() {
+		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation-ftp-section-text.php';
 	}
 
 	public function render_settings_analytics_enabled_section_text() {
