@@ -347,7 +347,7 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => '',
 				'class'       => 'shareasale-wc-tracker-option-hidden',
 		));
-		add_settings_field( 'ftp-upload', 'FTP Upload', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation_ftp',
+		add_settings_field( 'ftp-upload', 'Automate FTP Upload', array( $this, 'render_settings_input' ), 'shareasale_wc_tracker_datafeed_generation', 'shareasale_wc_tracker_datafeed_generation_ftp',
 			array(
 				'label_for'   => 'ftp-upload',
 				'id'          => 'ftp-upload',
@@ -385,11 +385,7 @@ class ShareASale_WC_Tracker_Admin {
 		));
 
 		/*
-		1. Pick and implement an FTP wrapper class.
-		2. Include as a dependency and use it to validate the credentials input by testing login.
-		3. Upload the generated file. Include plenty of error checking and use WP_Error well.
 		4. Schedule and unschedule uploads for daily using wp_(un)schedule_event().
-		5. Optional: show a log of uploads?
 		*/
 
 		$callback = @$options['analytics-setting'] ? 'render_settings_analytics_enabled_section_text' : 'render_settings_analytics_disabled_section_text';
@@ -555,6 +551,41 @@ class ShareASale_WC_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-advanced-analytics.php';
 	}
 
+	public function shareasale_wc_tracker_generate_scheduled_datafeed() {
+		global $wpdb;
+		$dir   = plugin_dir_path( __FILE__ ) . 'datafeeds';
+		$file  = trailingslashit( $dir ) . date( 'mdY' ) . '.csv';
+		$creds = request_filesystem_credentials( '', '', false, $dir );
+		$last_datafeed_date = $wpdb->get_var('
+			SELECT generation_date 
+			FROM ' . $wpdb->prefix . 'shareasale_wc_tracker_datafeeds 
+			ORDER BY generation_date DESC 
+			LIMIT 1
+		');
+		//make sure the last FTP uploaded datafeed wasn't today (in case manually done), so we don't waste an upload out of the 31/month ShareASale limit
+		if ( date( 'Ymd' ) == date( 'Ymd', strtotime( $last_datafeed_date ) ) ) {
+			return;
+		}
+
+		if ( $creds && WP_Filesystem( $creds ) ) {
+			global $wp_filesystem;
+			$datafeed = new ShareASale_WC_Tracker_Datafeed( $this->version, $wp_filesystem );
+			if ( $datafeed ) {
+				//should be an array returned with the file path as a key if successful, false otherwise
+				$exported = $datafeed->export( $file );
+				if ( $exported ) {
+					$this->shareasale_wc_tracker_datafeed_maybe_ftp_upload( $exported );
+				}
+				$datafeed->clean_up( $dir, SHAREASALE_WC_TRACKER_MAX_DATAFEED_AGE_DAYS );
+			}
+		} else {
+			//maybe hook some function to admin_notices to show a warning the last attempt failed?
+		}
+		//no point in outputting the normal request_filesystem_credentials() failure HTML form prompt since this is a backend cron...
+		//it either works or it doesn't, no second chances like manual datafeed generation
+		ob_clean();
+	}
+
 	public function wp_ajax_shareasale_wc_tracker_generate_datafeed() {
 		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'generate-datafeed' ) ) {
 			add_settings_error(
@@ -571,7 +602,6 @@ class ShareASale_WC_Tracker_Admin {
 		$file    = trailingslashit( $dir ) . date( 'mdY' ) . '.csv';
 		$inputs  = array( '_wpnonce', 'action' );
 		$creds   = request_filesystem_credentials( $url, '', false, $dir, $inputs );
-		$options = get_option( 'shareasale_wc_tracker_options' );
 
 		if ( ! $creds ) {
 			//stop here, we can't even write to /datafeeds yet and need credentials form...
@@ -585,46 +615,14 @@ class ShareASale_WC_Tracker_Admin {
 		}
 
 		//access granted! instantiate a ShareASale_WC_Tracker_Datafeed() object here and start exporting products to csv
-		global $wpdb;
 		global $wp_filesystem;
 		$datafeed = new ShareASale_WC_Tracker_Datafeed( $this->version, $wp_filesystem );
 		if ( $datafeed ) {
 			//should be an array returned with the file path as a key if successful, false otherwise i.e. see set settings_errors()
 			$exported = $datafeed->export( $file );
-			//if they've chosen to upload to ShareASale and the file was successfully generated, send to FTP
-			if ( 1 == $options['ftp-upload'] && $exported ) {
-				$ftp = new \FtpClient\FtpClient();
-				$ftp->connect( SHAREASALE_WC_TRACKER_FTP_HOSTNAME );
-				$username = $options['ftp-username'];
-				$password = $options['ftp-password'];
-				try {
-					$ftp->login( $username, $password );
-					$uploaded = $ftp->putFromPath( $exported['path'] );
-					if ( $uploaded ) {
-						add_settings_error(
-							'shareasale_wc_tracker_ftp_upload_success',
-							esc_attr( 'ftp' ),
-							'FTP upload successful! Watch for an email from ShareASale detailing the results.',
-							'updated'
-						);
-						//mark this log's entry as true for ftp_uploaded status, but maybe eventually move this logic out of this class?
-						$wpdb->update(
-							$wpdb->prefix . 'shareasale_wc_tracker_datafeeds',
-							array( 'ftp_uploaded' => 1 ),
-							array( 'id' => $exported['id'] )
-						);
-						settings_errors( 'shareasale_wc_tracker_ftp_upload_success' );
-					}
-				} catch ( FtpClient\FtpException $e ) {
-					add_settings_error(
-						'shareasale_wc_tracker_ftp_upload_failed',
-						esc_attr( 'ftp' ),
-						$e->getMessage() . '. Couldn\'t FTP upload generated product datafeed file. Did you enter the right credentials above?'
-					);
-					settings_errors( 'shareasale_wc_tracker_ftp_upload_failed' );
-				}
+			if ( $exported ) {
+				$this->shareasale_wc_tracker_datafeed_maybe_ftp_upload( $exported );
 			}
-
 			$datafeed->clean_up( $dir, SHAREASALE_WC_TRACKER_MAX_DATAFEED_AGE_DAYS );
 		}
 
@@ -632,6 +630,54 @@ class ShareASale_WC_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation-table.php';
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-datafeed-generation-pagination.php';
 		wp_die();
+	}
+
+	/**
+	* Uploads a product datafeed to ShareASale
+	* @param array $upload
+	* @return bool
+	*/
+	private function shareasale_wc_tracker_datafeed_maybe_ftp_upload( $upload ) {
+		global $wpdb;
+		$options = get_option( 'shareasale_wc_tracker_options' );
+
+		//if they've chosen to upload to ShareASale and the file was successfully generated, send to FTP
+		if ( 1 == $options['ftp-upload'] ) {
+			$ftp = new \FtpClient\FtpClient();
+			$ftp->connect( SHAREASALE_WC_TRACKER_FTP_HOSTNAME );
+			$username = @$options['ftp-username'];
+			$password = @$options['ftp-password'];
+			try {
+				$ftp->login( $username, $password );
+				$uploaded = $ftp->putFromPath( $upload['path'] );
+				if ( $uploaded ) {
+					add_settings_error(
+						'shareasale_wc_tracker_ftp_upload_success',
+						esc_attr( 'ftp' ),
+						'FTP upload successful! Watch for an email from ShareASale detailing the results.',
+						'updated'
+					);
+					settings_errors( 'shareasale_wc_tracker_ftp_upload_success' );
+					//mark this log's entry as true for ftp_uploaded status, but maybe eventually move this logic out of this class?
+					$wpdb->update(
+						$wpdb->prefix . 'shareasale_wc_tracker_datafeeds',
+						array( 'ftp_uploaded' => 1 ),
+						array( 'id' => $upload['id'] )
+					);
+					return true;
+				}
+			} catch ( FtpClient\FtpException $e ) {
+				add_settings_error(
+					'shareasale_wc_tracker_ftp_upload_failed',
+					esc_attr( 'ftp' ),
+					$e->getMessage() . '. Couldn\'t FTP upload generated product datafeed file. Did you enter the right credentials above?'
+				);
+				settings_errors( 'shareasale_wc_tracker_ftp_upload_failed' );
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 
 	public function render_settings_required_section_text() {
@@ -813,6 +859,10 @@ class ShareASale_WC_Tracker_Admin {
 			//validate login
 			try {
 				$ftp->login( $username, $password );
+				//login succeeds, then schedule this upload to repeat daily at the same time as well
+				if ( ! wp_next_scheduled( 'shareasale_wc_tracker_generate_scheduled_datafeed' ) ) {
+					wp_schedule_event( time(), 'daily', 'shareasale_wc_tracker_generate_scheduled_datafeed' );
+		    	}
 			} catch ( FtpClient\FtpException $e ) {
 				add_settings_error(
 					'shareasale_wc_tracker_ftp_login',
@@ -822,6 +872,12 @@ class ShareASale_WC_Tracker_Admin {
 				$final_settings['ftp-username'] = $final_settings['ftp-password'] = '';
 				$final_settings['ftp-upload'] = 0;
 			}
+		} else {
+			//if ftp upload turned off, unschedule the daily upload too...
+			$is_scheduled_when = wp_next_scheduled( 'shareasale_wc_tracker_generate_scheduled_datafeed' );
+			if ( $is_scheduled_when ) {
+				wp_unschedule_event( $is_scheduled_when, 'shareasale_wc_tracker_generate_scheduled_datafeed' );
+		    }
 		}
 		return $final_settings;
 	}

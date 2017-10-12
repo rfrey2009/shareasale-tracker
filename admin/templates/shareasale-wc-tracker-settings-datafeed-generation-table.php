@@ -6,7 +6,7 @@ if ( ! defined( 'WPINC' ) ) {
 global $wpdb;
 $datafeeds_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
 $page_num        = filter_input( INPUT_GET, 'page_num' ) ? absint( filter_input( INPUT_GET, 'page_num' ) ) : 1;
-$limit           = 10;
+$limit           = 5;
 $offset          = ( $page_num - 1 ) * $limit;
 $total           = $wpdb->get_var( "SELECT COUNT(DISTINCT file) FROM $datafeeds_table" );
 $num_of_pages    = ceil( $total / $limit );

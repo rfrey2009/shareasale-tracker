@@ -108,7 +108,8 @@ class ShareASale_WC_Tracker {
 		$this->loader->add_action( 'admin_init',            $admin, 'admin_init' );
 		$this->loader->add_action( 'admin_init',            $admin, 'plugin_upgrade' );
 		$this->loader->add_action( 'admin_menu',            $admin, 'admin_menu' );
-		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_generate_datafeed', $admin, 'wp_ajax_shareasale_wc_tracker_generate_datafeed' );
+		$this->loader->add_action( 'shareasale_wc_tracker_generate_scheduled_datafeed', $admin, 'shareasale_wc_tracker_generate_scheduled_datafeed' );
+		$this->loader->add_action( 'wp_ajax_shareasale_wc_tracker_generate_datafeed',   $admin, 'wp_ajax_shareasale_wc_tracker_generate_datafeed' );
 		//for adding and saving custom post meta (ShareASale category/subactegory number values) to the WC products page general section
 		$this->loader->add_action( 'woocommerce_product_options_general_product_data', $admin, 'woocommerce_product_options_general_product_data' );
 		$this->loader->add_action( 'woocommerce_process_product_meta',                 $admin, 'woocommerce_process_product_meta' );
