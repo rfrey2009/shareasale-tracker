@@ -23,7 +23,7 @@ class ShareASale_WC_Tracker_Admin {
 		require_once plugin_dir_path( __FILE__ ) . '../includes/FtpClient/FtpWrapper.php';
 		require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-installer.php';
 		//WooCommerce has to be loaded first for the ShareASale_WC_Tracker_Coupon class that extends WC_Coupon and is instantiated in $this->woocommerce_coupon_options_save()
-		add_action( 'plugins_loaded', array( $this, 'coupon_init' ) );
+		add_action( 'admin_init', array( $this, 'coupon_init' ) );
 	}
 
 	public function coupon_init() {

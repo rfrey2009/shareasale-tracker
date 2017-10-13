@@ -53,7 +53,7 @@ g. If you'd like to automatically send ShareASale your WooCommerce coupons as a 
 == Changelog ==
 
 = 1.3 =
-* BETA: Now support FTP uploads and automatic daily scheduling of your product datafeed file. Contact ShareASale with your host's IP address if you do not have an FTP account yet.
+* BETA: Now supports FTP uploads and automatic daily scheduling of your product datafeed file. Contact ShareASale with your host's IP address if you do not have an FTP account yet.
 
 = 1.2.2 =
 * Small fix to restore compatibility with other WooCommerce first-party plugins like WooCommerce Smart Coupons.
