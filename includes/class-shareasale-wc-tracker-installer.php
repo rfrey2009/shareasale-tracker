@@ -50,40 +50,36 @@ class ShareASale_WC_Tracker_Installer {
 			product_count INT(7) NOT NULL, 
 			generation_date DATETIME NOT NULL,
 			generation_version varchar(20) NOT NULL,
-			PRIMARY KEY (id)
+			ftp_uploaded TINYINT(1) NOT NULL,
+			PRIMARY KEY  (id)
 			) ENGINE = InnoDB';
 
 		dbDelta( $query );
 	}
 
 	/**
-	* @var string $old_version used for selective modifications to options and db
-	* @var string $latest_version used for knowing what to update to
+	* @var string $old_version what's stored in the db for wp_option
+	* @var string $latest_version what's been instantiated in the plugin's class
 	*/
 	public static function upgrade( $old_version, $latest_version ) {
 		self::load_dependencies();
 		global $wpdb;
-		//begin upgrade to v1.1
-		if ( -1 === version_compare( $old_version, '1.1' ) ) {
-			$datafeeds_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
+		$datafeeds_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
+		//begin upgrade to 1.2.3
+		if ( -1 === version_compare( $old_version, '1.2.3' ) ) {
 			$query           =
-				'CREATE TABLE IF NOT EXISTS ' . $datafeeds_table . ' ( 
+				'CREATE TABLE ' . $datafeeds_table . ' ( 
 				id INT(11) NOT NULL AUTO_INCREMENT,
 				file VARCHAR(255) NOT NULL,
 				warnings BLOB NOT NULL,
 				product_count INT(7) NOT NULL, 
 				generation_date DATETIME NOT NULL,
 				generation_version varchar(20) NOT NULL,
-				PRIMARY KEY (id)
+				ftp_uploaded TINYINT(1) NOT NULL DEFAULT "0",
+				PRIMARY KEY  (id)
 				) ENGINE = InnoDB';
 
 			dbDelta( $query );
-		}
-		//end upgrade to v1.1 from v1.0
-		//begin upgrade to 1.2.3
-		if ( -1 === version_compare( $old_version, '1.2.3' ) ) {
-			$datafeeds_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
-			$query = 'ALTER TABLE ' . $datafeeds_table . ' ADD ftp_uploaded TINYINT(1) NOT NULL AFTER generation_version';
 		}
 		//end upgrade to 1.2.3
 		update_option( 'shareasale_wc_tracker_version', $latest_version );

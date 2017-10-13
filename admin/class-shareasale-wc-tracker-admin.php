@@ -67,6 +67,13 @@ class ShareASale_WC_Tracker_Admin {
 				$this->version
 			);
 		}
+
+		wp_enqueue_script(
+			'shareasale-wc-tracker-notices-js',
+			esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-notices.js' ),
+			array( 'jquery' ),
+			$this->version
+		);
 	}
 
 	public function woocommerce_coupon_options( $post_id ) {
@@ -170,7 +177,20 @@ class ShareASale_WC_Tracker_Admin {
 		//see https://wordpress.stackexchange.com/questions/23701/how-should-one-implement-add-settings-error-on-custom-menu-pages
 		global $post_id;
 		global $wp_settings_errors;
+		$ftp_failed = get_option( 'shareasale_wc_tracker_generate_scheduled_datafeed_ftp_failed' );
 
+		if ( $ftp_failed ) {
+			$classes = array(
+				'notice',
+				'error',
+				'is-dismissible',
+			);
+			printf(
+				'<div id="shareasale-wc-tracker-ftp-failed" class="%1$s"><p>%2$s</p></div>',
+				trim( implode( ' ', $classes ) ),
+				'Your daily product datafeed FTP upload to ShareASale failed. Please check your WordPress permissions and ShareASale FTP credentials.'
+			);
+		}
 		if ( 'shop_coupon' !== get_post_type( $post_id ) ) return;
 		//make sure to use the settings_errors transient that lasts between pages and not just $wp_settings_errors global from memory gone between page loads
 		//do this by simulating the same &settings-updated=1 WordPress behavior found in wp-admin/includes/template.php without having that GET parameter actually set...
@@ -178,6 +198,11 @@ class ShareASale_WC_Tracker_Admin {
 		delete_transient( 'settings_errors' );
 		settings_errors( 'shareasale_wc_tracker_coupon_uploaded' );
 		settings_errors( 'shareasale_wc_tracker_coupon_edited' );
+	}
+
+	public function wp_ajax_shareasale_wc_tracker_ftp_failed_dismiss_notice() {
+		update_option( 'shareasale_wc_tracker_generate_scheduled_datafeed_ftp_failed', '' );
+		wp_die();
 	}
 
 	public function woocommerce_product_options_general_product_data() {
@@ -384,10 +409,6 @@ class ShareASale_WC_Tracker_Admin {
 				'class'       => 'shareasale-wc-tracker-option',
 		));
 
-		/*
-		4. Schedule and unschedule uploads for daily using wp_(un)schedule_event().
-		*/
-
 		$callback = @$options['analytics-setting'] ? 'render_settings_analytics_enabled_section_text' : 'render_settings_analytics_disabled_section_text';
 
 		add_settings_section( 'shareasale_wc_tracker_analytics', 'Advanced Analytics', array( $this, $callback ), 'shareasale_wc_tracker_advanced_analytics' );
@@ -553,9 +574,6 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function shareasale_wc_tracker_generate_scheduled_datafeed() {
 		global $wpdb;
-		$dir   = plugin_dir_path( __FILE__ ) . 'datafeeds';
-		$file  = trailingslashit( $dir ) . date( 'mdY' ) . '.csv';
-		$creds = request_filesystem_credentials( '', '', false, $dir );
 		$last_datafeed_date = $wpdb->get_var('
 			SELECT generation_date 
 			FROM ' . $wpdb->prefix . 'shareasale_wc_tracker_datafeeds 
@@ -566,6 +584,10 @@ class ShareASale_WC_Tracker_Admin {
 		if ( date( 'Ymd' ) == date( 'Ymd', strtotime( $last_datafeed_date ) ) ) {
 			return;
 		}
+
+		$dir   = plugin_dir_path( __FILE__ ) . 'datafeeds';
+		$file  = trailingslashit( $dir ) . date( 'mdY' ) . '.csv';
+		$creds = request_filesystem_credentials( '', '', false, $dir );
 
 		if ( $creds && WP_Filesystem( $creds ) ) {
 			global $wp_filesystem;
@@ -579,7 +601,10 @@ class ShareASale_WC_Tracker_Admin {
 				$datafeed->clean_up( $dir, SHAREASALE_WC_TRACKER_MAX_DATAFEED_AGE_DAYS );
 			}
 		} else {
-			//maybe hook some function to admin_notices to show a warning the last attempt failed?
+			//note: 64 character limit on option names!
+			update_option( 'shareasale_wc_tracker_generate_scheduled_datafeed_ftp_failed', date( 'Y-m-d H:i:s' ) );
+			//unschedule event since it failed
+			wp_unschedule_event( wp_next_scheduled( 'shareasale_wc_tracker_generate_scheduled_datafeed' ), 'shareasale_wc_tracker_generate_scheduled_datafeed' );
 		}
 		//no point in outputting the normal request_filesystem_credentials() failure HTML form prompt since this is a backend cron...
 		//it either works or it doesn't, no second chances like manual datafeed generation
@@ -664,6 +689,7 @@ class ShareASale_WC_Tracker_Admin {
 						array( 'ftp_uploaded' => 1 ),
 						array( 'id' => $upload['id'] )
 					);
+					update_option( 'shareasale_wc_tracker_generate_scheduled_datafeed_ftp_failed', '' );
 					return true;
 				}
 			} catch ( FtpClient\FtpException $e ) {
