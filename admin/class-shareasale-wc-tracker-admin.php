@@ -78,8 +78,9 @@ class ShareASale_WC_Tracker_Admin {
 
 	public function woocommerce_coupon_options( $post_id ) {
 		//only support this feature in new WooCommerce
-		if ( version_compare( WC()->version, '3.0' ) < 0 ) return;
-
+		if ( version_compare( WC()->version, '3.0' ) < 0 ) {
+			return;
+		}
 		$options          = get_option( 'shareasale_wc_tracker_options' );
 		$has_api_settings = ! empty( $options['merchant-id'] ) && ! empty( $options['api-token'] ) && ! empty( $options['api-secret'] );
 		$status           = $has_api_settings ? null : array( 'disabled' => 'disabled' );
@@ -105,7 +106,9 @@ class ShareASale_WC_Tracker_Admin {
 	public function woocommerce_coupon_options_save( $post_id, $post ) {
 		//only support this feature in new WooCommerce
 		//woocommerce_save_data nonce already safely checked by now
-		if ( version_compare( WC()->version, '3.0' ) < 0 ) return;
+		if ( version_compare( WC()->version, '3.0' ) < 0 ) {
+			return;
+		}
 
 		$options       = get_option( 'shareasale_wc_tracker_options' );
 		$prev_deal_id  = get_post_meta( $post_id, 'shareasale_wc_tracker_coupon_uploaded', true );
@@ -177,8 +180,8 @@ class ShareASale_WC_Tracker_Admin {
 		//see https://wordpress.stackexchange.com/questions/23701/how-should-one-implement-add-settings-error-on-custom-menu-pages
 		global $post_id;
 		global $wp_settings_errors;
-		$ftp_failed = get_option( 'shareasale_wc_tracker_generate_scheduled_datafeed_ftp_failed' );
 
+		$ftp_failed = get_option( 'shareasale_wc_tracker_generate_scheduled_datafeed_ftp_failed' );
 		if ( $ftp_failed ) {
 			$classes = array(
 				'notice',
@@ -188,10 +191,13 @@ class ShareASale_WC_Tracker_Admin {
 			printf(
 				'<div id="shareasale-wc-tracker-ftp-failed" class="%1$s"><p>%2$s</p></div>',
 				trim( implode( ' ', $classes ) ),
-				'Your daily product datafeed FTP upload to ShareASale failed. Please check your WordPress permissions and ShareASale FTP credentials.'
+				'Your daily product datafeed FTP upload to ShareASale failed on ' . date( 'F jS, Y', strtotime( $ftp_failed ) ) . ' at ' . date( 'g:i a', strtotime( $ftp_failed ) ) . '. Please check your WordPress permissions and ShareASale FTP credentials.'
 			);
 		}
-		if ( 'shop_coupon' !== get_post_type( $post_id ) ) return;
+
+		if ( 'shop_coupon' !== get_post_type( $post_id ) ) {
+			return;
+		}
 		//make sure to use the settings_errors transient that lasts between pages and not just $wp_settings_errors global from memory gone between page loads
 		//do this by simulating the same &settings-updated=1 WordPress behavior found in wp-admin/includes/template.php without having that GET parameter actually set...
 		$wp_settings_errors = array_merge( (array) $wp_settings_errors, array_filter( (array) get_transient( 'settings_errors' ) ) );
@@ -571,16 +577,20 @@ class ShareASale_WC_Tracker_Admin {
 
 		require_once plugin_dir_path( __FILE__ ) . 'templates/shareasale-wc-tracker-settings-advanced-analytics.php';
 	}
-
+	//daily cron job to try generating and auto-uploading a file to our ShareASale FTP
 	public function shareasale_wc_tracker_generate_scheduled_datafeed() {
 		global $wpdb;
+		//manually require these for request_filesystem_credentials() and ShareASale_WC_Tracker_Datafeed() to work
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		require_once( ABSPATH . 'wp-admin/includes/template.php' );
+
 		$last_datafeed_date = $wpdb->get_var('
 			SELECT generation_date 
 			FROM ' . $wpdb->prefix . 'shareasale_wc_tracker_datafeeds 
 			ORDER BY generation_date DESC 
 			LIMIT 1
 		');
-		//make sure the last FTP uploaded datafeed wasn't today (in case manually done), so we don't waste an upload out of the 31/month ShareASale limit
+		//make sure the last FTP uploaded datafeed wasn't already today (in case manually done), so we don't waste an upload out of the 31/month ShareASale limit
 		if ( date( 'Ymd' ) == date( 'Ymd', strtotime( $last_datafeed_date ) ) ) {
 			return;
 		}
@@ -885,9 +895,9 @@ class ShareASale_WC_Tracker_Admin {
 			//validate login
 			try {
 				$ftp->login( $username, $password );
-				//login succeeds, then schedule this upload to repeat daily at the same time as well
+				//login succeeds, then also schedule this upload to repeat daily starting tomorrow at the same time
 				if ( ! wp_next_scheduled( 'shareasale_wc_tracker_generate_scheduled_datafeed' ) ) {
-					wp_schedule_event( time(), 'daily', 'shareasale_wc_tracker_generate_scheduled_datafeed' );
+					wp_schedule_event( time() + 24 * 60 * 60, 'daily', 'shareasale_wc_tracker_generate_scheduled_datafeed' );
 		    	}
 			} catch ( FtpClient\FtpException $e ) {
 				add_settings_error(

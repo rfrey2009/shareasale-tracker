@@ -66,6 +66,9 @@ class ShareASale_WC_Tracker_Installer {
 		global $wpdb;
 		$datafeeds_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
 		//begin upgrade to 1.2.3
+		//don't need previous 1.1 upgrade code since it dealt with creating same datafeeds table, but without the last ftp_uploaded column
+		//sql query below doesn't use "IF NOT EXISTS" anymore, since we're both altering the table and maybe creating it for the first time
+		//dbDelta only uses create and update queries, not alter. It figures out "delta" changes itself and is very picky with syntax...
 		if ( -1 === version_compare( $old_version, '1.2.3' ) ) {
 			$query           =
 				'CREATE TABLE ' . $datafeeds_table . ' ( 

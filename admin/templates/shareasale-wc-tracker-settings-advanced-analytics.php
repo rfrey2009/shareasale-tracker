@@ -31,7 +31,7 @@ if ( ! defined( 'WPINC' ) ) {
 			  do_settings_sections( 'shareasale_wc_tracker_advanced_analytics' );
 			?>     
 			</div>
-			<button id="tracker-options-save" class="button" name="Submit">Enable advanced analytics</button>
+			<button id="tracker-options-save" class="button" name="Submit">Toggle advanced analytics</button>
 		</form>
 	</div> 
 </div>
