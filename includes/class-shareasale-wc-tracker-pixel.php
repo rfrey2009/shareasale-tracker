@@ -20,9 +20,27 @@ class ShareASale_WC_Tracker_Pixel {
 
 	public function script_loader_tag( $tag, $handle, $src ) {
 		$async_scripts = array( 'shareasale-wc-tracker-analytics-second-chance' );
+		$other_scripts = array(
+			'shareasale-wc-tracker-admin-js',
+			'shareasale-wc-tracker-notices-js',
+			'shareasale-wc-tracker-analytics',
+			'shareasale-wc-tracker-analytics-cart-observer',
+			'shareasale-wc-tracker-analytics-add-to-cart',
+			'shareasale-wc-tracker-analytics-begin-checkout',
+			'shareasale-wc-tracker-analytics-applied-coupon',
+			'shareasale-wc-tracker-analytics-conversion',
+			'shareasale-wc-tracker-triggered',
+			'shareasale-wc-tracker-pixel',
+		);
 
 		if ( in_array( $handle, $async_scripts, true ) ) {
-			return '<script type="text/javascript" src="' . $src . '" defer async></script>' . "\n";
+			return '<script type="text/javascript" src="' . $src . '" defer async data-noptimize></script>' . "\n";
+		} else {
+			return $tag;
+		}
+
+		if ( in_array( $handle, $other_scripts, true ) ) {
+			return '<script type="text/javascript" src="' . $src . '" data-noptimize></script>' . "\n";
 		} else {
 			return $tag;
 		}
