@@ -166,7 +166,7 @@ class ShareASale_WC_Tracker {
 			)
 		);
 		$this->loader->add_action( 'woocommerce_applied_coupon', $this->analytics, 'woocommerce_applied_coupon' );
-		$this->loader->add_action( 'woocommerce_thankyou',       $this->analytics, 'woocommerce_thankyou'	);
+		$this->loader->add_action( 'woocommerce_thankyou',       $this->analytics, 'woocommerce_thankyou' );
 	}
 
 	private function define_installer_hooks() {
