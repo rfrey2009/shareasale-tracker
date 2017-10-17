@@ -14,19 +14,19 @@ $num_of_pages    = ceil( $total / $limit );
 $datafeeds = $wpdb->get_results(
 	$wpdb->prepare(
 		"SELECT 
-		DATE_FORMAT( MAX(generation_date), '%%m/%%d/%%Y %%h:%%i %%p' ) as generation_date,
+		DATE_FORMAT( generation_date, '%%m/%%d/%%Y %%h:%%i %%p' ) as generation_date,
 		file,
 		product_count,
 		warnings,
 		ftp_uploaded
-		FROM (
-			SELECT *
+		FROM $datafeeds_table
+		WHERE id IN (
+			SELECT MAX(id)
 			FROM $datafeeds_table
 			WHERE generation_date > NOW() - INTERVAL %d DAY
-			ORDER BY generation_date DESC
-		) x
-		GROUP BY file
-		ORDER BY generation_date DESC
+			GROUP BY DATE_FORMAT( generation_date, '%%m/%%d/%%Y' )
+		)
+		ORDER BY id DESC
 		LIMIT %d, %d
 		",
 		SHAREASALE_WC_TRACKER_MAX_DATAFEED_AGE_DAYS, $offset, $limit
