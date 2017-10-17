@@ -35,15 +35,13 @@ class ShareASale_WC_Tracker_Pixel {
 
 		if ( in_array( $handle, $async_scripts, true ) ) {
 			return '<script type="text/javascript" src="' . $src . '" defer async data-noptimize></script>' . "\n";
-		} else {
-			return $tag;
 		}
 
 		if ( in_array( $handle, $other_scripts, true ) ) {
 			return '<script type="text/javascript" src="' . $src . '" data-noptimize></script>' . "\n";
-		} else {
-			return $tag;
 		}
+
+		return $tag;
 	}
 
 	public function woocommerce_thankyou( $order_id ) {

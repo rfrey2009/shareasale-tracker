@@ -21,11 +21,12 @@ jQuery(document).ready(function() {
 	jQuery( document ).on(
 		'updated_wc_div',
 		function(e){
-			console.log('observer saw that cart update!');
-			//somewhat hacky way of stopping analytics script injection on simple shipping cost calculations and coupon applies...
+			//somewhat hacky way of stopping analytics script injection on simple shipping cost calculations, coupon applies or errors...
+			if( jQuery('.woocommerce-error').length ){ return; } 
 			if( jQuery('div.woocommerce-info').text() == 'Shipping costs updated.' ){ return; }
 			if( jQuery('div.woocommerce-message').text() == 'Coupon code applied successfully.' || jQuery('div.woocommerce-message').text() == 'Coupon has been removed.' ) { return; }
 			jQuery.get( shareasaleWcTrackerAnalyticsCartObserver.ajaxurl, { action: 'shareasale_wc_tracker_update_cart_action_cart_updated' }, function(data) {
+				console.log('observer saw that cart update!');
     			jQuery.each( data, function( key, value ) {
 					jQuery(key).replaceWith(value);
 				});
