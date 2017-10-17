@@ -679,10 +679,10 @@ class ShareASale_WC_Tracker_Admin {
 		//if they've chosen to upload to ShareASale and the file was successfully generated, send to FTP
 		if ( 1 == $options['ftp-upload'] ) {
 			$ftp = new \FtpClient\FtpClient();
-			$ftp->connect( SHAREASALE_WC_TRACKER_FTP_HOSTNAME );
 			$username = @$options['ftp-username'];
 			$password = @$options['ftp-password'];
 			try {
+				$ftp->connect( SHAREASALE_WC_TRACKER_FTP_HOSTNAME );
 				$ftp->login( $username, $password );
 				$uploaded = $ftp->putFromPath( $upload['path'] );
 				if ( $uploaded ) {
@@ -889,11 +889,11 @@ class ShareASale_WC_Tracker_Admin {
 
 		if ( 1 == $final_settings['ftp-upload'] ) {
 			$ftp = new \FtpClient\FtpClient();
-			$ftp->connect( SHAREASALE_WC_TRACKER_FTP_HOSTNAME );
 			$username = @$final_settings['ftp-username'];
 			$password = @$final_settings['ftp-password'];
-			//validate login
+			//if connected, then validate login too
 			try {
+				$ftp->connect( SHAREASALE_WC_TRACKER_FTP_HOSTNAME );
 				$ftp->login( $username, $password );
 				//login succeeds, then also schedule this upload to repeat daily starting tomorrow at the same time
 				if ( ! wp_next_scheduled( 'shareasale_wc_tracker_generate_scheduled_datafeed' ) ) {
@@ -903,7 +903,7 @@ class ShareASale_WC_Tracker_Admin {
 				add_settings_error(
 					'shareasale_wc_tracker_ftp_login',
 					esc_attr( 'ftp' ),
-					$e->getMessage() . '. Couldn\'t turn on FTP Upload feature. Did you enter the right credentials above?'
+					$e->getMessage() . '. Did you enter the right credentials above?'
 				);
 				$final_settings['ftp-username'] = $final_settings['ftp-password'] = '';
 				$final_settings['ftp-upload'] = 0;
