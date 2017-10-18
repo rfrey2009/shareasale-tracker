@@ -612,7 +612,7 @@ class ShareASale_WC_Tracker_Admin {
 	}
 
 	public function wp_ajax_shareasale_wc_tracker_generate_datafeed() {
-		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'generate-datafeed' ) ) {
+		if ( ! wp_verify_nonce( $_POST['_sas_wc_gdf'], 'generate-datafeed' ) ) {
 			add_settings_error(
 				'shareasale_wc_tracker_datafeed_warning',
 				esc_attr( 'datafeed-security' ),
@@ -625,7 +625,7 @@ class ShareASale_WC_Tracker_Admin {
 		$url     = add_query_arg( 'page', 'shareasale_wc_tracker_datafeed_generation', esc_url( admin_url( 'admin.php' ) ) );
 		$dir     = plugin_dir_path( __FILE__ ) . 'datafeeds';
 		$file    = trailingslashit( $dir ) . date( 'mdY' ) . '.csv';
-		$inputs  = array( '_wpnonce', 'action' );
+		$inputs  = array( '_sas_wc_gdf', 'action' );
 		$creds   = request_filesystem_credentials( $url, '', false, $dir, $inputs );
 
 		if ( ! $creds ) {
