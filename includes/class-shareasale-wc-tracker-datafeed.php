@@ -336,9 +336,11 @@ class ShareASale_WC_Tracker_Datafeed {
 			return false;
 		}
 
-		//delete leftover csv now compressed, and change /datafeeds back to defined directory permissions for WP config...
+		//delete leftover csv now compressed, and remove any previous logged entries of it now that a zip version exists
+		//change /datafeeds back to defined directory permissions for WP config...
 		$this->filesystem->chmod( $dir, FS_CHMOD_DIR );
 		$this->filesystem->delete( $file );
+		$this->logger->unlog( $file );
 		return $this;
 	}
 

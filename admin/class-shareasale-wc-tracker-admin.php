@@ -891,7 +891,7 @@ class ShareASale_WC_Tracker_Admin {
 			$ftp = new \FtpClient\FtpClient();
 			$username = @$final_settings['ftp-username'];
 			$password = @$final_settings['ftp-password'];
-			//if connected, then validate login too
+			//validate connection and login
 			try {
 				$ftp->connect( SHAREASALE_WC_TRACKER_FTP_HOSTNAME );
 				$ftp->login( $username, $password );

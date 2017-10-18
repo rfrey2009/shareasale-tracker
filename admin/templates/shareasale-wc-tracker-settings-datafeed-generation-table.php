@@ -8,12 +8,15 @@ $datafeeds_table = $wpdb->prefix . 'shareasale_wc_tracker_datafeeds';
 $page_num        = filter_input( INPUT_GET, 'page_num' ) ? absint( filter_input( INPUT_GET, 'page_num' ) ) : 1;
 $limit           = 5;
 $offset          = ( $page_num - 1 ) * $limit;
-$total           = $wpdb->get_var( "SELECT COUNT(DISTINCT file) FROM $datafeeds_table" );
+$total           = $wpdb->get_var(
+	"SELECT COUNT(DISTINCT DATE_FORMAT(generation_date, '%Y-%m-%d'))
+	FROM $datafeeds_table"
+);
 $num_of_pages    = ceil( $total / $limit );
 
 $datafeeds = $wpdb->get_results(
 	$wpdb->prepare(
-		"SELECT 
+		"SELECT
 		DATE_FORMAT( generation_date, '%%m/%%d/%%Y %%h:%%i %%p' ) as generation_date,
 		file,
 		product_count,
