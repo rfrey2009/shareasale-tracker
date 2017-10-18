@@ -7,7 +7,7 @@ class ShareASale_WC_Tracker_Installer {
 
 	private static function load_dependencies() {
 		//necessary for using dbDelta() to create and update WordPress tables
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once( trailingslashit( ABSPATH ) . 'wp-admin/includes/upgrade.php' );
 	}
 
 	public static function install() {

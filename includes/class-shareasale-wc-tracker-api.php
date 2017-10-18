@@ -55,7 +55,7 @@ class ShareASale_WC_Tracker_API {
 		$sig      = $this->api_token . ':' . $this->timestamp . ':' . $this->action . ':' . $this->api_secret;
 		$sig_hash = hash( 'sha256', $sig );
 
-		$this->headers = array( "x-ShareASale-Date: {$this->timestamp}", "x-ShareASale-Authentication: {$sig_hash}" );
+		$this->headers = array( 'x-ShareASale-Date' => $this->timestamp, 'x-ShareASale-Authentication' => $sig_hash );
 		return true;
 	}
 
@@ -134,7 +134,7 @@ class ShareASale_WC_Tracker_API {
 
 		if ( $sas_coupon->get_deal_id( 'shareasale_wc_tracker_deal_id' ) ) {
 			$this->action     = 'dealEdit';
-			$params['dealID'] = $sas_coupon->get_deal_id( 'shareasale_wc_tracker_deal_id ');
+			$params['dealID'] = $sas_coupon->get_deal_id( 'shareasale_wc_tracker_deal_id' );
 		}
 
 		$this->query = $this->build_url( $params );
@@ -148,21 +148,20 @@ class ShareASale_WC_Tracker_API {
 			return false;
 		}
 
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $this->query );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, $this->headers );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_HEADER, 0 );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-		//make the API request
-		$response = curl_exec( $ch );
-		curl_close( $ch );
+		$response = wp_remote_get(
+			$this->query,
+			array(
+				'headers' => $this->headers,
+				'sslverify' => false,
+			)
+		);
+		$body = $response['body'];
 		//set last_query property and clear out current query property
 		$this->last_query = $this->query;
 		$this->query      = '';
 
-		if ( strpos( $response, 'Error Code' ) ) {
-			$pieces  = array_map( 'trim', explode( '-', $response ) );
+		if ( strpos( $body, 'Error Code' ) ) {
+			$pieces  = array_map( 'trim', explode( '-', $body ) );
 			$code    = str_replace( 'Error Code', '', $pieces[1] );
 			$message = str_replace( ':', '', $pieces[0] );
 			if ( 4002 == $code ) {
@@ -173,7 +172,7 @@ class ShareASale_WC_Tracker_API {
 			$this->errors->add( $code, $message, $data );
 			return false;
 		}
-		$this->response = trim( $response );
+		$this->response = trim( $body );
 		return true;
 	}
 

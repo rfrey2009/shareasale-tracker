@@ -236,10 +236,10 @@ class ShareASale_WC_Tracker_Admin {
 	public function woocommerce_process_product_meta( $post_id ) {
 		//woocommerce_save_data nonce already safely checked by now
 		if ( ! empty( $_POST['shareasale_wc_tracker_datafeed_product_category'] ) ) {
-			update_post_meta( $post_id, 'shareasale_wc_tracker_datafeed_product_category', esc_attr( $_POST['shareasale_wc_tracker_datafeed_product_category'] ) );
+			update_post_meta( $post_id, 'shareasale_wc_tracker_datafeed_product_category', sanitize_text_field( $_POST['shareasale_wc_tracker_datafeed_product_category'] ) );
 		}
 		if ( ! empty( $_POST['shareasale_wc_tracker_datafeed_product_subcategory'] ) ) {
-			update_post_meta( $post_id, 'shareasale_wc_tracker_datafeed_product_subcategory', esc_attr( $_POST['shareasale_wc_tracker_datafeed_product_subcategory'] ) );
+			update_post_meta( $post_id, 'shareasale_wc_tracker_datafeed_product_subcategory', sanitize_text_field( $_POST['shareasale_wc_tracker_datafeed_product_subcategory'] ) );
 		}
 	}
 
@@ -519,16 +519,6 @@ class ShareASale_WC_Tracker_Admin {
 		//must be included so regular setting saves show general 'Settings saved' notice
 		//and also any setting errors on the stack without a slug (first arg in add_settings_error() function) are displayed using settings_errors()
 		include_once 'options-head.php';
-		if ( ! function_exists( 'curl_version' ) ) {
-			add_settings_error(
-				'shareasale_wc_tracker_curl_warning',
-				esc_attr( 'cURL-warning' ),
-				'cURL is not enabled on your server. Please contact your webhost to have cURL enabled to use automatic reconciliation.'
-			);
-			settings_errors( 'shareasale_wc_tracker_curl_warning', false, true );
-			return;
-		}
-
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			add_settings_error(
 				'shareasale_wc_tracker_woocommerce_warning',
@@ -581,8 +571,8 @@ class ShareASale_WC_Tracker_Admin {
 	public function shareasale_wc_tracker_generate_scheduled_datafeed() {
 		global $wpdb;
 		//manually require these for request_filesystem_credentials() and ShareASale_WC_Tracker_Datafeed() to work
-		require_once( ABSPATH . 'wp-admin/includes/file.php' );
-		require_once( ABSPATH . 'wp-admin/includes/template.php' );
+		require_once( trailingslashit( ABSPATH ) . 'wp-admin/includes/file.php' );
+		require_once( trailingslashit( ABSPATH ) . 'wp-admin/includes/template.php' );
 
 		$last_datafeed_date = $wpdb->get_var('
 			SELECT generation_date 

@@ -14,6 +14,16 @@ $page_links = paginate_links( array(
 ?>
 <div class="tablenav">
 	<div class="tablenav-pages shareasale-wc-tracker-logs-pagination">
-		<?php echo $page_links; ?>
+		<?php
+		echo wp_kses( $page_links, array(
+			'div' => array( 'class' => true ),
+			'span' => array( 'class' => true ),
+			'a' => array(
+				'class'  => true,
+				'href'    => true,
+				),
+			)
+		);
+		?>
 	</div>
 </div>

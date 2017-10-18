@@ -138,7 +138,7 @@ class ShareASale_WC_Tracker_Datafeed {
 			add_settings_error(
 				'shareasale_wc_tracker_products',
 				esc_attr( 'datafeed-products' ),
-				'We found zero products to export! Start by adding one <a href="' . admin_url('post-new.php?post_type=product') . '">here</a>.',
+				'We found zero products to export! Start by adding one <a href="' . admin_url( 'post-new.php?post_type=product' ) . '">here</a>.',
 				'notice-warning'
 			);
 			settings_errors( 'shareasale_wc_tracker_products' );
