@@ -148,7 +148,7 @@ class ShareASale_WC_Tracker_API {
 			return false;
 		}
 
-		$response = wp_remote_get(
+		$response = wp_safe_remote_get(
 			$this->query,
 			array(
 				'headers' => $this->headers,
