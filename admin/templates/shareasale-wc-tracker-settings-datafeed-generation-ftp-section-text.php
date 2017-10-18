@@ -8,7 +8,7 @@ $prefixed    = 'MID ' . $merchant_id;
 $ip          = $_SERVER['SERVER_ADDR'];
 ?>
 <p>
-You can upload this file to ShareASale's FTP server upon generating. Checking this box will also automatically generate a new file and upload it daily if you haven't already generated a feed for that day.
+You can directly upload the file to ShareASale's FTP server upon generating. Checking this box will also automatically generate a new file and upload it daily if you haven't already generated one yourself for the day.
 </p>
 <?php if ( ! $options['ftp-upload'] ) : ?>
 <p>
