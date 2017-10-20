@@ -191,7 +191,7 @@ class ShareASale_WC_Tracker_Admin {
 			printf(
 				'<div id="shareasale-wc-tracker-ftp-failed" class="%1$s"><p>%2$s</p></div>',
 				trim( implode( ' ', $classes ) ),
-				'Your daily product datafeed FTP upload to ShareASale failed on ' . date( 'F jS, Y', strtotime( $ftp_failed ) ) . ' at ' . date( 'g:i a', strtotime( $ftp_failed ) ) . '. Please check your WordPress permissions and ShareASale FTP credentials. Automatic FTP uploads have been disabled.'
+				'Your daily product datafeed FTP upload to ShareASale failed on ' . date( 'F jS, Y', strtotime( $ftp_failed ) ) . ' at ' . date( 'g:i a', strtotime( $ftp_failed ) ) . '. Please check your WordPress permissions at ' . plugin_dir_path( __FILE__ ) . 'datafeeds/ and ShareASale FTP credentials. Automatic FTP uploads have been disabled.'
 			);
 		}
 
@@ -605,7 +605,7 @@ class ShareASale_WC_Tracker_Admin {
 			wp_mail(
 				get_bloginfo( 'admin_email' ),
 				"ShareASale product datafeed automated upload failure",
-				"This is a notice the ShareASale WC Tracker plugin installed on " . get_bloginfo( 'url' ) . " attempted to generate and upload a new product datafeed to ShareASale's FTP server, but failed. Please check your WordPress hosting permissions and ShareASale FTP credentials.\r\nContact shareasale@shareasale.com if you have any questions."
+				"This is a notice the ShareASale WC Tracker plugin installed on " . get_bloginfo( 'url' ) . " attempted to generate and upload a new product datafeed to ShareASale's FTP server, but failed. Please check your WordPress hosting permissions at " . plugin_dir_path( __FILE__ ) . "datafeeds and ShareASale FTP credentials.\r\nContact shareasale@shareasale.com if you have any questions."
 			);
 			//note: 64 character limit on option names!
 			update_option( 'shareasale_wc_tracker_generate_scheduled_datafeed_ftp_failed', date( 'Y-m-d H:i:s' ) );
@@ -628,11 +628,11 @@ class ShareASale_WC_Tracker_Admin {
 			wp_die();
 		}
 
-		$url     = add_query_arg( 'page', 'shareasale_wc_tracker_datafeed_generation', esc_url( admin_url( 'admin.php' ) ) );
-		$dir     = plugin_dir_path( __FILE__ ) . 'datafeeds';
-		$file    = trailingslashit( $dir ) . date( 'mdY' ) . '.csv';
-		$inputs  = array( '_sas_wc_gdf', 'action' );
-		$creds   = request_filesystem_credentials( $url, '', false, $dir, $inputs );
+		$url    = add_query_arg( 'page', 'shareasale_wc_tracker_datafeed_generation', esc_url( admin_url( 'admin.php' ) ) );
+		$dir    = plugin_dir_path( __FILE__ ) . 'datafeeds';
+		$file   = trailingslashit( $dir ) . date( 'mdY' ) . '.csv';
+		$inputs = array( '_sas_wc_gdf', 'action' );
+		$creds  = request_filesystem_credentials( $url, '', false, $dir, $inputs );
 
 		if ( ! $creds ) {
 			//stop here, we can't even write to /datafeeds yet and need credentials form...
