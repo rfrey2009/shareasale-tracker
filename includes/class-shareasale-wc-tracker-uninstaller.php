@@ -20,6 +20,9 @@ class ShareASale_WC_Tracker_Uninstaller {
 		unregister_setting( 'shareasale_wc_tracker_options', 'shareasale_wc_tracker_options' );
 		delete_option( 'shareasale_wc_tracker_options' );
 		delete_option( 'shareasale_wc_tracker_version' );
+		delete_option( 'shareasale_wc_tracker_generate_scheduled_datafeed_ftp_failed' );
+		//unschedule possible automated product datafeed FTP upload
+		wp_unschedule_event( wp_next_scheduled( 'shareasale_wc_tracker_generate_scheduled_datafeed' ), 'shareasale_wc_tracker_generate_scheduled_datafeed' );
 	}
 
 	public static function disable() {
