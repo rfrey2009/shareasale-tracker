@@ -3,7 +3,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 $options     = get_option( 'shareasale_wc_tracker_options' );
-$merchant_id = $options['merchant-id'];
+$merchant_id = @$options['merchant-id'];
 $prefixed    = 'MID ' . $merchant_id;
 ?>
 <style>
