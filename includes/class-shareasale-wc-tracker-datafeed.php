@@ -231,7 +231,7 @@ class ShareASale_WC_Tracker_Datafeed {
 					'<a target="_blank" href="' . esc_url( get_edit_post_link( $product_id, '' ) ) . '">' . esc_html( $product_id ) . '</a> is missing a ShareASale subcategory number.',
 					$this->push_error_data( 'subcategory', $product_id )
 				),
-				'Description'                           => version_compare( $this->wc_version, '3.0' ) >= 0 ? wp_strip_all_tags( $product_row->get_description() ) : wp_strip_all_tags( $product_row->get_post_data()->post_content ),
+				'Description'                           => version_compare( $this->wc_version, '3.0' ) >= 0 ? wp_strip_all_tags( preg_replace( '/\[(.*?)\]/', '', $product_row->get_description() ) ) : wp_strip_all_tags( preg_replace( '/\[(.*?)\]/', '', $product_row->get_post_data()->post_content ) ),
 				'SearchTerms'                           => version_compare( $this->wc_version, '3.0' ) >= 0 ? wp_strip_all_tags( wc_get_product_tag_list( $product_id, ',' ) ) : wp_strip_all_tags( $product_row->get_tags( ',' ) ),
 				'Status'                                => $product_row->is_in_stock() ? 'instock' : 'soldout',
 				//required
@@ -248,7 +248,7 @@ class ShareASale_WC_Tracker_Datafeed {
 				'PartNumber'                            => $product_row->get_attribute( 'partnumber' ),
 				'MerchantCategory'                      => end( $merchant_taxonomy ),
 				'MerchantSubcategory'                   => prev( $merchant_taxonomy ),
-				'ShortDescription'                      => version_compare( $this->wc_version, '3.0' ) >= 0 ? wp_strip_all_tags( $product_row->get_short_description() ) : '',
+				'ShortDescription'                      => version_compare( $this->wc_version, '3.0' ) >= 0 ? wp_strip_all_tags( preg_replace( '/\[(.*?)\]/', '', $product_row->get_short_description() ) ) : '',
 				'ISBN'                                  => $product_row->get_attribute( 'ISBN' ),
 				'UPC'                                   => $product_row->get_attribute( 'UPC' ),
 				//array_filter used without callback argument to remove false values from array
