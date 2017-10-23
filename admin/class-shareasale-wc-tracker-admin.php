@@ -322,7 +322,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'api-token',
 				'name'        => 'api-token',
 				'value'       => ! empty( $options['api-token'] ) ? $options['api-token'] : '',
-				'status'      => disabled( @$options['reconciliation-setting'], 0, false ) . " required='required'",
+				'status'      => disabled( @$options['reconciliation-setting'], 0, false ) . disabled( @$options['reconciliation-setting'], '', false ) . " required='required'",
 				'size'        => 20,
 				'type'        => 'text',
 				'placeholder' => 'Enter your API Token',
@@ -334,7 +334,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'api-secret',
 				'name'        => 'api-secret',
 				'value'       => ! empty( $options['api-secret'] ) ? $options['api-secret'] : '',
-				'status'      => disabled( @$options['reconciliation-setting'], 0, false ) . " required='required'",
+				'status'      => disabled( @$options['reconciliation-setting'], 0, false ) . disabled( @$options['reconciliation-setting'], '', false ) . " required='required'",
 				'size'        => 34,
 				'type'        => 'text',
 				'placeholder' => 'Enter your API Secret',
@@ -396,7 +396,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'ftp-username',
 				'name'        => 'ftp-username',
 				'value'       => ! empty( $options['ftp-username'] ) ? $options['ftp-username'] : '',
-				'status'      => disabled( @$options['ftp-upload'], 0, false ) . " required='required'",
+				'status'      => disabled( @$options['ftp-upload'], 0, false ) . disabled( @$options['ftp-upload'], '', false ) . " required='required'",
 				'size'        => 33,
 				'type'        => 'text',
 				'placeholder' => 'Enter your Required FTP Username',
@@ -408,7 +408,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'ftp-password',
 				'name'        => 'ftp-password',
 				'value'       => ! empty( $options['ftp-password'] ) ? $options['ftp-password'] : '',
-				'status'      => disabled( @$options['ftp-upload'], 0, false ) . " required='required'",
+				'status'      => disabled( @$options['ftp-upload'], 0, false ) . disabled( @$options['ftp-upload'], '', false ) . " required='required'",
 				'size'        => 33,
 				'type'        => 'password',
 				'placeholder' => 'Enter your Required FTP Password',
@@ -447,7 +447,7 @@ class ShareASale_WC_Tracker_Admin {
 				'id'          => 'analytics-passkey',
 				'name'        => 'analytics-passkey',
 				'value'       => ! empty( $options['analytics-passkey'] ) ? $options['analytics-passkey'] : '',
-				'status'      => disabled( @$options['analytics-setting'], 0, false ) . " required='required'",
+				'status'      => disabled( @$options['analytics-setting'], 0, false ) . disabled( @$options['analytics-setting'], '', false ) . " required='required'",
 				'size'        => 28,
 				'type'        => 'text',
 				'placeholder' => 'Enter your Required Passkey',
@@ -839,7 +839,7 @@ class ShareASale_WC_Tracker_Admin {
 			);
 		}
 
-		if ( 1 == $final_settings['reconciliation-setting'] ) {
+		if ( 1 == @$final_settings['reconciliation-setting'] ) {
 
 			if ( isset( $diff_new_settings['merchant-id'] ) || isset( $diff_new_settings['api-token'] ) || isset( $diff_new_settings['api-secret'] ) || 0 == $old_settings['reconciliation-setting'] ) {
 
@@ -860,7 +860,7 @@ class ShareASale_WC_Tracker_Admin {
 			}
 		}
 
-		if ( 1 == $final_settings['analytics-setting'] && $final_settings['merchant-id'] ) {
+		if ( 1 == @$final_settings['analytics-setting'] && @$final_settings['merchant-id'] ) {
 			/*
 			* If you're reading this, the passkey we provide is not really intended to be a secure form of authentication whatsoever...
 			* It's just there to ensure Merchants have first contacted ShareASale and reached a plan for actually using advanced analytics with our Conversion Lines feature.
@@ -883,7 +883,7 @@ class ShareASale_WC_Tracker_Admin {
 				$final_settings['analytics-setting'] = 0;
 		}
 
-		if ( 1 == $final_settings['ftp-upload'] ) {
+		if ( 1 == @$final_settings['ftp-upload'] ) {
 			$ftp = new \FtpClient\FtpClient();
 			$username = @$final_settings['ftp-username'];
 			$password = @$final_settings['ftp-password'];
