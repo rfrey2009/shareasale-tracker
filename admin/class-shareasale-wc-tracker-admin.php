@@ -680,6 +680,7 @@ class ShareASale_WC_Tracker_Admin {
 			try {
 				$ftp->connect( SHAREASALE_WC_TRACKER_FTP_HOSTNAME );
 				$ftp->login( $username, $password );
+				$ftp->pasv( true );
 				$uploaded = $ftp->putFromPath( $upload['path'] );
 				if ( $uploaded ) {
 					add_settings_error(
@@ -702,7 +703,7 @@ class ShareASale_WC_Tracker_Admin {
 				add_settings_error(
 					'shareasale_wc_tracker_ftp_upload_failed',
 					esc_attr( 'ftp' ),
-					$e->getMessage() . '. Couldn\'t FTP upload generated product datafeed file. Did you enter the right credentials above?'
+					$e->getMessage() . '. Couldn\'t FTP upload generated product datafeed file. Did you enter the right credentials?'
 				);
 				settings_errors( 'shareasale_wc_tracker_ftp_upload_failed' );
 				return false;
@@ -899,7 +900,7 @@ class ShareASale_WC_Tracker_Admin {
 				add_settings_error(
 					'shareasale_wc_tracker_ftp_login',
 					esc_attr( 'ftp' ),
-					$e->getMessage() . '. Did you enter the right credentials above?'
+					$e->getMessage() . '. Did you enter the right credentials?'
 				);
 				$final_settings['ftp-username'] = $final_settings['ftp-password'] = '';
 				$final_settings['ftp-upload'] = 0;

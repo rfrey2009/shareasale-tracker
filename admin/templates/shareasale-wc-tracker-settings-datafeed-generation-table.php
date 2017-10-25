@@ -63,26 +63,28 @@ $datafeeds = $wpdb->get_results(
 					break;
 				case 'warnings':
 					$warnings = maybe_unserialize( $value );
-					foreach ( $warnings as $code => $warning ) {
-						$messages = $warning['messages'];
-						$count    = count( $messages );
-						if ( $count > 0 ) {
-							echo '<div class="shareasale-wc-tracker-datafeeds-error-code">';
-							echo '<b>' . esc_html( strtoupper( $code ) ) . '</b>';
-							echo '<a class="shareasale-wc-tracker-datafeeds-error-count">'
-									. esc_html( $count ) .
-								 '</a><br>';
-							foreach ( $messages as $message ) {
-								echo '<div class="shareasale-wc-tracker-datafeeds-error-message shareasale-wc-tracker-datafeeds-error-message-hidden">';
-								echo wp_kses( $message, array(
-									'a' => array(
-										'target'  => true,
-										'href'    => true,
-										),
-									)
-								) . '</div>';
+					if( $warnings ) {
+						foreach ( $warnings as $code => $warning ) {
+							$messages = $warning['messages'];
+							$count    = count( $messages );
+							if ( $count > 0 ) {
+								echo '<div class="shareasale-wc-tracker-datafeeds-error-code">';
+								echo '<b>' . esc_html( strtoupper( $code ) ) . '</b>';
+								echo '<a class="shareasale-wc-tracker-datafeeds-error-count">'
+										. esc_html( $count ) .
+									 '</a><br>';
+								foreach ( $messages as $message ) {
+									echo '<div class="shareasale-wc-tracker-datafeeds-error-message shareasale-wc-tracker-datafeeds-error-message-hidden">';
+									echo wp_kses( $message, array(
+										'a' => array(
+											'target'  => true,
+											'href'    => true,
+											),
+										)
+									) . '</div>';
+								}
+								echo '</div>';
 							}
-							echo '</div>';
 						}
 					}
 					break;
