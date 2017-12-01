@@ -460,6 +460,7 @@ class ShareASale_WC_Tracker_Admin {
 		$current_version = get_option( 'shareasale_wc_tracker_version' );
 		$latest_version  = $this->version;
 		//at first installation, shareasale_wc_tracker_version actually gets defined here even if not an upgrade
+		//only run if there's version difference at all, and then in the upgrade() method figure out which version we're exactly upgrading from and to...
 		if ( -1 === version_compare( $current_version, $latest_version ) ) {
 			ShareASale_WC_Tracker_Installer::upgrade( $current_version, $latest_version );
 		}

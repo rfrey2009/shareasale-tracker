@@ -45,6 +45,7 @@ class ShareASale_WC_Tracker_Pixel {
 	}
 
 	public function woocommerce_thankyou( $order_id ) {
+
 		$options        = get_option( 'shareasale_wc_tracker_options' );
 		$merchant_id    = @$options['merchant-id'];
 		$store_id       = @$options['store-id'];
@@ -151,16 +152,29 @@ class ShareASale_WC_Tracker_Pixel {
 			array( 'jquery' ),
 			$this->version
 		);
+
 		//called post_id here because that's really the WPDB entry that's meta is being updated
-		wp_localize_script(
+		$this->shareasale_wc_tracker_add_data(
 			'shareasale-wc-tracker-triggered',
-			'shareasaleWcTrackerTriggeredData',
-			array(
-				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'wp_ajax_shareasale_wc_tracker_triggered' ),
-				'post_id' => $order_id,
+			'var shareasaleWcTrackerTriggeredData = ' . wp_json_encode(
+				array(
+					'ajaxurl' => admin_url( 'admin-ajax.php' ),
+					'nonce'   => wp_create_nonce( 'wp_ajax_shareasale_wc_tracker_triggered' ),
+					'post_id' => $order_id,
+				)
 			)
 		);
+
+		// wp_localize_script(
+		// 	'shareasale-wc-tracker-triggered',
+		// 	'shareasaleWcTrackerTriggeredData',
+		// 	array(
+		// 		'ajaxurl' => admin_url( 'admin-ajax.php' ),
+		// 		'nonce'   => wp_create_nonce( 'wp_ajax_shareasale_wc_tracker_triggered' ),
+		// 		'post_id' => $order_id,
+		// 	)
+		// );
+
 		//add the actual tracking pixel to the page via JS
 		$src2 = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-pixel.js' );
 		wp_enqueue_script(
@@ -170,15 +184,27 @@ class ShareASale_WC_Tracker_Pixel {
 			$this->version
 		);
 
-		wp_localize_script(
+		$this->shareasale_wc_tracker_add_data(
 			'shareasale-wc-tracker-pixel',
-			'shareasaleWcTrackerPixel',
-			array(
-				'src'    => $url,
-				'onload' => 'shareasaleWcTrackerTriggered()',
-				'id'     => '_SHRSL_img_1',
+			'var shareasaleWcTrackerPixel = ' . wp_json_encode(
+				array(
+					'src'    => $url,
+					'onload' => 'shareasaleWcTrackerTriggered()',
+					'id'     => '_SHRSL_img_1',
+				)
 			)
 		);
+
+		// wp_localize_script(
+		// 	'shareasale-wc-tracker-pixel',
+		// 	'shareasaleWcTrackerPixel',
+		// 	array(
+		// 		'src'    => $url,
+		// 		'onload' => 'shareasaleWcTrackerTriggered()',
+		// 		'id'     => '_SHRSL_img_1',
+		// 	)
+		// );
+
 		//second-chance pixel domain swap in case of adblockers
 		$src3 = esc_url( 'https://shareasale-analytics.com/j.js' );
 		wp_enqueue_script(
@@ -187,6 +213,32 @@ class ShareASale_WC_Tracker_Pixel {
 			array( 'shareasale-wc-tracker-pixel' ),
 			$this->version
 		);
+
+	}
+
+	public function shareasale_wc_tracker_add_data( $handle, $json ) {
+		//Collect input data
+		$data = array();
+		$data[ $handle ] = $json;
+
+	    // Append data for relevant script handle
+	    add_filter(
+	        'script_loader_tag',
+	        function( $tag, $hndl, $src ) use ( &$data, $handle ) {
+	            // Nothing to do if no match
+	            if ( ! isset( $data[ $hndl ] ) ) {
+	                return $tag;
+	            }
+
+	            // Append data
+	            $tag = sprintf(
+	                "<script type='text/javascript' data-noptimize>\n/* <![CDATA[ */\n%s;\n/* ]]> */\n</script>" . PHP_EOL,
+	                $data[ $hndl ]
+	            ) . $tag;
+
+	            return $tag;
+	        },
+		10, 3 );
 	}
 
 	public function wp_ajax_nopriv_shareasale_wc_tracker_triggered() {
