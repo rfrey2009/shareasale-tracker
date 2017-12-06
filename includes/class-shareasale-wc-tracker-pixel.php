@@ -132,9 +132,9 @@ class ShareASale_WC_Tracker_Pixel {
 		$query_string = '?' . http_build_query( $params );
 		$url          = 'https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype;
 		//backup pixel if JS is disabled (rare)
-		$noscript_pixel = '<noscript><img id = "_SHRSL_img_1" src = "' . $url . '" width = "1" height = "1"></noscript>';
+		$noscript_pixel = '<noscript id = "_SHRSL_noscript_1"><img id = "_SHRSL_img_1" src = "' . $url . '" width = "1" height = "1"></noscript>';
 		echo wp_kses( $noscript_pixel, array(
-									'noscript' => array(),
+									'noscript' => array( 'id' => true ),
 									'img' => array(
 										'id'           => true,
 										'src'          => true,
@@ -184,26 +184,26 @@ class ShareASale_WC_Tracker_Pixel {
 			$this->version
 		);
 
-		$this->shareasale_wc_tracker_add_data(
-			'shareasale-wc-tracker-pixel',
-			'var shareasaleWcTrackerPixel = ' . wp_json_encode(
-				array(
-					'src'    => $url,
-					'onload' => 'shareasaleWcTrackerTriggered()',
-					'id'     => '_SHRSL_img_1',
-				)
-			)
-		);
-
-		// wp_localize_script(
+		// $this->shareasale_wc_tracker_add_data(
 		// 	'shareasale-wc-tracker-pixel',
-		// 	'shareasaleWcTrackerPixel',
-		// 	array(
-		// 		'src'    => $url,
-		// 		'onload' => 'shareasaleWcTrackerTriggered()',
-		// 		'id'     => '_SHRSL_img_1',
+		// 	'var shareasaleWcTrackerPixel = ' . wp_json_encode(
+		// 		array(
+		// 			'src'    => $url,
+		// 			'onload' => 'shareasaleWcTrackerTriggered()',
+		// 			'id'     => '_SHRSL_img_1',
+		// 		)
 		// 	)
 		// );
+
+		wp_localize_script(
+			'shareasale-wc-tracker-pixel',
+			'shareasaleWcTrackerPixel',
+			array(
+				'src'    => $url,
+				'onload' => 'shareasaleWcTrackerTriggered()',
+				'id'     => '_SHRSL_img_1',
+			)
+		);
 
 		//second-chance pixel domain swap in case of adblockers
 		$src3 = esc_url( 'https://shareasale-analytics.com/j.js' );
