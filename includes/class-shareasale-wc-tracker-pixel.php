@@ -153,27 +153,27 @@ class ShareASale_WC_Tracker_Pixel {
 			$this->version
 		);
 
-		//called post_id here because that's really the WPDB entry that's meta is being updated
-		$this->shareasale_wc_tracker_add_data(
-			'shareasale-wc-tracker-triggered',
-			'var shareasaleWcTrackerTriggeredData = ' . wp_json_encode(
-				array(
-					'ajaxurl' => admin_url( 'admin-ajax.php' ),
-					'nonce'   => wp_create_nonce( 'wp_ajax_shareasale_wc_tracker_triggered' ),
-					'post_id' => $order_id,
-				)
-			)
-		);
-
-		// wp_localize_script(
+		// //called post_id here because that's really the WPDB entry that's meta is being updated
+		// $this->shareasale_wc_tracker_add_data(
 		// 	'shareasale-wc-tracker-triggered',
-		// 	'shareasaleWcTrackerTriggeredData',
-		// 	array(
-		// 		'ajaxurl' => admin_url( 'admin-ajax.php' ),
-		// 		'nonce'   => wp_create_nonce( 'wp_ajax_shareasale_wc_tracker_triggered' ),
-		// 		'post_id' => $order_id,
+		// 	'var shareasaleWcTrackerTriggeredData = ' . wp_json_encode(
+		// 		array(
+		// 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+		// 			'nonce'   => wp_create_nonce( 'wp_ajax_shareasale_wc_tracker_triggered' ),
+		// 			'post_id' => $order_id,
+		// 		)
 		// 	)
 		// );
+
+		wp_localize_script(
+			'shareasale-wc-tracker-triggered',
+			'shareasaleWcTrackerTriggeredData',
+			array(
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'wp_ajax_shareasale_wc_tracker_triggered' ),
+				'post_id' => $order_id,
+			)
+		);
 
 		//add the actual tracking pixel to the page via JS
 		$src2 = esc_url( plugin_dir_url( __FILE__ ) . 'js/shareasale-wc-tracker-pixel.js' );
@@ -216,30 +216,30 @@ class ShareASale_WC_Tracker_Pixel {
 
 	}
 
-	public function shareasale_wc_tracker_add_data( $handle, $json ) {
-		//Collect input data
-		$data = array();
-		$data[ $handle ] = $json;
+	// public function shareasale_wc_tracker_add_data( $handle, $json ) {
+	// 	//Collect input data
+	// 	$data = array();
+	// 	$data[ $handle ] = $json;
 
-	    // Append data for relevant script handle
-	    add_filter(
-	        'script_loader_tag',
-	        function( $tag, $hndl, $src ) use ( &$data, $handle ) {
-	            // Nothing to do if no match
-	            if ( ! isset( $data[ $hndl ] ) ) {
-	                return $tag;
-	            }
+	//     // Append data for relevant script handle
+	//     add_filter(
+	//         'script_loader_tag',
+	//         function( $tag, $hndl, $src ) use ( &$data, $handle ) {
+	//             // Nothing to do if no match
+	//             if ( ! isset( $data[ $hndl ] ) ) {
+	//                 return $tag;
+	//             }
 
-	            // Append data
-	            $tag = sprintf(
-	                "<script type='text/javascript' data-noptimize>\n/* <![CDATA[ */\n%s;\n/* ]]> */\n</script>" . PHP_EOL,
-	                $data[ $hndl ]
-	            ) . $tag;
+	//             // Append data
+	//             $tag = sprintf(
+	//                 "<script type='text/javascript' data-noptimize>\n/* <![CDATA[ */\n%s;\n/* ]]> */\n</script>" . PHP_EOL,
+	//                 $data[ $hndl ]
+	//             ) . $tag;
 
-	            return $tag;
-	        },
-		10, 3 );
-	}
+	//             return $tag;
+	//         },
+	// 	10, 3 );
+	// }
 
 	public function wp_ajax_nopriv_shareasale_wc_tracker_triggered() {
 		$this->wp_ajax_shareasale_wc_tracker_triggered();

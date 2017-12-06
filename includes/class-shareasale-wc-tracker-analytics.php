@@ -42,22 +42,22 @@ class ShareASale_WC_Tracker_Analytics {
 			$this->version
 		);
 
-		$this->shareasale_wc_tracker_add_data(
-			'shareasale-wc-tracker-analytics',
-			'var shareasaleWcTrackerAnalytics = ' . wp_json_encode(
-				array(
-					'merchantId' => $merchant_id,
-				)
-			)
-		);
-
-		// wp_localize_script(
+		// $this->shareasale_wc_tracker_add_data(
 		// 	'shareasale-wc-tracker-analytics',
-		// 	'shareasaleWcTrackerAnalytics',
-		// 	array(
-		// 		'merchantId' => $merchant_id,
+		// 	'var shareasaleWcTrackerAnalytics = ' . wp_json_encode(
+		// 		array(
+		// 			'merchantId' => $merchant_id,
+		// 		)
 		// 	)
 		// );
+
+		wp_localize_script(
+			'shareasale-wc-tracker-analytics',
+			'shareasaleWcTrackerAnalytics',
+			array(
+				'merchantId' => $merchant_id,
+			)
+		);
 
 		if ( is_cart() ) {
 			wp_enqueue_script(
@@ -67,22 +67,22 @@ class ShareASale_WC_Tracker_Analytics {
 				$this->version
 			);
 
-			$this->shareasale_wc_tracker_add_data(
-				'shareasale-wc-tracker-analytics-cart-observer',
-				'var shareasaleWcTrackerAnalyticsCartObserver = ' . wp_json_encode(
-					array(
-						'ajaxurl' => admin_url( 'admin-ajax.php' ),
-					)
-				)
-			);
-
-			// wp_localize_script(
+			// $this->shareasale_wc_tracker_add_data(
 			// 	'shareasale-wc-tracker-analytics-cart-observer',
-			// 	'shareasaleWcTrackerAnalyticsCartObserver',
-			// 	array(
-			// 		'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			// 	'var shareasaleWcTrackerAnalyticsCartObserver = ' . wp_json_encode(
+			// 		array(
+			// 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			// 		)
 			// 	)
 			// );
+
+			wp_localize_script(
+				'shareasale-wc-tracker-analytics-cart-observer',
+				'shareasaleWcTrackerAnalyticsCartObserver',
+				array(
+					'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				)
+			);
 		}
 	}
 
@@ -170,26 +170,26 @@ class ShareASale_WC_Tracker_Analytics {
 			$this->version
 		);
 
-		$this->shareasale_wc_tracker_add_data(
-			'shareasale-wc-tracker-analytics-add-to-cart',
-			'var shareasaleWcTrackerAnalyticsAddToCart = ' . wp_json_encode(
-				array(
-					'skulist'      => $skulist,
-					'pricelist'    => $pricelist,
-					'quantitylist' => $quantitylist,
-				)
-			)
-		);
-
-		// wp_localize_script(
+		// $this->shareasale_wc_tracker_add_data(
 		// 	'shareasale-wc-tracker-analytics-add-to-cart',
-		// 	'shareasaleWcTrackerAnalyticsAddToCart',
-		// 	array(
-		// 		'skulist'      => $skulist,
-		// 		'pricelist'    => $pricelist,
-		// 		'quantitylist' => $quantitylist,
+		// 	'var shareasaleWcTrackerAnalyticsAddToCart = ' . wp_json_encode(
+		// 		array(
+		// 			'skulist'      => $skulist,
+		// 			'pricelist'    => $pricelist,
+		// 			'quantitylist' => $quantitylist,
+		// 		)
 		// 	)
 		// );
+
+		wp_localize_script(
+			'shareasale-wc-tracker-analytics-add-to-cart',
+			'shareasaleWcTrackerAnalyticsAddToCart',
+			array(
+				'skulist'      => $skulist,
+				'pricelist'    => $pricelist,
+				'quantitylist' => $quantitylist,
+			)
+		);
 	}
 
 	public function woocommerce_before_checkout_form() {
@@ -234,26 +234,26 @@ class ShareASale_WC_Tracker_Analytics {
 				$this->version
 			);
 
-			$this->shareasale_wc_tracker_add_data(
-				'shareasale-wc-tracker-analytics-begin-checkout',
-				'var shareasaleWcTrackerAnalyticsBeginCheckout = ' . wp_json_encode(
-					array(
-						'skulist'      => $skulist,
-						'pricelist'    => $pricelist,
-						'quantitylist' => $quantitylist,
-					)
-				)
-			);
-
-			// wp_localize_script(
+			// $this->shareasale_wc_tracker_add_data(
 			// 	'shareasale-wc-tracker-analytics-begin-checkout',
-			// 	'shareasaleWcTrackerAnalyticsBeginCheckout',
-			// 	array(
-			// 		'skulist'      => $skulist,
-			// 		'pricelist'    => $pricelist,
-			// 		'quantitylist' => $quantitylist,
+			// 	'var shareasaleWcTrackerAnalyticsBeginCheckout = ' . wp_json_encode(
+			// 		array(
+			// 			'skulist'      => $skulist,
+			// 			'pricelist'    => $pricelist,
+			// 			'quantitylist' => $quantitylist,
+			// 		)
 			// 	)
 			// );
+
+			wp_localize_script(
+				'shareasale-wc-tracker-analytics-begin-checkout',
+				'shareasaleWcTrackerAnalyticsBeginCheckout',
+				array(
+					'skulist'      => $skulist,
+					'pricelist'    => $pricelist,
+					'quantitylist' => $quantitylist,
+				)
+			);
 		}
 	}
 
@@ -285,21 +285,21 @@ class ShareASale_WC_Tracker_Analytics {
 				$this->version
 			);
 
-			$this->shareasale_wc_tracker_add_data(
-				'shareasale-wc-tracker-analytics-applied-coupon',
-				'var shareasaleWcTrackerAnalyticsAppliedCoupon = ' . wp_json_encode(
-					array(
-						'couponcode' => $coupon_code,
-					)
-				)
-			);
-			// wp_localize_script(
+			// $this->shareasale_wc_tracker_add_data(
 			// 	'shareasale-wc-tracker-analytics-applied-coupon',
-			// 	'shareasaleWcTrackerAnalyticsAppliedCoupon',
-			// 	array(
-			// 		'couponcode' => $coupon_code,
+			// 	'var shareasaleWcTrackerAnalyticsAppliedCoupon = ' . wp_json_encode(
+			// 		array(
+			// 			'couponcode' => $coupon_code,
+			// 		)
 			// 	)
 			// );
+			wp_localize_script(
+				'shareasale-wc-tracker-analytics-applied-coupon',
+				'shareasaleWcTrackerAnalyticsAppliedCoupon',
+				array(
+					'couponcode' => $coupon_code,
+				)
+			);
 		}
 	}
 
@@ -322,48 +322,48 @@ class ShareASale_WC_Tracker_Analytics {
 			$this->version
 		);
 
-		$this->shareasale_wc_tracker_add_data(
-			'shareasale-wc-tracker-analytics-conversion',
-			'var shareasaleWcTrackerAnalyticsConversion = ' . wp_json_encode(
-				array(
-					'ordernumber' => $ordernumber,
-				)
-			)
-		);
-
-		// wp_localize_script(
+		// $this->shareasale_wc_tracker_add_data(
 		// 	'shareasale-wc-tracker-analytics-conversion',
-		// 	'shareasaleWcTrackerAnalyticsConversion',
-		// 	array(
-		// 		'ordernumber' => $ordernumber,
+		// 	'var shareasaleWcTrackerAnalyticsConversion = ' . wp_json_encode(
+		// 		array(
+		// 			'ordernumber' => $ordernumber,
+		// 		)
 		// 	)
 		// );
+
+		wp_localize_script(
+			'shareasale-wc-tracker-analytics-conversion',
+			'shareasaleWcTrackerAnalyticsConversion',
+			array(
+				'ordernumber' => $ordernumber,
+			)
+		);
 	}
 
-	public function shareasale_wc_tracker_add_data( $handle, $json ) {
-		//Collect input data
-		$data = array();
-		$data[ $handle ] = $json;
+	// public function shareasale_wc_tracker_add_data( $handle, $json ) {
+	// 	//Collect input data
+	// 	$data = array();
+	// 	$data[ $handle ] = $json;
 
-	    // Append data for relevant script handle
-	    add_filter(
-	        'script_loader_tag',
-	        function( $tag, $hndl, $src ) use ( &$data, $handle ) {
-	            // Nothing to do if no match
-	            if ( ! isset( $data[ $hndl ] ) ) {
-	                return $tag;
-	            }
+	//     // Append data for relevant script handle
+	//     add_filter(
+	//         'script_loader_tag',
+	//         function( $tag, $hndl, $src ) use ( &$data, $handle ) {
+	//             // Nothing to do if no match
+	//             if ( ! isset( $data[ $hndl ] ) ) {
+	//                 return $tag;
+	//             }
 
-	            // Append data
-	            $tag = sprintf(
-	                "<script type='text/javascript' data-noptimize>\n/* <![CDATA[ */\n%s;\n/* ]]> */\n</script>" . PHP_EOL,
-	                $data[ $hndl ]
-	            ) . $tag;
+	//             // Append data
+	//             $tag = sprintf(
+	//                 "<script type='text/javascript' data-noptimize>\n/* <![CDATA[ */\n%s;\n/* ]]> */\n</script>" . PHP_EOL,
+	//                 $data[ $hndl ]
+	//             ) . $tag;
 
-	            return $tag;
-	        },
-		10, 3 );
-	}
+	//             return $tag;
+	//         },
+	// 	10, 3 );
+	// }
 
 	private function calculate_lists( $items ) {
 		$last_index = array_search( end( $items ), $items, true );
