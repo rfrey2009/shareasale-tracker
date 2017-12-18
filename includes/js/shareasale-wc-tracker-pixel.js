@@ -9,6 +9,6 @@ try {
 	document.body.appendChild(shareasaleWcTrackerPixelImg);
 }
 catch (e) {
-	console.log(e);
+	console.log('ShareASale JS failed because ' + e + ', so unwrapped <noscript> as a fallback');
 	jQuery('body').append(jQuery('noscript#_SHRSL_noscript_1').text());
 }

@@ -1,8 +1,8 @@
 === ShareASale WooCommerce Tracker ===
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 3.0.1
-Tested up to: 4.8
-Stable tag: 1.3.2
+Tested up to: 4.9.1
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,9 @@ http://blog.shareasale.com/2015/02/04/conversion-lines-where-the-tracking-gap-en
 g. If you'd like to automatically send ShareASale your WooCommerce coupons as a coupon/deal type creative, check the "send to ShareASale?" box while adding/editing a WooCommerce coupon. Make sure to choose a coupon description.
 
 == Changelog ==
+
+= 1.3.3 =
+* Small change to prevent caching and optimizing plugins from interfering with ShareASale tracking.
 
 = 1.3.2 =
 * Small change to use passive (not active) mode for FTP uploads of ShareASale product datafeeds, for users having trouble with internal firewalls/hosting security settings.

@@ -19,7 +19,7 @@ class ShareASale_WC_Tracker_Pixel {
 	}
 
 	public function script_loader_tag( $tag, $handle, $src ) {
-		$async_scripts = array( 'shareasale-wc-tracker-analytics-second-chance' );
+		//$async_scripts = array( 'shareasale-wc-tracker-analytics-second-chance' );
 		$other_scripts = array(
 			'shareasale-wc-tracker-admin-js',
 			'shareasale-wc-tracker-notices-js',
@@ -33,9 +33,9 @@ class ShareASale_WC_Tracker_Pixel {
 			'shareasale-wc-tracker-pixel',
 		);
 
-		if ( in_array( $handle, $async_scripts, true ) ) {
-			return '<script type="text/javascript" src="' . $src . '" defer async data-noptimize></script>' . "\n";
-		}
+		// if ( in_array( $handle, $async_scripts, true ) ) {
+		// 	return '<script type="text/javascript" src="' . $src . '" defer async data-noptimize></script>' . "\n";
+		// }
 
 		if ( in_array( $handle, $other_scripts, true ) ) {
 			return '<script type="text/javascript" src="' . $src . '" data-noptimize></script>' . "\n";
@@ -132,15 +132,16 @@ class ShareASale_WC_Tracker_Pixel {
 		$query_string = '?' . http_build_query( $params );
 		$url          = 'https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype;
 		//backup pixel if JS is disabled (rare)
-		$noscript_pixel = '<noscript id = "_SHRSL_noscript_1"><img id = "_SHRSL_img_1" src = "' . $url . '" width = "1" height = "1" onload="shareasaleWcTrackerTriggered()"></noscript>';
+		$noscript_pixel = '<noscript id = "_SHRSL_noscript_1"><img id = "_SHRSL_img_1" src = "' . $url . '" width = "1" height = "1" onload="shareasaleWcTrackerTriggered()" data-no-lazy="1"></noscript>';
 		echo wp_kses( $noscript_pixel, array(
 									'noscript' => array( 'id' => true ),
 									'img' => array(
-										'id'     => true,
-										'onload' => true,
-										'src'    => true,
-										'width'  => true,
-										'height' => true,
+										'id'           => true,
+										'data-no-lazy' => true,
+										'onload'       => true,
+										'src'          => true,
+										'width'        => true,
+										'height'       => true,
 									),
 								)
 		);
@@ -207,13 +208,13 @@ class ShareASale_WC_Tracker_Pixel {
 		);
 
 		//second-chance pixel domain swap in case of adblockers
-		$src3 = esc_url( 'https://shareasale-analytics.com/j.js' );
-		wp_enqueue_script(
-			'shareasale-wc-tracker-analytics-second-chance',
-			$src3,
-			array( 'shareasale-wc-tracker-pixel' ),
-			$this->version
-		);
+		// $src3 = esc_url( 'https://shareasale-analytics.com/j.js' );
+		// wp_enqueue_script(
+		// 	'shareasale-wc-tracker-analytics-second-chance',
+		// 	$src3,
+		// 	array( 'shareasale-wc-tracker-pixel' ),
+		// 	$this->version
+		// );
 
 	}
 

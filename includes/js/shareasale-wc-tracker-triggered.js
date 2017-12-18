@@ -1,4 +1,5 @@
 function shareasaleWcTrackerTriggered(){
+	jQuery('#_SHRSL_img_1').after('<script type="text/javascript" src="https://shareasale-analytics.com/j.js" defer async data-noptimize></script>');
 	jQuery.post( shareasaleWcTrackerTriggeredData.ajaxurl,
 		{ action: 'shareasale_wc_tracker_triggered', post_id: shareasaleWcTrackerTriggeredData.post_id, nonce: shareasaleWcTrackerTriggeredData.nonce },
 		function(data) {
