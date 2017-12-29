@@ -10,5 +10,7 @@ try {
 }
 catch (e) {
 	console.log('ShareASale JS failed because ' + e + ', so unwrapped <noscript> as a fallback');
-	jQuery('body').append(jQuery('noscript#_SHRSL_noscript_1').text());
+	var shareasaleWcTrackerPixelFallback = document.querySelector('#_SHRSL_noscript_1').textContent;
+	document.body.insertAdjacentHTML('beforeend', shareasaleWcTrackerPixelFallback);
+	//jQuery('body').append(jQuery('noscript#_SHRSL_noscript_1').text());
 }
