@@ -151,7 +151,7 @@ class ShareASale_WC_Tracker_Pixel {
 		wp_enqueue_script(
 			'shareasale-wc-tracker-triggered',
 			$src,
-			array( 'jquery' ),
+			array(),
 			$this->version
 		);
 
@@ -182,7 +182,7 @@ class ShareASale_WC_Tracker_Pixel {
 		wp_enqueue_script(
 			'shareasale-wc-tracker-pixel',
 			$src2,
-			array( 'shareasale-wc-tracker-triggered', 'jquery' ),
+			array( 'shareasale-wc-tracker-triggered' ),
 			$this->version
 		);
 
