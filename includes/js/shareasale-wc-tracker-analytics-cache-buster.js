@@ -5,5 +5,6 @@ if(sessionStorage[fragment_name]){
 	delete fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax'];
 	delete fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-cb'];
 	sessionStorage.setItem( fragment_name, JSON.stringify( fragments ) );
+    jQuery( document.body ).trigger( 'wc_fragment_refresh' );
 	console.log('cache busted!');
 }

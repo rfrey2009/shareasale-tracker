@@ -7,6 +7,8 @@
  Depends:  			WooCommerce
  License:           GPL-2.0+
  License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ WC requires at least: 2.3
+ WC tested up to: 3.3
  */
 
 //don't allow access from a web browser
