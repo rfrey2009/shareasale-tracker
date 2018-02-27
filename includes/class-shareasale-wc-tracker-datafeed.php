@@ -149,15 +149,43 @@ class ShareASale_WC_Tracker_Datafeed {
 	}
 
 	private function get_all_product_posts() {
-		$product_posts = get_posts(
-			array(
-				'post_type'   => array( 'product', 'product_variation' ),
-				'numberposts' => -1,
-				'post_status' => 'publish',
-				'order'       => 'ASC',
-				'orderby'     => 'ID',
-			)
-		);
+
+		if ( version_compare( $this->wc_version, '3.0' ) >= 0 ) {
+			$product_posts = get_posts(
+				array(
+					'post_type'   => array( 'product', 'product_variation' ),
+					'numberposts' => -1,
+					'post_status' => 'publish',
+					'order'       => 'ASC',
+					'orderby'     => 'ID',
+					'tax_query' => array(
+					    array(
+					        'taxonomy' => 'product_visibility',
+					        'field'    => 'name',
+					        'terms'    => 'exclude-from-catalog',
+					        'operator' => 'NOT IN',
+					    ),
+					),
+				)
+			);
+		} else {
+			$product_posts = get_posts(
+				array(
+					'post_type'   => array( 'product', 'product_variation' ),
+					'numberposts' => -1,
+					'post_status' => 'publish',
+					'order'       => 'ASC',
+					'orderby'     => 'ID',
+					'meta_query' => array(
+					    array(
+					        'key'       => '_visibility',
+					        'value'     => 'hidden',
+					        'compare'   => '!=',
+					    ),
+					),
+				)
+			);
+		}
 
 		return $product_posts;
 	}
