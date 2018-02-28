@@ -1,6 +1,6 @@
 === ShareASale WooCommerce Tracker ===
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
-Requires at least: 3.0.1
+Requires at least: 4.4
 Tested up to: 4.9.4
 Stable tag: 1.3.5
 License: GPLv2 or later
