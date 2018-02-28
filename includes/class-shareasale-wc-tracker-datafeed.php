@@ -49,11 +49,8 @@ class ShareASale_WC_Tracker_Datafeed {
 				continue;
 			}
 
-			/*
-			* don't bother with a variant product if it has the same non-unique SKU as its parent
-			* can't use $product->get_parent_data()['sku'] unless WC v3.0+
-			*/
-			if ( $product instanceof WC_Product_Variation && $product->get_sku() == get_post_meta( $product_post->post_parent, '_sku', true ) ) {
+			//don't bother with a variant product if it has the same non-unique SKU as its parent
+			if ( $product instanceof WC_Product_Variation && ! wc_product_has_unique_sku( $product->get_id(), $product->get_sku() ) ) {
 				unset( $product );
 				continue;
 			}
@@ -149,43 +146,56 @@ class ShareASale_WC_Tracker_Datafeed {
 	}
 
 	private function get_all_product_posts() {
-
+		//visibility is stored differently in WooCommerce v2 vs v3
 		if ( version_compare( $this->wc_version, '3.0' ) >= 0 ) {
-			$product_posts = get_posts(
+			$query['name']  = 'tax_query';
+			$query['values'] = array(
 				array(
-					'post_type'   => array( 'product', 'product_variation' ),
-					'numberposts' => -1,
-					'post_status' => 'publish',
-					'order'       => 'ASC',
-					'orderby'     => 'ID',
-					'tax_query' => array(
-					    array(
-					        'taxonomy' => 'product_visibility',
-					        'field'    => 'name',
-					        'terms'    => 'exclude-from-catalog',
-					        'operator' => 'NOT IN',
-					    ),
-					),
-				)
+		        	'taxonomy' => 'product_visibility',
+		        	'field'    => 'name',
+		        	'terms'    => 'exclude-from-catalog',
+		        	'operator' => 'NOT IN',
+		        ),
 			);
 		} else {
-			$product_posts = get_posts(
+			$query['name']   = 'meta_query';
+			$query['values'] = array(
+				'relation' => 'OR',
 				array(
-					'post_type'   => array( 'product', 'product_variation' ),
-					'numberposts' => -1,
-					'post_status' => 'publish',
-					'order'       => 'ASC',
-					'orderby'     => 'ID',
-					'meta_query' => array(
-					    array(
-					        'key'       => '_visibility',
-					        'value'     => 'hidden',
-					        'compare'   => '!=',
-					    ),
-					),
-				)
+		        	'key'     => '_visibility',
+		        	'value'   => array( 'hidden', 'search' ),
+		        	'compare' => 'NOT IN',
+		        ),
+				array(
+					'key'     => '_visibility',
+		        	'value'   => array( 'hidden', 'search' ),
+					'compare' => 'NOT EXISTS',
+				),
 			);
 		}
+
+		//get all products and variations that are visible
+		$product_posts = get_posts(
+			array(
+				'post_type'    => array( 'product', 'product_variation' ),
+				'numberposts'  => -1,
+				'post_status'  => 'publish',
+				'order'        => 'ASC',
+				'orderby'      => 'ID',
+				$query['name'] => $query['values'],
+			    'post_parent__not_in' => get_posts(
+					array(
+						'fields'       => 'ids',
+						'post_type'    => 'product',
+						'numberposts'  => -1,
+						'post_status'  => 'publish',
+						'order'        => 'ASC',
+						'orderby'      => 'ID',
+						$query['name'] => array( array_slice( $query['values'][0], 0, -1 ) ),
+					)
+				),
+			)
+		);
 
 		return $product_posts;
 	}
