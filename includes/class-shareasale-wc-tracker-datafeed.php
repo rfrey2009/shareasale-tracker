@@ -188,7 +188,7 @@ class ShareASale_WC_Tracker_Datafeed {
 						'fields'       => 'ids',
 						'post_type'    => 'product',
 						'numberposts'  => -1,
-						'post_status'  => 'publish',
+						'post_status'  => 'any',
 						'order'        => 'ASC',
 						'orderby'      => 'ID',
 						$query['name'] => array( array_slice( $query['values'][0], 0, -1 ) ),
