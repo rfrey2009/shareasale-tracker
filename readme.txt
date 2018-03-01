@@ -2,7 +2,7 @@
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 4.4
 Tested up to: 4.9.4
-Stable tag: 1.3.5
+Stable tag: 1.3.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,9 @@ http://blog.shareasale.com/2015/02/04/conversion-lines-where-the-tracking-gap-en
 g. If you'd like to automatically send ShareASale your WooCommerce coupons as a coupon/deal type creative, check the "send to ShareASale?" box while adding/editing a WooCommerce coupon. Make sure to choose a coupon description.
 
 == Changelog ==
+
+= 1.3.6 =
+* Another small improvement to further filter out catalog hidden and/or private (unpublished) WooCommerce products from product datafeed generation. Also updated the minimum WordPress and WooCommerce compatible version requirements.
 
 = 1.3.5 =
 * Small change to filter out WooCommerce products that are hidden and/or private from product datafeed generation. Bug fix for advance analytics to prevent add-to-cart events from being counted twice if the page was refreshed a certain way.
