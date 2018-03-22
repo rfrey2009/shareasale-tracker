@@ -223,6 +223,7 @@ class ShareASale_WC_Tracker_Datafeed {
 
 		$options           = get_option( 'shareasale_wc_tracker_options' );
 		$merchant_id       = @$options['merchant-id'];
+		$store_id          = @$options['store-id'];
 		$product_id        = $product_row->get_id();
 		$category          = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_category', true ) ?: @$options['default-category'];
 		$subcategory       = get_post_meta( $product_id, 'shareasale_wc_tracker_datafeed_product_subcategory', true ) ?: @$options['default-subcategory'];
@@ -316,6 +317,9 @@ class ShareASale_WC_Tracker_Datafeed {
 				'ReservedForFutureUse'                  => '',
 			);
 
+		if ( $store_id ) {
+			$row = array_slice( $row, 0, 19, true ) + array( 'storeID' => $store_id ) + array_slice( $row, 19, count( $row ) -19, true );
+		}
 		return array_map( array( $this, 'wrap_row' ), $row );
 	}
 
