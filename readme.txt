@@ -1,8 +1,8 @@
 === ShareASale WooCommerce Tracker ===
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 4.4
-Tested up to: 4.9.4
-Stable tag: 1.3.6
+Tested up to: 4.9.5
+Stable tag: 1.3.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,11 +52,17 @@ g. If you'd like to automatically send ShareASale your WooCommerce coupons as a 
 
 == Changelog ==
 
+= 1.3.7 =
+* Small improvement to variation SKU tracking in advanced analytics "add to cart" events. 
+* If you have a store ID entered into your Tracking Settings tab, it will now be passed in generated product datafeed files between custom5 and manufacturer columns. This is necessary for Merchants using ShareASale's StoresConnect feature, with product datafeeds separated by specific stores.
+
 = 1.3.6 =
-* Another small improvement to further filter out catalog hidden and/or private (unpublished) WooCommerce products from product datafeed generation. Also updated the minimum WordPress and WooCommerce compatible version requirements.
+* Another small improvement to further filter out catalog hidden and/or private (unpublished) WooCommerce products from product datafeed generation. 
+* Updated the minimum WordPress and WooCommerce compatible version requirements.
 
 = 1.3.5 =
-* Small change to filter out WooCommerce products that are hidden and/or private from product datafeed generation. Bug fix for advance analytics to prevent add-to-cart events from being counted twice if the page was refreshed a certain way.
+* Small change to filter out WooCommerce products that are hidden and/or private from product datafeed generation. 
+* Bug fix for advance analytics to prevent add-to-cart events from being counted twice if the page was refreshed a certain way.
 
 = 1.3.4 =
 * Small change to remove dependency on jQuery library for the pixel, to further prevent caching and optimizing plugins from interfering with ShareASale tracking.
