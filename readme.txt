@@ -6,7 +6,7 @@ Stable tag: 1.3.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The ShareASale WooCommerce Tracker sets up the tracking pixel on a Merchant's cart, allows commission auto-edits if customers are refunded, automatic coupon uploads to ShareASale, product datafeed generation, and advanced analytics useful for sophisticated Affiliate attribution strategies.
+The ShareASale WooCommerce Tracker sets up the tracking pixel on a Merchant's cart, allows commission auto-edits if customers are refunded, automatic coupon uploads to ShareASale, product datafeed generation, and advanced analytics useful for sophisticated Affiliate attribution strategies. 
 
 == Installation ==
 
