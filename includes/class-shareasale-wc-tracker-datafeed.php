@@ -42,15 +42,19 @@ class ShareASale_WC_Tracker_Datafeed {
 		foreach ( $product_posts as $product_post ) {
 			//protect against instantiating somehow orphaned variations (causing an exception) by checking its parent for a post_type value too
 			if ( 'product_variation' == $product_post->post_type && 'product' == get_post_type( $product_post->post_parent ) ) {
-				$product = new WC_Product_Variation( $product_post );
+				$product     = new WC_Product_Variation( $product_post );
+				$parent_type = wp_get_post_terms( $product->get_parent_id(), 'product_type' )[0]->name;
 			} elseif ( 'product' == $product_post->post_type ) {
 				$product = new WC_Product( $product_post );
 			} else {
 				continue;
 			}
 
-			//don't bother with a variant product if it has the same non-unique SKU as its parent
-			if ( $product instanceof WC_Product_Variation && ! wc_product_has_unique_sku( $product->get_id(), $product->get_sku() ) ) {
+			/* don't bother with a variant product if it:
+			 *has the same non-unique SKU as its parent, usually because though its enabled it isn't assigned a SKU itself yet
+			 *or somehow its parent product was once variable, but is now simple again... without the variations being auto-trashed (rare)
+			*/
+			if ( $product instanceof WC_Product_Variation && ! wc_product_has_unique_sku( $product->get_id(), $product->get_sku() ) || 'simple' == $parent_type ) {
 				unset( $product );
 				continue;
 			}
