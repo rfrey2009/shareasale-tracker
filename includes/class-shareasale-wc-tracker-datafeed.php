@@ -51,10 +51,10 @@ class ShareASale_WC_Tracker_Datafeed {
 			}
 
 			/* don't bother with a variant product if it:
-			 *has the same non-unique SKU as its parent, usually because though its enabled it isn't assigned a SKU itself yet
-			 *or somehow its parent product was once variable, but is now simple again... without the variations being auto-trashed (rare)
+			 *has the same non-unique SKU as its parent, usually because though its enabled it isn't yet assigned a SKU itself
+			 *or somehow its parent product was once variable, but is now simple again... without the variations having been auto-trashed like normal (rare)
 			*/
-			if ( $product instanceof WC_Product_Variation && ! wc_product_has_unique_sku( $product->get_id(), $product->get_sku() ) || 'simple' == $parent_type ) {
+			if ( $product instanceof WC_Product_Variation && ( ! wc_product_has_unique_sku( $product->get_id(), $product->get_sku() ) || 'simple' == $parent_type ) ) {
 				unset( $product );
 				continue;
 			}
