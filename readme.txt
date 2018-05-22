@@ -1,12 +1,13 @@
 === ShareASale WooCommerce Tracker ===
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 4.4
-Tested up to: 4.9.5
-Stable tag: 1.3.7
+Tested up to: 4.9.6
+Requires PHP: 5.3
+Stable tag: 1.3.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The ShareASale WooCommerce Tracker sets up the tracking pixel on a Merchant's cart, allows commission auto-edits if customers are refunded, automatic coupon uploads to ShareASale, product datafeed generation, and advanced analytics useful for sophisticated Affiliate attribution strategies. 
+The ShareASale WooCommerce Tracker sets up the tracking pixel on a Merchant's cart, allows commission auto-edits if customers are refunded, automatic coupon uploads to ShareASale, product datafeed generation, and advanced analytics useful for sophisticated Affiliate attribution strategies.
 
 == Installation ==
 
@@ -51,6 +52,9 @@ http://blog.shareasale.com/2015/02/04/conversion-lines-where-the-tracking-gap-en
 g. If you'd like to automatically send ShareASale your WooCommerce coupons as a coupon/deal type creative, check the "send to ShareASale?" box while adding/editing a WooCommerce coupon. Make sure to choose a coupon description.
 
 == Changelog ==
+
+= 1.3.8 =
+* Small improvement for Merchants who have variable product types that later change back to simple product types, and the past child variations are not automatically trashed by WooCommerce as expected. These will be excluded from generated ShareASale product datafeed files.
 
 = 1.3.7 =
 * Small improvement to variation SKU tracking in advanced analytics "add to cart" events. 
