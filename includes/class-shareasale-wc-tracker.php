@@ -30,6 +30,7 @@ class ShareASale_WC_Tracker {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-shareasale-wc-tracker-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-pixel.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-reconciler.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-mastertag.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-analytics.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-loader.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-installer.php';
@@ -42,6 +43,9 @@ class ShareASale_WC_Tracker {
 	}
 
 	private function define_frontend_hooks() {
+		$mastertag = new ShareASale_WC_Tracker_Mastertag( $this->version );
+		$this->loader->add_action( 'wp_enqueue_scripts', $mastertag, 'enqueue_scripts' );
+
 		$this->loader->add_action( 'wp_head', $this->analytics, 'wp_head',
 			array(
 				'priority' => 10,

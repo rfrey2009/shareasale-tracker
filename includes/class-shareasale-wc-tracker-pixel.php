@@ -113,6 +113,12 @@ class ShareASale_WC_Tracker_Pixel {
 				$xtype = '&xtype=';
 		}
 
+		if( $_COOKIE['shareasaleWcTrackerSSCID'] ) {
+			$sscid = '&sscid=' . $_COOKIE['shareasaleWcTrackerSSCID'] . '&sscidmode=2';
+		}else {
+			$sscid = '';
+		}
+
 		$product_data = $this->get_product_data();
 
 		$params = array(
@@ -130,7 +136,8 @@ class ShareASale_WC_Tracker_Pixel {
 			);
 
 		$query_string = '?' . http_build_query( $params );
-		$url          = 'https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype;
+
+		$url          = 'https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype . $sscid;
 		//backup pixel if JS is disabled (rare)
 		$noscript_pixel = '<noscript id = "_SHRSL_noscript_1"><img id = "_SHRSL_img_1" src = "' . $url . '" width = "1" height = "1" onload="shareasaleWcTrackerTriggered()" data-no-lazy="1"></noscript>';
 		echo wp_kses( $noscript_pixel, array(
