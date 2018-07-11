@@ -209,7 +209,7 @@ class ShareASale_WC_Tracker_Analytics {
 		if ( defined( 'WC_DOING_AJAX' ) && DOING_AJAX ) {
 			ob_start();
 			?>
-				<!-- first localize coupon data -->
+				<!-- first localize product data -->
 				<script type="text/javascript">
 					var shareasaleWcTrackerAnalyticsBeginCheckout = 
 					<?php
@@ -222,7 +222,7 @@ class ShareASale_WC_Tracker_Analytics {
 					)
 					?>;
 				</script>
-				<!-- run coupon applied call for ShareASale analytics -->
+				<!-- run checkout began call for ShareASale analytics -->
 				<script type="text/javascript" src="<?php echo esc_attr( $src ); ?>"></script>
 			<?php
 			ob_end_flush();

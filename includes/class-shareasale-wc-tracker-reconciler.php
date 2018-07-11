@@ -18,7 +18,7 @@ class ShareASale_WC_Tracker_Reconciler {
 
 		$settings = get_option( 'shareasale_wc_tracker_options' );
 
-		if ( @$settings['merchant-id'] && @$settings['api-token'] && @$settings['api-secret'] && 1 == @$settings['reconciliation-setting'] ) {
+		if ( ! empty( $settings['merchant-id'] ) && ! empty( $settings['api-token'] ) && ! empty( $settings['api-secret'] ) && 1 == @$settings['reconciliation-setting'] ) {
 
 			$this->api    = new ShareASale_WC_Tracker_API( $settings['merchant-id'], $settings['api-token'], $settings['api-secret'] );
 			$this->logger = new ShareASale_WC_Tracker_Reconciliation_Logger( $this->version );

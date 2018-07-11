@@ -1,11 +1,9 @@
 var shareasaleWcTrackerSSCID    = shareasaleWcTrackerGetParameterByName( 'sscid' );
-var shareasaleWcTrackerGapDays  = shareasaleWcTrackerGetParameterByName( 'gap' );;
-if( shareasaleWcTrackerSSCID && shareasaleWcTrackerGapDays ) {
-	var shareasaleWcTrackerGapMilli = 1000 * 60 * 60 * 24 * shareasaleWcTrackerGapDays;
+if( shareasaleWcTrackerSSCID ) {
 	shareasaleWcTrackerSetCookie(
 		'shareasaleWcTrackerSSCID',
 		shareasaleWcTrackerSSCID,
-		shareasaleWcTrackerGapMilli,
+		946707780000, //30 years
 		'/'
 	);
 }

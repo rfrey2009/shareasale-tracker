@@ -113,8 +113,8 @@ class ShareASale_WC_Tracker_Pixel {
 				$xtype = '&xtype=';
 		}
 
-		if( $_COOKIE['shareasaleWcTrackerSSCID'] ) {
-			$sscid = '&sscid=' . $_COOKIE['shareasaleWcTrackerSSCID'] . '&sscidmode=2';
+		if( ! empty( $_COOKIE['shareasaleWcTrackerSSCID'] ) ) {
+			$sscid = '&sscid=' . $_COOKIE['shareasaleWcTrackerSSCID'] . '&sscidmode=6';
 		}else {
 			$sscid = '';
 		}

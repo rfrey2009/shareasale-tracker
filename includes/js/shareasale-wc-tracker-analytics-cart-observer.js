@@ -23,8 +23,8 @@ jQuery(document).ready(function() {
 		function(e){
 			//somewhat hacky way of stopping analytics script injection on simple shipping cost calculations, coupon applies or errors...
 			if( jQuery('.woocommerce-error').length ){ return; } 
-			if( jQuery('div.woocommerce-info').text() == 'Shipping costs updated.' ){ return; }
-			if( jQuery('div.woocommerce-message').text() == 'Coupon code applied successfully.' || jQuery('div.woocommerce-message').text() == 'Coupon has been removed.' ) { return; }
+			if( jQuery('div.woocommerce-info:contains("Shipping costs updated")').length > 0 ){ return; }
+			if( jQuery('div.woocommerce-message:contains("Coupon code applied successfully")').length > 0 || jQuery('div.woocommerce-message:contains("Coupon has been removed")').length > 0 ) { return; }
 			jQuery.get( shareasaleWcTrackerAnalyticsCartObserver.ajaxurl, { action: 'shareasale_wc_tracker_update_cart_action_cart_updated' }, function(data) {
 				console.log('observer saw that cart update!');
     			jQuery.each( data, function( key, value ) {
