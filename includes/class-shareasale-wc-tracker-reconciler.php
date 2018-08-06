@@ -120,7 +120,7 @@ class ShareASale_WC_Tracker_Reconciler {
 
 		$previous_amount = ( $this->logger->get_previous_log_subtotal_after( $order_number ) ? $this->logger->get_previous_log_subtotal_after( $order_number ) : $subtotal );
 		$current_refund  = ( $subtotal === $previous_amount ? $subtotal_refunded : round( $previous_amount - $new_amount, 3 ) );
-		$refund_date     = version_compare( WC()->version, '3.0' ) >= 0 ? $refund->get_date_created() : $refund->date;
+		$refund_date     = version_compare( WC()->version, '3.0' ) >= 0 ? $refund->get_date_created()->date('Y-m-d H:i:s') : $refund->date;
 		$refund_reason   = version_compare( WC()->version, '3.0' ) >= 0 ? $refund->get_reason() : $refund->get_refund_reason();
 
 		return array(
