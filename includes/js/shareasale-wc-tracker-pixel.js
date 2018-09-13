@@ -7,9 +7,7 @@ try {
 	shareasaleWcTrackerPixelImg.height  = 1;
 	shareasaleWcTrackerPixelImg.setAttribute('data-no-lazy', 1);
 	document.body.appendChild(shareasaleWcTrackerPixelImg);
-	if( typeof shareasaleWcTrackerPixelImg.complete !== 'undefined' ){ 
-		shareasaleWcTrackerTriggered();
-	}
+	shareasaleWcTrackerTriggered();
 }
 catch (e) {
 	console.log('ShareASale JS failed because ' + e + ', so unwrapped <noscript> as a fallback');
