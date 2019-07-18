@@ -414,7 +414,8 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => 'Enter your Required FTP Password',
 				'class'       => 'shareasale-wc-tracker-option',
 		));
-
+		/*
+		*this feature was deprecated in version 1.4.2
 		$callback = @$options['analytics-setting'] ? 'render_settings_analytics_enabled_section_text' : 'render_settings_analytics_disabled_section_text';
 
 		add_settings_section( 'shareasale_wc_tracker_analytics', 'Advanced Analytics', array( $this, $callback ), 'shareasale_wc_tracker_advanced_analytics' );
@@ -453,6 +454,7 @@ class ShareASale_WC_Tracker_Admin {
 				'placeholder' => 'Enter your Required Passkey',
 				'class'       => 'shareasale-wc-tracker-option',
 		));
+		*/
 
 	}
 	//this is here because it runs on admin_init hook unfortunately
@@ -491,12 +493,14 @@ class ShareASale_WC_Tracker_Admin {
 		$submenu_slug       = 'shareasale_wc_tracker_datafeed_generation';
 		$submenu_function   = array( $this, 'render_settings_page_subsubmenu' );
 		add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
-
+		/*
+		*this feature was deprecated in version 1.4.2
 		$submenu_page_title = 'Advanced Analytics';
 		$submenu_title      = 'Advanced Analytics';
 		$submenu_slug       = 'shareasale_wc_tracker_advanced_analytics';
 		$submenu_function   = array( $this, 'render_settings_page_subsubsubmenu' );
 		add_submenu_page( $menu_slug, $submenu_page_title, $submenu_title, $capability, $submenu_slug, $submenu_function );
+		*/
 	}
 
 	public function render_settings_page() {

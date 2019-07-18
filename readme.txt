@@ -1,9 +1,9 @@
 === ShareASale WooCommerce Tracker ===
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 4.4
-Tested up to: 4.9.8
+Tested up to: 5.2.2
 Requires PHP: 5.4
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,7 +39,7 @@ http://blog.shareasale.com/2014/04/21/free-slide-deck-from-shareasales-datafeed-
 
 You can view or re-download the product datafeed files you've generated in the past 30 days in the table at the bottom of this tab.
 
-e. BETA: You can also upload the product datafeed to ShareASale via FTP now. If you don't have an FTP account yet, contact us (shareasale@shareasale.com) with your host's IP address (shown on the settings page) to request credentials. Once you have them, turn on the FTP upload checkbox and enter the credentials into the FTP Username and Password fields, then save settings. 
+e. You can also upload the product datafeed to ShareASale via FTP now. If you don't have an FTP account yet, contact us (shareasale@shareasale.com) with your host's IP address (shown on the settings page) to request credentials. Once you have them, turn on the FTP upload checkbox and enter the credentials into the FTP Username and Password fields, then save settings. 
 
 This will also automatically schedule an ongoing daily FTP upload of a new product datafeed file, making your Affiliates' lives easier. :)
 
@@ -52,6 +52,9 @@ http://blog.shareasale.com/2015/02/04/conversion-lines-where-the-tracking-gap-en
 g. If you'd like to automatically send ShareASale your WooCommerce coupons as a coupon/deal type creative, check the "send to ShareASale?" box while adding/editing a WooCommerce coupon. Make sure to choose a coupon description.
 
 == Changelog ==
+
+= 1.4.2 =
+* Updated to confirm compatibility with WordPress 5.0 - 5.2.2 and WooCommerce 3.6.5. Retired Advanced Analytics feature. Made a suggested improvement to product datafeed generation efficiency.
 
 = 1.4.1 =
 * Tiny update to tracking JavaScript.

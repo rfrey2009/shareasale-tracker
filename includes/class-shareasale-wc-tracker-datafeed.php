@@ -36,10 +36,11 @@ class ShareASale_WC_Tracker_Datafeed {
 	}
 
 	public function export( $file ) {
-		$product_posts  = $this->get_all_product_posts();
+		$product_posts_ids = $this->get_all_product_posts_ids();
 		$rows = array();
 
-		foreach ( $product_posts as $product_post ) {
+		foreach ( $product_posts_ids as $product_post_id ) {
+			$product_post = get_post( $product_post_id, 'OBJECT' );
 			//protect against instantiating somehow orphaned variations (causing an exception) by checking its parent for a post_type value too
 			if ( 'product_variation' == $product_post->post_type && 'product' == get_post_type( $product_post->post_parent ) ) {
 				$product     = new WC_Product_Variation( $product_post );
@@ -149,7 +150,7 @@ class ShareASale_WC_Tracker_Datafeed {
 		return array( 'path' => $path, 'id' => $logged );
 	}
 
-	private function get_all_product_posts() {
+	private function get_all_product_posts_ids() {
 		//visibility is stored differently in WooCommerce v2 vs v3
 		if ( version_compare( $this->wc_version, '3.0' ) >= 0 ) {
 			$query['name']  = 'tax_query';
@@ -181,6 +182,7 @@ class ShareASale_WC_Tracker_Datafeed {
 		//get all products and variations that are visible
 		$product_posts = get_posts(
 			array(
+				'fields'       => 'ids',
 				'post_type'    => array( 'product', 'product_variation' ),
 				'numberposts'  => -1,
 				'post_status'  => 'publish',
