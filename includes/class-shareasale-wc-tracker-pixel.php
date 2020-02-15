@@ -313,7 +313,7 @@ class ShareASale_WC_Tracker_Pixel {
 						'post_type'   => wc_get_order_types(),
 						'meta_key'    => '_customer_user',
 						'meta_value'  => $customer_user_id,
-						'numberposts' => 1,
+						'numberposts' => 2,
 						'post_status' => array_keys( wc_get_order_statuses() ),
 					)
 				);
