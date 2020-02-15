@@ -1,3 +1,4 @@
 /admin/datafeeds/*
 error_log.log
 admin/.DS_Store
+.DS_Store

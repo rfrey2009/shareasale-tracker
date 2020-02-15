@@ -1,9 +1,9 @@
 === ShareASale WooCommerce Tracker ===
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 4.4
-Tested up to: 5.2.2
+Tested up to: 5.3
 Requires PHP: 5.4
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,9 @@ http://blog.shareasale.com/2015/02/04/conversion-lines-where-the-tracking-gap-en
 g. If you'd like to automatically send ShareASale your WooCommerce coupons as a coupon/deal type creative, check the "send to ShareASale?" box while adding/editing a WooCommerce coupon. Make sure to choose a coupon description.
 
 == Changelog ==
+
+= 1.4.3 =
+* Updated to confirm compatibility with WordPress 5.3 and WooCommerce 3.8. Replaced deprecated function calls for WooCommerce 3.7 and higher.
 
 = 1.4.2 =
 * Updated to confirm compatibility with WordPress 5.0 - 5.2.2 and WooCommerce 3.6.5. Retired Advanced Analytics feature. Made a suggested improvement to product datafeed generation efficiency.

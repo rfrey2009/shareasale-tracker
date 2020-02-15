@@ -313,7 +313,7 @@ class ShareASale_WC_Tracker_Pixel {
 						'post_type'   => wc_get_order_types(),
 						'meta_key'    => '_customer_user',
 						'meta_value'  => $customer_user_id,
-						'numberposts' => -1,
+						'numberposts' => 1,
 						'post_status' => array_keys( wc_get_order_statuses() ),
 					)
 				);
@@ -328,7 +328,7 @@ class ShareASale_WC_Tracker_Pixel {
 
 	private function get_coupon_codes() {
 
-		$couponcode = implode( ', ', $this->order->get_used_coupons() );
+		$couponcode = version_compare( WC()->version, '3.7' ) >= 0 ? implode( ',', $this->order->get_coupon_codes() ) : implode( ',', $this->order->get_used_coupons() );
 
 		return $couponcode;
 	}
