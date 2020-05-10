@@ -19,7 +19,7 @@ class ShareASale_WC_Tracker_Pixel {
 	}
 
 	public function script_loader_tag( $tag, $handle, $src ) {
-		//$async_scripts = array( 'shareasale-wc-tracker-analytics-second-chance' );
+		$defer_scripts = array( 'shareasale-wc-tracker-mastertag' );
 		$other_scripts = array(
 			'shareasale-wc-tracker-admin-js',
 			'shareasale-wc-tracker-notices-js',
@@ -33,9 +33,9 @@ class ShareASale_WC_Tracker_Pixel {
 			'shareasale-wc-tracker-pixel',
 		);
 
-		// if ( in_array( $handle, $async_scripts, true ) ) {
-		// 	return '<script type="text/javascript" src="' . $src . '" defer async data-noptimize></script>' . "\n";
-		// }
+		if ( in_array( $handle, $defer_scripts, true ) ) {
+			return '<script type="text/javascript" src="' . $src . '" defer data-noptimize></script>' . "\n";
+		}
 
 		if ( in_array( $handle, $other_scripts, true ) ) {
 			return '<script type="text/javascript" src="' . $src . '" data-noptimize></script>' . "\n";
@@ -56,7 +56,7 @@ class ShareASale_WC_Tracker_Pixel {
 			echo '<!-- no ShareASale merchant ID entered or order ID doesn\'t exist-->';
 			return;
 		}
-		//allow &troubleshooting=1 so tech/launch team can view past referrer URLs and check for pixel presence. Still doesn't fire second-chance or advanced analytics though
+		//allow &troubleshooting=1 so tech/launch team can view past referrer URLs and check for pixel presence.
 		if ( $prev_triggered && ! isset( $_GET['troubleshooting'] ) ) {
 			echo '<!-- ShareASale pixel was previously triggered -->';
 			return;
@@ -113,12 +113,13 @@ class ShareASale_WC_Tracker_Pixel {
 				$xtype = '&xtype=';
 		}
 
+		/* removed in version 1.4.5 in favor of Awin's master tag
 		if( ! empty( $_COOKIE['shareasaleWcTrackerSSCID'] ) && ! isset( $_GET['troubleshooting'] ) ) {
 			$sscid = '&sscid=' . $_COOKIE['shareasaleWcTrackerSSCID'] . '&sscidmode=6';
 		}else {
 			$sscid = '';
 		}
-
+		*/
 		$product_data = $this->get_product_data();
 
 		$params = array(
@@ -137,7 +138,7 @@ class ShareASale_WC_Tracker_Pixel {
 
 		$query_string = '?' . http_build_query( $params );
 
-		$url          = 'https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype . $sscid;
+		$url          = 'https://shareasale.com/sale.cfm' . $query_string . $store_id . $xtype /* . $sscid */;
 		//backup pixel if JS is disabled (rare)
 		$noscript_pixel = '<noscript id = "_SHRSL_noscript_1"><img id = "_SHRSL_img_1" src = "' . $url . '" width = "1" height = "1" onload="shareasaleWcTrackerTriggered()" data-no-lazy="1"></noscript>';
 		echo wp_kses( $noscript_pixel, array(

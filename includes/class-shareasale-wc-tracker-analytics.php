@@ -59,7 +59,7 @@ class ShareASale_WC_Tracker_Analytics {
 			)
 		);
 
-		if ( is_cart() ) {
+		if ( is_cart() || is_shop() ) {
 			wp_enqueue_script(
 				'shareasale-wc-tracker-analytics-cart-observer',
 				$src2,
@@ -133,11 +133,11 @@ class ShareASale_WC_Tracker_Analytics {
 				var shareasaleWcTrackerAnalyticsAddToCart = <?php echo wp_json_encode( $this->ajax_product_data ) ?>;
 			</script>
 
-		<?php $fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-model'] = ob_get_clean(); ?>
+		<?php $fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax-model'] = ob_get_contents(); ob_clean(); ?>
 			
 			<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax" type="text/javascript" src="<?php echo esc_attr( $src ); ?>"></script>
 
-		<?php $fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax'] = ob_get_clean(); ?>
+		<?php $fragments['#shareasale-wc-tracker-analytics-add-to-cart-ajax'] = ob_get_contents(); ob_clean(); ?>
 			
 			<script id="shareasale-wc-tracker-analytics-add-to-cart-ajax-cb" type="text/javascript" src="<?php echo esc_attr( $src2 ); ?>"></script>
 

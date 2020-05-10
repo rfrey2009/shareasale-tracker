@@ -1,9 +1,10 @@
 === ShareASale WooCommerce Tracker ===
+Contributors: rfrey2009
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 4.4
-Tested up to: 5.3
-Requires PHP: 5.4
-Stable tag: 1.4.3
+Tested up to: 5.4
+Requires PHP: 5.6.4
+Stable tag: 1.4.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,15 +44,17 @@ e. You can also upload the product datafeed to ShareASale via FTP now. If you do
 
 This will also automatically schedule an ongoing daily FTP upload of a new product datafeed file, making your Affiliates' lives easier. :)
 
-f. If you're interested in our Conversion Lines feature that lets Merchants setup advanced Affiliate attribution beyond just standard last-click crediting, go to the "Advanced Analytics" tab. You can enter your advanced analytics passkey or if you do not have one yet, request it by contacting ShareASale support (shareasale@shareasale.com), subj: attn Ryan - tech team.
-
-For example, Affiliates can have their credit determined by when items are added to cart, whether coupons are used, or if other special Affiliates also referred a click. Read more on our Conversion Lines feature here:
-
-http://blog.shareasale.com/2015/02/04/conversion-lines-where-the-tracking-gap-ends/
-
-g. If you'd like to automatically send ShareASale your WooCommerce coupons as a coupon/deal type creative, check the "send to ShareASale?" box while adding/editing a WooCommerce coupon. Make sure to choose a coupon description.
+f. If you'd like to automatically send ShareASale your WooCommerce coupons as a coupon/deal type creative, check the "send to ShareASale?" box while adding/editing a WooCommerce coupon. Make sure to choose a coupon description.
 
 == Changelog ==
+
+= 1.4.5 =
+* Added support for Awin MasterTag tracking solution - https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Journey_Tag_.2F_Mastertag
+* Added support for ShareASale admins to enable Advanced Analytics on a client-by-client basis
+* General bug fixes and improvements
+
+= 1.4.4 =
+* Small efficiency change to the way new vs old customer tracking is calculated.
 
 = 1.4.3 =
 * Updated to confirm compatibility with WordPress 5.3 and WooCommerce 3.8. Replaced deprecated function calls for WooCommerce 3.7 and higher.

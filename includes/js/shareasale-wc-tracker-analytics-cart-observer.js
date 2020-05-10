@@ -19,7 +19,7 @@ jQuery(document).ready(function() {
 
 	//any cart update
 	jQuery( document ).on(
-		'updated_wc_div',
+		'updated_wc_div removed_from_cart',
 		function(e){
 			//somewhat hacky way of stopping analytics script injection on simple shipping cost calculations, coupon applies or errors...
 			if( jQuery('.woocommerce-error').length ){ return; } 

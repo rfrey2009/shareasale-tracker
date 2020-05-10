@@ -5,12 +5,13 @@ if ( ! defined( 'WPINC' ) ) {
 
 class ShareASale_WC_Tracker {
 	/**
+	* @var ShareASale_WC_Tracker_Pixel $pixel object that controls tracking sale conversions
 	* @var ShareASale_WC_Tracker_Analytics $analytics object that controls advanced analytics (add-to-cart, coupon code, etc.) setup
 	* @var ShareASale_WC_Tracker_Loader $loader Loader object that coordinates actions and filters between core plugin and admin classes
 	* @var string $plugin_slug WordPress Slug for this plugin
 	* @var string $version Plugin version
 	*/
-	private $analytics, $loader, $plugin_slug, $version;
+	private $pixel, $analytics, $loader, $plugin_slug, $version;
 
 	public function __construct( $version ) {
 
@@ -24,6 +25,7 @@ class ShareASale_WC_Tracker {
 		$this->define_woocommerce_hooks();
 		$this->define_installer_hooks();
 		$this->define_uninstaller_hooks();
+		$this->define_backend_hooks();
 	}
 
 	private function load_dependencies() {
@@ -35,6 +37,7 @@ class ShareASale_WC_Tracker {
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-loader.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-installer.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-uninstaller.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-shareasale-wc-tracker-rest.php';
 
 		$this->loader    = new ShareASale_WC_Tracker_Loader();
 		//both define_frontend_hooks() and define_woocommerce_hooks() rely on $pixel and $analytics objects so instantiate them here instead
@@ -180,6 +183,12 @@ class ShareASale_WC_Tracker {
 	private function define_uninstaller_hooks() {
 		register_deactivation_hook( SHAREASALE_WC_TRACKER_PLUGIN_FILENAME, array( 'ShareASale_WC_Tracker_Uninstaller', 'disable' ) );
 	    register_uninstall_hook( SHAREASALE_WC_TRACKER_PLUGIN_FILENAME, array( 'ShareASale_WC_Tracker_Uninstaller', 'uninstall' ) );
+	}
+
+	private function define_backend_hooks() {
+		$rest = new ShareASale_WC_Tracker_Rest();
+		$this->loader->add_action( 'rest_api_init', $rest, 'register_routes' );
+
 	}
 
 	public function run() {

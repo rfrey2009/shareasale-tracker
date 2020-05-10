@@ -873,7 +873,7 @@ class ShareASale_WC_Tracker_Admin {
 			* So don't just reverse engineer this to get your "passkey" (a simple crc32 hash of your Merchant ID...) or hack the db option directly.
 			* It won't do any good if Conversion Lines isn't already setup on our end too.
 			* Email us first to talk about your Affiliate attribution/commission strategy. We'd love to help!
-			* - Ryan Stark, Technical Team Lead, ShareASale.com, Inc.
+			*
 			*/
 			$checksum = hash( 'crc32', $final_settings['merchant-id'] );
 			if ( trim( $final_settings['analytics-passkey'] ) !== $checksum ) {
