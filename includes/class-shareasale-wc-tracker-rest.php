@@ -22,10 +22,12 @@ class ShareASale_WC_Tracker_Rest extends WP_REST_Controller {
 		register_rest_route( $namespace, '/mastertag', array(
 			array(
 				'methods'  => 'GET',
+				'permission_callback' => '__return_true',
 				'callback' => array( $this, 'get_mastertag' ),
 			),
 			array(
 				'methods'  => 'PUT',
+				'permission_callback' => '__return_true',
 				'callback' => array( $this, 'update_mastertag' ),
 				'args' => array(
 			    	'id' => array(
@@ -40,6 +42,7 @@ class ShareASale_WC_Tracker_Rest extends WP_REST_Controller {
 
 		register_rest_route( $namespace, '/mastertag/(?P<key>\w+)', array(
 				'methods'  => 'DELETE',
+				'permission_callback' => '__return_true',
 				'callback' => array( $this, 'delete_mastertag_value' ),
 			)
 		);
@@ -47,10 +50,12 @@ class ShareASale_WC_Tracker_Rest extends WP_REST_Controller {
 		register_rest_route( $namespace, '/advanced-analytics/status', array(
 			array(
 				'methods'  => 'GET',
+				'permission_callback' => '__return_true',
 				'callback' => array( $this, 'get_analytics_status' ),
 			),
 			array(
 				'methods'  => 'POST',
+				'permission_callback' => '__return_true',
 				'callback' => array( $this, 'update_analytics_status' ),
 				'args' => array(
 			    	'enabled' => array(
@@ -181,5 +186,4 @@ class ShareASale_WC_Tracker_Rest extends WP_REST_Controller {
 
 		return in_array( $remote_ip, $authorized_ips );
 	}
-
 }

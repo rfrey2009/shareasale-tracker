@@ -109,10 +109,14 @@ class ShareASale_WC_Tracker_Admin {
 		if ( version_compare( WC()->version, '3.0' ) < 0 ) {
 			return;
 		}
+		//in case woocommerce_coupon_options_save hook is called directly without admin_init, like in the woorewards pro plugin... see https://wordpress.org/support/topic/error-shareasale_wc_tracker_coupon-not-found/
+		if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+			require_once plugin_dir_path( __FILE__ ) . '../includes/class-shareasale-wc-tracker-coupon.php';
+		}
 
 		$options       = get_option( 'shareasale_wc_tracker_options' );
 		$prev_deal_id  = get_post_meta( $post_id, 'shareasale_wc_tracker_coupon_uploaded', true );
-		$new_setting   = sanitize_text_field( $_POST['shareasale_wc_tracker_coupon_upload_enabled'] );
+		$new_setting   = @sanitize_text_field( $_POST['shareasale_wc_tracker_coupon_upload_enabled'] );
 		/*
 		* instantiating this ShareASale_WC_Tracker_API without a possible merchant-id, api-token, or api-secret is okay
 		* it won't be used to make actual API calls unless at least $new_setting is 'yes,' which can only be true if there are already proper API credentials set...

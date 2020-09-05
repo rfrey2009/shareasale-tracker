@@ -2,9 +2,9 @@
 Contributors: rfrey2009
 Tags: Affiliate, marketing, ShareASale, tracking, WooCommerce
 Requires at least: 4.4
-Tested up to: 5.4
+Tested up to: 5.5.0
 Requires PHP: 5.6.4
-Stable tag: 1.4.5
+Stable tag: 1.4.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,14 @@ This will also automatically schedule an ongoing daily FTP upload of a new produ
 f. If you'd like to automatically send ShareASale your WooCommerce coupons as a coupon/deal type creative, check the "send to ShareASale?" box while adding/editing a WooCommerce coupon. Make sure to choose a coupon description.
 
 == Changelog ==
+
+= 1.4.7 =
+* Updated REST API to avoid PHP notices regarding missing required permission_callback argument
+* Confirmed compatibility with WordPress 5.5.0 and WooCommerce 4.4.1
+
+= 1.4.6 =
+* Tweaked coupon syncing with ShareASale functionality to better support third-party plugins like WooRewards
+* Confirmed compatibility with WordPress 5.4.1 and WooCommerce 4.1.1
 
 = 1.4.5 =
 * Added support for Awin MasterTag tracking solution - https://wiki.awin.com/index.php/Advertiser_Tracking_Guide/Standard_Implementation#Journey_Tag_.2F_Mastertag
